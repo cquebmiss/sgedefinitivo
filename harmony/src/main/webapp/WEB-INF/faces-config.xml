@@ -19,9 +19,6 @@
 		</renderer>
 	</render-kit>
 
-	<lifecycle>
-		<phase-listener>util.SesionPhaseListener</phase-listener>
-	</lifecycle>
 
 	<navigation-rule>
 		<from-view-id>/login.xhtml</from-view-id>
