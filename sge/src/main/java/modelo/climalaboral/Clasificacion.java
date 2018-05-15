@@ -39,7 +39,7 @@ public class Clasificacion
 	{
 		for (ClasificacionGrupo clasGrup : this.jornadasClasificadas)
 		{
-			clasGrup.sortear(this.totalPersonal);
+			clasGrup.sortear();
 		}
 	}
 
@@ -70,7 +70,7 @@ public class Clasificacion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionClimaLaboral();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT cg.idClasificacionGrupo, cg.idClasificacion, cg.idJornada, cg.Total, j.Descripcion AS descJornada from clasificaciongrupo cg, jornada j\n"
+					" SELECT cg.idClasificacionGrupo, cg.idClasificacion, cg.idJornada, cg.Total, cg.TotalMuestra, j.Descripcion AS descJornada from clasificaciongrupo cg, jornada j\n"
 							+ "WHERE cg.idJornada = j.idJornada AND cg.idClasificacion=? order by cg.idJornada ASC");
 			prep.setInt(1, this.idClasificacion);
 
@@ -86,6 +86,7 @@ public class Clasificacion
 					obj.setClasificacion(this);
 					obj.setJornada(new Jornada(rBD.getInt("idJornada"), rBD.getString("descJornada")));
 					obj.setTotal(rBD.getInt("Total"));
+					obj.setTotalMuestra(rBD.getInt("TotalMuestra"));
 
 					this.jornadasClasificadas.add(obj);
 

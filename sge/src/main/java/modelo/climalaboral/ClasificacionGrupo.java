@@ -19,6 +19,7 @@ public class ClasificacionGrupo
 	private Clasificacion	clasificacion;
 	private Jornada			jornada;
 	private int				total;
+	private int				totalMuestra;
 	private List<Folio>		folios;
 
 	public ClasificacionGrupo()
@@ -28,7 +29,7 @@ public class ClasificacionGrupo
 		// TODO Auto-generated constructor stub
 	}
 
-	public void sortear(int totalPersonal)
+	public void sortear()
 	{
 		this.folios = new ArrayList<>();
 
@@ -49,7 +50,7 @@ public class ClasificacionGrupo
 				{
 					repetido = false;
 
-					aleatorio = ((int) (Math.random() * totalPersonal) + 1);
+					aleatorio = ((int) (Math.random() * totalMuestra) + 1);
 
 					for (Folio fol : this.folios)
 					{
@@ -129,7 +130,7 @@ public class ClasificacionGrupo
 					Folio fol = new Folio();
 					fol.setIdFolio(rBD.getInt("Folio"));
 					String folioString = "" + fol.getIdFolio();
-					folioString = folioString.substring(2, folioString.length());
+					folioString = folioString.substring(3, folioString.length());
 					fol.setNumero(Integer.parseInt(folioString));
 					fol.setEncuestado(rBD.getBoolean("Encuestado"));
 
@@ -213,6 +214,16 @@ public class ClasificacionGrupo
 	public void setFolios(List<Folio> folios)
 	{
 		this.folios = folios;
+	}
+
+	public int getTotalMuestra()
+	{
+		return totalMuestra;
+	}
+
+	public void setTotalMuestra(int totalMuestra)
+	{
+		this.totalMuestra = totalMuestra;
 	}
 
 }
