@@ -18,162 +18,187 @@
 
 				<p:outputPanel id="panelGroupGeneral">
 
-
 					<p:autoUpdate></p:autoUpdate>
 
 					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq -1}"
 						style="text-align: center;">
 
+
 						<p:messages closable="true"></p:messages>
 
 						<h:form>
 
+
+
 							<h1>Bienvenido(a) a la Encuesta de Clima Laboral 2018</h1>
 
-							<div>
 
-								<p>Por favor, ayúdanos a contestar esta encuesta.</p>
-								<p>Queremos saber tu opinión para conocer el ambiente
-									laboral del Hospital.</p>
+							<h:outputText
+								value="Por favor, ayúdanos a contestar esta encuesta."></h:outputText>
 
-								<p>Contesta con la honestidad que te caracteriza y de ésta
-									manera danos la oportunidad de mejorar juntos.</p>
-
-								<p>
-									<b>Los datos obtenidos son confidenciales y anónimos.</b>
-								</p>
-
-							</div>
-
-							<p:spacer height="25"></p:spacer>
 							<br></br>
 
-							<div style="text-align: center;">
-
-								<p:outputLabel for="inputFolio"
-									value="Ingrese su número de folio:"></p:outputLabel>
-								<br></br>
-								<p:spacer height="25"></p:spacer>
-
-								<p:inputText id="inputFolio"
-									value="#{persistEncuestaBean.folio}"
-									placeholder="Ingresar Folio" required="true"></p:inputText>
-								<br></br>
-
-								<p:spacer height="25"></p:spacer>
-								<br></br>
-
-								<p:commandButton style="text-align: center;"
-									value="Iniciar Encuesta"
-									actionListener="#{persistEncuestaBean.actionValidarFolio}"></p:commandButton>
-
-							</div>
-
-							<p:spacer height="125"></p:spacer>
+							<h:outputText
+								value="Queremos saber tu opinión para conocer el ambiente
+									laboral del Hospital."></h:outputText>
 							<br></br>
+
+							<h:outputText
+								value="Contesta con la honestidad que te caracteriza y de ésta
+									manera danos la oportunidad de mejorar juntos."></h:outputText>
+
 							<br></br>
-							<br></br>
-							<br></br>
+
+							<h:outputText
+								value="Los datos obtenidos son confidenciales y anónimos."></h:outputText>
+
+							<p:separator></p:separator>
+
+
+							<p:commandButton style="text-align: center;"
+								value="Iniciar Encuesta"
+								actionListener="#{encuestasBean.actionIniciarEncuestaSeleccionFolioOVOluntario}"></p:commandButton>
+
+
 
 						</h:form>
 					</h:panelGroup>
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 0}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 0}"
+						style="text-align: center;">
+
+						<p:messages closable="true"></p:messages>
+
+						<h:form>
+							<p:focus for="inputFolio"></p:focus>
+
+							<h:outputText for="inputFolio"
+								value="Si fuiste seleccionado ingresa tu número de folio:"></h:outputText>
+							<br></br>
+							<br></br>
+							<p:spacer height="25"></p:spacer>
+
+							<p:inputText id="inputFolio" value="#{persistEncuestaBean.folio}"
+								placeholder="Ingresar Folio" required="true"></p:inputText>
+							<br></br>
+
+							<p:spacer height="25"></p:spacer>
+							<br></br>
+
+							<p:commandButton style="text-align: center;"
+								value="Iniciar Encuesta"
+								actionListener="#{persistEncuestaBean.actionValidarFolio}"></p:commandButton>
+
+							<br></br>
+							<br></br>
+							<h:outputText
+								value="En caso contrario, puedes participar de forma voluntaria."></h:outputText>
+							<br></br>
+							<br></br>
+							<p:commandButton value="Encuesta Voluntaria"
+								actionListener="#{encuestasBean.actionIniciarEncuestaVoluntaria}"></p:commandButton>
+
+						</h:form>
+
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
 						<h:form>
 
 							<p:messages closable="true"></p:messages>
 
 
-							<div>
 
-								<p:panelGrid columns="1" layout="grid"
-									styleClass="ui-panelgrid-blank form-group"
-									style="margin-top:10px">
+							<p:outputLabel for="oneMenuArea" value="Area Laboral:"></p:outputLabel>
+							<br></br>
+							<p:selectOneMenu id="oneMenuArea"
+								value="#{persistEncuestaBean.areaSelec}"
+								converter="areaConverter" effect="fade" var="pa" filter="true"
+								filterMatchMode="startsWith" required="true"
+								requiredMessage="Seleccione un área por favor.">
 
-									<h:outputText
-										value="Por favor, ayúdanos con los siguientes datos antes de iniciar."></h:outputText>
-									<p:outputLabel for="oneMenuArea" value="Area Laboral:"></p:outputLabel>
+								<f:selectItem itemLabel="Seleccione su área"
+									noSelectionOption="true"></f:selectItem>
 
+								<f:selectItems value="#{persistEncuestaBean.catAreas}" var="p"
+									itemLabel="#{p.descripcion}" itemValue="#{p}" />
 
-									<p:selectOneMenu id="oneMenuArea"
-										value="#{persistEncuestaBean.areaSelec}"
-										converter="areaConverter" effect="fade" var="pa" filter="true"
-										filterMatchMode="startsWith" required="true"
-										requiredMessage="Seleccione un área por favor.">
-
-										<f:selectItem itemLabel="Seleccione su área"
-											noSelectionOption="true"></f:selectItem>
-
-										<f:selectItems value="#{persistEncuestaBean.catAreas}" var="p"
-											itemLabel="#{p.descripcion}" itemValue="#{p}" />
-
-										<p:column>
-											<h:outputText value="#{pa.descripcion}" />
-										</p:column>
+								<p:column>
+									<h:outputText value="#{pa.descripcion}" />
+								</p:column>
 
 
-									</p:selectOneMenu>
+							</p:selectOneMenu>
 
-									<p:outputLabel for="oneMenuProfesion" value="Profesión:"></p:outputLabel>
+							<br></br>
+							<br></br>
 
-									<p:selectOneMenu id="oneMenuProfesion"
-										value="#{persistEncuestaBean.profesionSelec}"
-										converter="profesionConverter" effect="fade" var="pa"
-										filter="true" filterMatchMode="startsWith" required="true"
-										requiredMessage="Seleccione una profesión por favor.">
+							<p:outputLabel for="oneMenuProfesion" value="Profesión:"></p:outputLabel>
+							<br></br>
 
-										<f:selectItem itemLabel="Seleccione su profesión"
-											noSelectionOption="true"></f:selectItem>
+							<p:selectOneMenu id="oneMenuProfesion"
+								value="#{persistEncuestaBean.profesionSelec}"
+								converter="profesionConverter" effect="fade" var="pa"
+								filter="true" filterMatchMode="startsWith" required="true"
+								requiredMessage="Seleccione una profesión por favor.">
 
-										<f:selectItems value="#{persistEncuestaBean.catProfesiones}"
-											var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
+								<f:selectItem itemLabel="Seleccione su profesión"
+									noSelectionOption="true"></f:selectItem>
 
-										<p:column>
-											<h:outputText value="#{pa.descripcion}" />
-										</p:column>
+								<f:selectItems value="#{persistEncuestaBean.catProfesiones}"
+									var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
 
-
-									</p:selectOneMenu>
-
-									<p:outputLabel for="oneMenuJornada" value="Jornada:"></p:outputLabel>
-
-									<p:selectOneMenu id="oneMenuJornada"
-										value="#{persistEncuestaBean.jornadaSelec}"
-										converter="jornadaConverter" effect="fade" var="pa"
-										filter="true" filterMatchMode="startsWith" required="true"
-										requiredMessage="Seleccione una jornada por favor.">
-
-										<f:selectItem itemLabel="Seleccione una jornada"
-											noSelectionOption="true"></f:selectItem>
-
-										<f:selectItems value="#{persistEncuestaBean.catJornadas}"
-											var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
-
-										<p:column>
-											<h:outputText value="#{pa.descripcion}" />
-										</p:column>
+								<p:column>
+									<h:outputText value="#{pa.descripcion}" />
+								</p:column>
 
 
-									</p:selectOneMenu>
+							</p:selectOneMenu>
+
+							<br></br>
+							<br></br>
+
+							<p:outputLabel for="oneMenuJornada" value="Jornada:"></p:outputLabel>
+							<br></br>
+
+							<p:selectOneMenu id="oneMenuJornada"
+								value="#{persistEncuestaBean.jornadaSelec}"
+								converter="jornadaConverter" effect="fade" var="pa"
+								filter="true" filterMatchMode="startsWith" required="true"
+								requiredMessage="Seleccione una jornada por favor.">
+
+
+								<f:selectItem itemLabel="Seleccione una jornada"
+									noSelectionOption="true"></f:selectItem>
+
+								<f:selectItems value="#{persistEncuestaBean.catJornadas}"
+									var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
+
+								<p:column>
+									<h:outputText value="#{pa.descripcion}" />
+								</p:column>
+
+
+							</p:selectOneMenu>
+
+
+							<br></br>
+							<br></br>
+
+							<p:commandButton style="text-align: center;" value="Continuar"
+								actionListener="#{encuestasBean.actionIniciarEncuesta}"></p:commandButton>
 
 
 
-									<p:commandButton style="text-align: center;" value="Continuar"
-										actionListener="#{encuestasBean.actionIniciarEncuesta}"></p:commandButton>
-
-
-								</p:panelGrid>
 
 
 
-
-							</div>
 
 						</h:form>
 					</h:panelGroup>
 
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
 						<h:form>
 
 							<div style="width: 100%;">
@@ -241,7 +266,7 @@
 						</h:form>
 					</h:panelGroup>
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 3}">
 						<h:form>
 
 

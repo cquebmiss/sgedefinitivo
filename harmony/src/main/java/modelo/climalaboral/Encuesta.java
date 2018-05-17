@@ -275,7 +275,7 @@ public class Encuesta
 				prep = conexion.prepareStatement("UPDATE folio SET Encuestado=true WHERE Folio=?");
 				prep.setInt(1, folio);
 				prep.executeUpdate();
-				
+
 				prep.close();
 
 				java.util.Date utilDate = new java.util.Date();
@@ -287,10 +287,22 @@ public class Encuesta
 				prep.setInt(1, this.getIdEncuesta());
 				prep.setDate(2, new java.sql.Date(utilDate.getTime()));
 				prep.setTime(3, new java.sql.Time(utilDate.getTime()));
-				prep.setInt(4, registro.getArea().getIdArea());
-				prep.setInt(5, registro.getProfesion().getIdProfesion());
-				prep.setInt(6, registro.getJornada().getIdJornada());
-				prep.setInt(7, registro.getFolio());
+
+				//Si es participación voluntaria pone a nulo el area, profesión, jornada y folio
+				if (folio == 0)
+				{
+					prep.setNull(4, Types.INTEGER);
+					prep.setNull(5, Types.INTEGER);
+					prep.setNull(6, Types.INTEGER);
+					prep.setNull(7, Types.INTEGER);
+				}
+				else
+				{
+					prep.setInt(4, registro.getArea().getIdArea());
+					prep.setInt(5, registro.getProfesion().getIdProfesion());
+					prep.setInt(6, registro.getJornada().getIdJornada());
+					prep.setInt(7, registro.getFolio());
+				}
 
 				prep.executeUpdate();
 
