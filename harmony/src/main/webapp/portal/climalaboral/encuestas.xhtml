@@ -70,21 +70,18 @@
 						<p:messages closable="true"></p:messages>
 
 						<h:form>
-							<p:focus for="inputFolio"></p:focus>
 
-							<h:outputText for="inputFolio"
-								value="Si fuiste seleccionado ingresa tu número de folio:"></h:outputText>
+							<h:outputText  value="Si fuiste seleccionado:"></h:outputText>
 							<br></br>
 							<br></br>
-							<p:spacer height="25"></p:spacer>
-
+							<!-- 
 							<p:inputText id="inputFolio" value="#{persistEncuestaBean.folio}"
 								placeholder="Ingresar Folio" required="true"></p:inputText>
 							<br></br>
 
 							<p:spacer height="25"></p:spacer>
 							<br></br>
-
+ -->
 							<p:commandButton style="text-align: center;"
 								value="Iniciar Encuesta"
 								actionListener="#{persistEncuestaBean.actionValidarFolio}"></p:commandButton>
@@ -271,9 +268,6 @@
 
 
 							<h1>Gracias por responder la encuesta.</h1>
-
-							<p:commandButton value="Reiniciar Encuesta"
-								actionListener="#{encuestasBean.actionReiniciarEncuesta}"></p:commandButton>
 
 						</h:form>
 					</h:panelGroup>

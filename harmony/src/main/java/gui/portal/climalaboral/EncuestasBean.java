@@ -65,6 +65,8 @@ public class EncuestasBean implements Serializable
 	
 	public void actionIniciarEncuestaVoluntaria()
 	{
+		PersistEncuestaBean bean = (PersistEncuestaBean) FacesUtils.getManagedBean("persistEncuestaBean");
+		bean.iniciarCatalogos();
 		actionIniciarEncuesta();
 	}
 

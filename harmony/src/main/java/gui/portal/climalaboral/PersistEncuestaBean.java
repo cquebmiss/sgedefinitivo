@@ -102,7 +102,8 @@ public class PersistEncuestaBean
 			}
 		}
 
-		return resultado;
+		//Se devolverá siempre 0 ya que se eliminó lo del folio
+		return 0;
 
 	}
 

@@ -289,18 +289,25 @@ public class Encuesta
 				prep.setTime(3, new java.sql.Time(utilDate.getTime()));
 
 				//Si es participación voluntaria pone a nulo el area, profesión, jornada y folio
-				if (folio == 0)
-				{
-					prep.setNull(4, Types.INTEGER);
-					prep.setNull(5, Types.INTEGER);
-					prep.setNull(6, Types.INTEGER);
-					prep.setNull(7, Types.INTEGER);
-				}
-				else
+				if (registro.getArea() != null && registro.getProfesion() != null && registro.getJornada() != null)
 				{
 					prep.setInt(4, registro.getArea().getIdArea());
 					prep.setInt(5, registro.getProfesion().getIdProfesion());
 					prep.setInt(6, registro.getJornada().getIdJornada());
+				}
+				else
+				{
+					prep.setNull(4, Types.INTEGER);
+					prep.setNull(5, Types.INTEGER);
+					prep.setNull(6, Types.INTEGER);
+				}
+				
+				if( registro.getFolio() == 0)
+				{
+					prep.setNull(7, Types.INTEGER);
+				}
+				else
+				{
 					prep.setInt(7, registro.getFolio());
 				}
 
