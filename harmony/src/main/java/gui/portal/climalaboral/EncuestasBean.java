@@ -72,12 +72,12 @@ public class EncuestasBean implements Serializable
 
 	public void actionPasoPrevioInicioEncuesta()
 	{
-		this.estadoModulo = 1;
+		this.estadoModulo = 0;
 	}
 
 	public void actionIniciarEncuesta()
 	{
-		this.estadoModulo = 2;
+		this.estadoModulo = 1;
 		this.indicadorPregunta = -1;
 
 		this.encuesta = UtilidadesClimaLaboral.getEncuestaFromBD();
@@ -113,7 +113,7 @@ public class EncuestasBean implements Serializable
 			System.out.println("Encuesta finalizada");
 			PersistEncuestaBean bean = (PersistEncuestaBean) FacesUtils.getManagedBean("persistEncuestaBean");
 			bean.actionRegistrarEncuesta(this.encuesta);
-			this.estadoModulo = 3;
+			this.estadoModulo = 2;
 		}
 		else
 		{

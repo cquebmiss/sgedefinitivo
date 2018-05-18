@@ -114,7 +114,7 @@ public class PersistEncuestaBean
 		{
 			case 0:
 				EncuestasBean bean = (EncuestasBean) FacesUtils.getManagedBean("encuestasBean");
-				bean.setEstadoModulo(1);
+				bean.setEstadoModulo(0);
 			break;
 
 			case 1:

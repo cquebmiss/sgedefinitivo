@@ -57,49 +57,15 @@
 
 							<p:commandButton style="text-align: center;"
 								value="Iniciar Encuesta"
-								actionListener="#{encuestasBean.actionIniciarEncuestaSeleccionFolioOVOluntario}"></p:commandButton>
+								actionListener="#{encuestasBean.actionPasoPrevioInicioEncuesta}"></p:commandButton>
 
 
 
 						</h:form>
 					</h:panelGroup>
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 0}"
-						style="text-align: center;">
 
-						<p:messages closable="true"></p:messages>
-
-						<h:form>
-
-							<h:outputText  value="Si fuiste seleccionado:"></h:outputText>
-							<br></br>
-							<br></br>
-							<!-- 
-							<p:inputText id="inputFolio" value="#{persistEncuestaBean.folio}"
-								placeholder="Ingresar Folio" required="true"></p:inputText>
-							<br></br>
-
-							<p:spacer height="25"></p:spacer>
-							<br></br>
- -->
-							<p:commandButton style="text-align: center;"
-								value="Iniciar Encuesta"
-								actionListener="#{persistEncuestaBean.actionValidarFolio}"></p:commandButton>
-
-							<br></br>
-							<br></br>
-							<h:outputText
-								value="En caso contrario, puedes participar de forma voluntaria."></h:outputText>
-							<br></br>
-							<br></br>
-							<p:commandButton value="Encuesta Voluntaria"
-								actionListener="#{encuestasBean.actionIniciarEncuestaVoluntaria}"></p:commandButton>
-
-						</h:form>
-
-					</h:panelGroup>
-
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 0}">
 						<h:form>
 
 							<p:messages closable="true"></p:messages>
@@ -195,7 +161,7 @@
 					</h:panelGroup>
 
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
 						<h:form>
 
 							<div style="width: 100%;">
@@ -263,7 +229,7 @@
 						</h:form>
 					</h:panelGroup>
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 3}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
 						<h:form>
 
 
