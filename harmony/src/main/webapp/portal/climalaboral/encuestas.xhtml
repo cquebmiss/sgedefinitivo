@@ -51,13 +51,11 @@
 
 							<h:outputText
 								value="Los datos obtenidos son confidenciales y anónimos."></h:outputText>
-
 							<p:separator></p:separator>
 
-
-							<p:commandButton style="text-align: center;"
-								value="Iniciar Encuesta"
+							<p:commandButton value="Iniciar Encuestas"
 								actionListener="#{encuestasBean.actionPasoPrevioInicioEncuesta}"></p:commandButton>
+							<br></br>
 
 
 
@@ -66,6 +64,30 @@
 
 
 					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 0}">
+
+
+						<h:form>
+
+							<p:focus for="inputFolio"></p:focus>
+							<p:messages closable="true"></p:messages>
+
+
+							<p:outputLabel value="Folio"></p:outputLabel>
+							<p:separator></p:separator>
+
+							<p:inputText id="inputFolio" value="#{persistEncuestaBean.folio}"></p:inputText>
+							<br></br>
+							<br></br>
+
+
+							<p:commandButton style="text-align: center;" value="Continuar"
+								actionListener="#{persistEncuestaBean.actionValidarFolio}"></p:commandButton>
+
+						</h:form>
+					</h:panelGroup>
+
+
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
 						<h:form>
 
 							<p:messages closable="true"></p:messages>
@@ -161,7 +183,7 @@
 					</h:panelGroup>
 
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
 						<h:form>
 
 							<div style="width: 100%;">
@@ -229,7 +251,7 @@
 						</h:form>
 					</h:panelGroup>
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
+					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 3}">
 						<h:form>
 
 

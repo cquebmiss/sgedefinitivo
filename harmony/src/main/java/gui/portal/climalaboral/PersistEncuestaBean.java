@@ -102,8 +102,16 @@ public class PersistEncuestaBean
 			}
 		}
 
-		//Se devolverá siempre 0 ya que se eliminó lo del folio
-		return 0;
+		
+		if( this.folio == 246 )
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+		
 
 	}
 
@@ -114,7 +122,7 @@ public class PersistEncuestaBean
 		{
 			case 0:
 				EncuestasBean bean = (EncuestasBean) FacesUtils.getManagedBean("encuestasBean");
-				bean.setEstadoModulo(0);
+				bean.setEstadoModulo(1);
 			break;
 
 			case 1:
