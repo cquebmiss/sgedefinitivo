@@ -23,10 +23,30 @@ public class JornadaConverter implements Converter
 			return null;
 		}
 
-		Optional<Jornada> res = bean.getCatJornadas().stream().filter(v -> v.getIdJornada() == Integer.parseInt(id))
-				.findFirst();
+		Optional<Jornada> res = bean.getCatJornadas().stream().filter(v ->
+		{
+			try
+			{
+				if (v.getIdJornada() == Integer.parseInt(id))
+					return true;
 
-		return res.get();
+			}
+			catch (NumberFormatException e)
+			{
+				return false;
+			}
+
+			return false;
+
+		}).findFirst();
+
+		if (res.isPresent())
+		{
+			return res.get();
+
+		}
+
+		return null;
 	}
 
 	@Override

@@ -36,6 +36,7 @@ import javax.mail.internet.MimeMultipart;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
+import modelo.minutas.Acuerdo;
 import modelo.minutas.Compromiso;
 import modelo.minutas.Minuta;
 import modelo.minutas.Participante;
@@ -101,17 +102,6 @@ public class MinutaBean
 
 	}
 
-	public void actionCrearActualizarMinuta()
-	{
-		if (this.minuta.getIdMinuta() < 0)
-		{
-			this.minuta.crearMinutaBD();
-		}
-		else
-		{
-			this.minuta.updateDatosBasicosMinuta();
-		}
-	}
 
 	public void activarModoEdicion()
 	{
@@ -323,6 +313,14 @@ public class MinutaBean
 	public void removeCompromisoDeMinuta(Compromiso compromiso)
 	{
 		this.minuta.removeCompromiso(compromiso);
+	}
+
+	// *******************************************************
+
+	// MÉTODOS FUNCIONALES PARA LA SECCIÓN DE ACUERDOS
+	public void removeAcuerdoDeMinuta(Acuerdo acuerdo)
+	{
+		this.minuta.removeAcuerdo(acuerdo);
 	}
 
 	// *******************************************************

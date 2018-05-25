@@ -54,6 +54,15 @@
 								</h:outputText>
 							</p:column>
 
+							<p:column headerText="Tipo"
+								sortBy="#{minuta.tipoMinuta.descripcion}"
+								style="text-align: center; width: 100px;"
+								filterBy="#{minuta.tipoMinuta.descripcion}"
+								filterMatchMode="contains">
+								<h:outputText value="#{minuta.tipoMinuta.descripcion}">
+								</h:outputText>
+							</p:column>
+
 							<p:column headerText="Fecha / Hora" style="text-align: center;"
 								sortBy="#{minuta.fechaHoraString}"
 								filterBy="#{minuta.fechaHoraString}" filterMatchMode="contains">

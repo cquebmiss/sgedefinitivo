@@ -8,64 +8,121 @@
 	<div class="ui-g" id="div1">
 		<div class="ui-g-12" id="div2">
 			<div class="card" id="div3">
-				<h1>
-					<h:outputText
-						value="#{minutaBean.editarMinuta gt -1 ? 'Edición de Minuta' : 'Nueva Minuta' }"></h:outputText>
-				</h1>
 
 
-				<div class="ui-fluid" id="div4">
-					<div class="ui-g" id="div5">
-						<div class="ui-g-12" id="div6">
-							<div class="card card-w-title" id="div7">
-								<h:form id="formMinuta">
 
 
-									<p:panelGrid columns="2"
-										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
-										layout="grid"
-										styleClass="ui-panelgrid-blank form-group form-elements"
-										style="border:0px none; background-color:transparent;">
+				<p:outputPanel>
+
+					<p:autoUpdate></p:autoUpdate>
+
+					<h:panelGroup id="idOutputCrearMinuta"
+						rendered="#{minutaBean.minuta.idMinuta eq -1 }">
+
+						<h:form>
+
+							<p:panelGrid columns="1" cellpadding="10" cellspacing="10"
+								styleClass="ui-noborder">
 
 
-										<p:outputLabel for="outputIdMinuta" value="Folio Minuta:"
-											rendered="#{minutaBean.editarMinuta gt -1}" />
-										<h:outputText id="outputIdMinuta"
-											value="#{minutaBean.minuta.idMinuta}"
-											rendered="#{minutaBean.editarMinuta gt -1}" />
+								<p:outputLabel value="Tipo de Minuta:"></p:outputLabel>
 
-										<p:outputLabel for="inputAsunto" value="Asunto" />
-										<p:inputText id="inputAsunto"
-											value="#{minutaBean.minuta.descripcion}" />
+								<p:selectOneMenu
+									value="#{minutaBean.minuta.tipoMinuta.idTipoMinuta}">
 
-										<p:outputLabel for="inputLugar" value="Lugar" />
-										<p:inputText id="inputLugar"
-											value="#{minutaBean.minuta.lugar}" />
+									<f:selectItem itemLabel="Reunión de Trabajo" itemValue="0"></f:selectItem>
+									<f:selectItem itemLabel="Gira de Trabajo" itemValue="1"></f:selectItem>
+								</p:selectOneMenu>
 
-										<p:outputLabel for="inputFechaHora" value="Fecha / Hora" />
-										<p:calendar id="inputFechaHora" pattern="MM/dd/yyyy HH:mm"
-											value="#{minutaBean.minuta.fechaHora}" />
-
-										<p:column></p:column>
-										<p:commandButton id="botonCrearMinuta"
-											value="#{minutaBean.minuta.idMinuta lt 0 ? 'Crear Minuta' : 'Guardar Cambios'}"
-											icon="fa fa-save" style="max-width:150px;"
-											actionListener="#{minutaBean.minuta.crearMinutaBD}"
-											update="@(.panelFormularioMinuta), @this">
-										</p:commandButton>
+								<p:commandButton id="botonCrearMinuta" value="Crear Minuta"
+									icon="fa fa-save"
+									actionListener="#{minutaBean.minuta.crearMinutaBD}"
+									update="@(.panelFormularioMinuta)">
+								</p:commandButton>
 
 
-									</p:panelGrid>
-								</h:form>
-							</div>
-						</div>
-					</div>
-				</div>
+							</p:panelGrid>
+
+						</h:form>
+
+					</h:panelGroup>
+
+
+				</p:outputPanel>
 
 				<h:panelGroup id="outputFormularioMinuta"
 					styleClass="panelFormularioMinuta">
 
 					<h:panelGroup rendered="#{minutaBean.minuta.idMinuta gt -1}">
+
+						<h1>
+							<h:outputText
+								value="#{minutaBean.editarMinuta gt -1 ? 'Edición de Minuta' : 'Nueva Minuta' } ( #{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0 ? 'Reunión de Trabajo' : 'Gira de Trabajo'} )"></h:outputText>
+						</h1>
+
+						<div class="ui-fluid" id="div4">
+							<div class="ui-g" id="div5">
+								<div class="ui-g-12" id="div6">
+									<div class="card card-w-title" id="div7">
+										<h:form id="formMinuta">
+
+
+											<p:panelGrid columns="2"
+												columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+												layout="grid"
+												styleClass="ui-panelgrid-blank form-group form-elements"
+												style="border:0px none; background-color:transparent;">
+
+
+												<p:outputLabel for="outputIdMinuta" value="Folio Minuta:" />
+												<h:outputText id="outputIdMinuta"
+													value="#{minutaBean.minuta.idMinuta}" />
+
+												<p:outputLabel for="inputAsunto" value="Título" />
+												<p:inputText id="inputAsunto"
+													value="#{minutaBean.minuta.descripcion}">
+													<p:ajax event="blur"
+														listener="#{minutaBean.minuta.updateDatosBasicosMinuta('descripcion')}"></p:ajax>
+												</p:inputText>
+
+												<p:outputLabel for="inputLugar"
+													value="#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0 ? 'Lugar' : 'Lugar de Visita' }" />
+												<p:inputText id="inputLugar"
+													value="#{minutaBean.minuta.lugar}">
+
+													<p:ajax event="blur"
+														listener="#{minutaBean.minuta.updateDatosBasicosMinuta('lugar')}"></p:ajax>
+
+												</p:inputText>
+
+												<p:outputLabel for="inputMotivoVisita"
+													rendered="#{minutaBean.minuta.tipoMinuta.idTipoMinuta  eq 1}"
+													value="Motivo de Visita" />
+												<p:inputText id="inputMotivoVisita"
+													rendered="#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 1}"
+													value="#{minutaBean.minuta.motivoVisita}">
+													<p:ajax event="blur"
+														listener="#{minutaBean.minuta.updateDatosBasicosMinuta('motivo')}"></p:ajax>
+												</p:inputText>
+
+												<p:outputLabel for="inputFechaHora"
+													value="#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0 ? 'Fecha / Hora' : 'Fecha'}" />
+												<p:calendar id="inputFechaHora"
+													pattern="#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0 ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy'}"
+													value="#{minutaBean.minuta.fechaHora}">
+
+													<p:ajax event="dateSelect"
+														listener="#{minutaBean.minuta.updateDatosBasicosMinuta('fecha')}"></p:ajax>
+												</p:calendar>
+
+											</p:panelGrid>
+
+										</h:form>
+
+									</div>
+								</div>
+							</div>
+						</div>
 
 
 						<h1>Participantes</h1>
@@ -592,7 +649,7 @@
 													<h:outputText value="#{compromiso.descripcion}" />
 												</p:column>
 
-												</p:selectOneMenu>
+											</p:selectOneMenu>
 
 										</div>
 
@@ -671,92 +728,95 @@
 
 
 						<!-- FIN DE DIÁLOGO PARA AÑADIR COMPROMISO PENDIENTE -->
+						<h:panelGroup
+							rendered="#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0}">
+
+							<h1>Temas</h1>
 
 
-						<h1>Temas</h1>
-
-
-						<h:form>
-							<div class="ui-g">
-								<div class="ui-g-6">
-									<p:commandButton value="Añadir Tema" icon="fa fa-plus"
-										actionListener="#{dialogoTemaBean.addTemaNuevo}"
-										onclick="PF('dlgTema').show()" update="@(.classDlgTema)">
-									</p:commandButton>
+							<h:form>
+								<div class="ui-g">
+									<div class="ui-g-6">
+										<p:commandButton value="Añadir Tema" icon="fa fa-plus"
+											actionListener="#{dialogoTemaBean.addTemaNuevo}"
+											onclick="PF('dlgTema').show()" update="@(.classDlgTema)">
+										</p:commandButton>
+									</div>
+									<div class="ui-g-6">
+										<p:commandButton id="botonAñadirCompromisoPendiente"
+											value="Añadir Compromiso Pendiente" icon="fa fa-download"
+											actionListener="#{dialogoTemaBean.preparaDialogoCompromisosNoResueltos}"
+											onsuccess="PF('dlgCompromisoPendiente').show()" />
+									</div>
 								</div>
-								<div class="ui-g-6">
-									<p:commandButton id="botonAñadirCompromisoPendiente"
-										value="Añadir Compromiso Pendiente" icon="fa fa-download"
-										actionListener="#{dialogoTemaBean.preparaDialogoCompromisosNoResueltos}"
-										onsuccess="PF('dlgCompromisoPendiente').show()" />
-								</div>
-							</div>
 
-						</h:form>
+							</h:form>
 
-						<div></div>
+							<div></div>
 
-						<br></br>
+							<br></br>
 
 
-						<h:form id="formTablaTema">
+							<h:form id="formTablaTema">
 
-							<p:dataTable id="tablaTemaMinuta" widgetVar="wTablaTemaMinuta"
-								styleClass="classTablaTemas" reflow="true" emptyMessage="..."
-								value="#{minutaBean.minuta.temas}" var="tema" paginator="true"
-								paginatorPosition="top" rows="10" paginatorAlwaysVisible="true">
+								<p:dataTable id="tablaTemaMinuta" widgetVar="wTablaTemaMinuta"
+									styleClass="classTablaTemas" reflow="true" emptyMessage="..."
+									value="#{minutaBean.minuta.temas}" var="tema" paginator="true"
+									paginatorPosition="top" rows="10" paginatorAlwaysVisible="true">
 
-								<p:column headerText="Editar" style="width: 150px;">
+									<p:column headerText="Editar" style="width: 150px;">
 
-									<p:commandButton icon="fa fa-edit"
-										onclick="PF('dlgTema').show()" update="@(.classDlgTema)">
+										<p:commandButton icon="fa fa-edit"
+											onclick="PF('dlgTema').show()" update="@(.classDlgTema)">
 
-										<f:setPropertyActionListener value="#{tema}"
-											target="#{dialogoTemaBean.temaMinuta}" />
-									</p:commandButton>
-								</p:column>
+											<f:setPropertyActionListener value="#{tema}"
+												target="#{dialogoTemaBean.temaMinuta}" />
+										</p:commandButton>
+									</p:column>
 
-								<p:column headerText="Descripción del Tema">
+									<p:column headerText="Descripción del Tema">
 
-									<h:outputText value="#{tema.descripcion}"></h:outputText>
+										<h:outputText value="#{tema.descripcion}"></h:outputText>
 
-								</p:column>
+									</p:column>
 
-								<p:column headerText="Responsable">
+									<p:column headerText="Responsable">
 
-									<h:outputText
-										value="#{tema.responsable.persona.nombre} #{tema.responsable.persona.apellidoPaterno} #{tema.responsable.persona.apellidoMaterno}"></h:outputText>
-									<br></br>
-									<h:outputText style="font-weight: bold;"
-										value="#{tema.responsable.persona.cargo}"></h:outputText>
+										<h:outputText
+											value="#{tema.responsable.persona.nombre} #{tema.responsable.persona.apellidoPaterno} #{tema.responsable.persona.apellidoMaterno}"></h:outputText>
+										<br></br>
+										<h:outputText style="font-weight: bold;"
+											value="#{tema.responsable.persona.cargo}"></h:outputText>
 
-								</p:column>
+									</p:column>
 
-								<p:column headerText="Desarrollo del Tema" style="width: 150px;">
+									<p:column headerText="Desarrollo del Tema"
+										style="width: 150px;">
 
-									<p:commandButton icon="fa fa-edit "
-										onclick="PF('dlgTemaDesarrollo').show();"
-										update="@(.classDlgTemaDesarrollo)">
-										<f:setPropertyActionListener value="#{tema}"
-											target="#{dialogoTemaBean.temaMinuta}" />
-									</p:commandButton>
+										<p:commandButton icon="fa fa-edit "
+											onclick="PF('dlgTemaDesarrollo').show();"
+											update="@(.classDlgTemaDesarrollo)">
+											<f:setPropertyActionListener value="#{tema}"
+												target="#{dialogoTemaBean.temaMinuta}" />
+										</p:commandButton>
 
-								</p:column>
+									</p:column>
 
-								<p:column style="width: 150px;">
+									<p:column style="width: 150px;">
 
-									<p:commandButton icon="fa fa-close"
-										actionListener="#{minutaBean.removeTemaDeMinuta(tema)}"
-										update="@(.classTablaTemas)">
+										<p:commandButton icon="fa fa-close"
+											actionListener="#{minutaBean.removeTemaDeMinuta(tema)}"
+											update="@(.classTablaTemas)">
 
-									</p:commandButton>
+										</p:commandButton>
 
-								</p:column>
+									</p:column>
 
-							</p:dataTable>
+								</p:dataTable>
 
-						</h:form>
+							</h:form>
 
+						</h:panelGroup>
 						<!-- FIN DE SECCIÓN PARA TEMAS -->
 
 
@@ -939,26 +999,189 @@
 
 						<!-- FIN DE SECCIÓN DE COMPROMISOS -->
 
+						<!-- SECCIÓN PARA AÑADIR ACUERDOS -->
+
+						<h:form id="formDlgAcuerdoMinuta">
+
+							<p:dialog header="Acuerdo" widgetVar="dlgAcuerdo" modal="true"
+								responsive="true" draggable="false" width="300"
+								minimizable="false" maximizable="true" closeOnEscape="true"
+								closable="true" focus="inputDescripcionAcuerdo">
+
+								<p:outputPanel styleClass="classDlgAcuerdo">
+
+									<div class="card card-w-title">
+
+										<h1>Datos del Acuerdo</h1>
+
+										<p:messages styleClass="msjDlgAcuerdo" closable="true"
+											showDetail="true">
+										</p:messages>
+
+										<p:panelGrid id="panelGridNDlgAcuerdo" columns="1"
+											layout="grid" styleClass="ui-panelgrid-blank form-group">
+
+											<p:inputText id="inputDescripcionAcuerdo" style="width: 95%;"
+												placeholder="Asunto o descripción"
+												value="#{dialogoAcuerdoBean.acuerdo.descripcion}"
+												required="true" requiredMessage="- Asunto del Acuerdo">
+											</p:inputText>
+
+											<p:inputTextarea id="inputInvolucradosAcuerdo"
+												style="width: 95%;" placeholder="Involucrados"
+												value="#{dialogoAcuerdoBean.acuerdo.involucrados}"
+												required="true"
+												requiredMessage="- Personas o grupos involucrados">
+											</p:inputTextarea>
+
+
+											<p:outputLabel for="inputFechaInicio" value="Fecha de Inicio"></p:outputLabel>
+
+											<p:calendar id="inputFechaInicio" style="width: 95%;"
+												value="#{dialogoAcuerdoBean.acuerdo.fechaInicio}"></p:calendar>
+
+										</p:panelGrid>
+									</div>
+
+								</p:outputPanel>
+
+								<f:facet name="header">
+
+
+									<p:commandButton id="botonAceptarDlgAcuerdo"
+										widgetVar="wbotonAceptarDlgAcuerdo" value="Aceptar"
+										icon="fa fa-check"
+										actionListener="#{dialogoAcuerdoBean.actionGuardarAcuerdo}"
+										update="@(.msjDlgAcuerdo), @(.classTablaAcuerdos)"
+										oncomplete="handleAñadirAcuerdo(xhr, status, args)"
+										process="@form" />
+
+
+									<p:commandButton id="botonCancelarDlgAcuerdo"
+										widgetVar="wbotonCancelarDlgAcuerdo" value="Cancelar"
+										type="button" styleClass="secondary-button" icon="fa fa-close"
+										onclick="PF('dlgAcuerdo').hide()" />
+
+
+								</f:facet>
+
+
+
+							</p:dialog>
+
+						</h:form>
+
+						<script type="text/javascript">
+							function handleAñadirAcuerdo(xhr, status, args) {
+
+								if (args.validationFailed
+										|| !args.acuerdoAñadido) {
+
+									PF('dlgAcuerdo').jq.effect("shake", {
+										times : 2
+									}, 200);
+
+								} else {
+									PF('dlgAcuerdo').hide();
+								}
+							}
+						</script>
+
+
+
+						<h1>Acuerdos</h1>
 
 
 						<h:form>
 
-							<h1>Introducción</h1>
+							<p:commandButton value="Añadir Acuerdo" icon="fa fa-plus"
+								actionListener="#{dialogoAcuerdoBean.addAcuerdoNuevo}"
+								update="@(.classDlgAcuerdo)" onclick="PF('dlgAcuerdo').show()"></p:commandButton>
+
+
+						</h:form>
+
+						<br></br>
+
+
+						<h:form id="formTablaAcuerdo">
+
+							<p:dataTable id="tablaAcuerdoMinuta"
+								widgetVar="classTablaAcuerdos" styleClass="classTablaAcuerdos"
+								reflow="true" emptyMessage="..."
+								value="#{minutaBean.minuta.acuerdos}" var="acuerdo"
+								paginator="true" paginatorPosition="top" rows="10"
+								paginatorAlwaysVisible="true">
+
+								<p:column headerText="Editar" style="width: 150px;">
+
+									<p:commandButton icon="fa fa-edit"
+										onclick="PF('dlgAcuerdo').show()" update="@(.classDlgAcuerdo)">
+
+										<f:setPropertyActionListener value="#{acuerdo}"
+											target="#{dialogoAcuerdoBean.acuerdo}" />
+									</p:commandButton>
+								</p:column>
+
+								<p:column headerText="Descripción del Acuerdo">
+
+									<h:outputText value="#{acuerdo.descripcion}"></h:outputText>
+
+								</p:column>
+
+								<p:column headerText="Involucrados">
+
+									<h:outputText value="#{acuerdo.involucrados}"></h:outputText>
+
+								</p:column>
+
+								<p:column headerText="Fecha de Inicio">
+
+									<h:outputText value="#{acuerdo.fechaInicio}">
+										<f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+									</h:outputText>
+
+								</p:column>
+
+								<p:column style="width: 150px;">
+
+									<p:commandButton icon="fa fa-close"
+										actionListener="#{minutaBean.removeAcuerdoDeMinuta(acuerdo)}"
+										update="@(.classTablaAcuerdos)">
+									</p:commandButton>
+
+								</p:column>
+
+							</p:dataTable>
+
+						</h:form>
+
+						<!-- FIN DE SECCIÓN DE ACUERDOS -->
+
+
+
+						<h:form>
+
+							<h1>Anotaciones Generales</h1>
 
 							<p:textEditor height="300"
 								value="#{minutaBean.minuta.introduccion}"
 								valueChangeListener="#{minutaBean.minuta.updateIntroduccionMinuta}">
+								<f:facet name="toolbar">
+									<span class="ql-formats">
+										<button class="ql-bold"></button>
+										<button class="ql-italic"></button>
+										<button class="ql-underline"></button>
+										<button class="ql-strike"></button>
+									</span>
+									<span class="ql-formats">
+										<button class="ql-image"></button>
+									</span>
+								</f:facet>
 								<p:ajax event="blur"></p:ajax>
 							</p:textEditor>
 
 
-							<h1>Conclusión</h1>
-
-							<p:textEditor height="300"
-								value="#{minutaBean.minuta.conclusion}"
-								valueChangeListener="#{minutaBean.minuta.updateConclusionMinuta}">
-								<p:ajax event="blur"></p:ajax>
-							</p:textEditor>
 
 						</h:form>
 
@@ -1008,6 +1231,7 @@
 					</h:panelGroup>
 
 				</h:panelGroup>
+
 
 
 

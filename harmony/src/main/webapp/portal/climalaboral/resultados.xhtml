@@ -15,6 +15,101 @@
 	<ui:define name="content">
 		<div class="ui-g">
 			<div class="ui-g-12 card">
+				<h:form>
+
+					<h:panelGroup>
+						<h1>Resultados de la Encuesta de Clima Laboral 2018</h1>
+
+						<div class="ui-g">
+
+							<div class="ui-g-12 ui-md-6 ui-lg-3">
+
+								<p:outputLabel for="oneMenuArea" value="Area Laboral:"></p:outputLabel>
+								<br></br>
+								<p:selectOneMenu id="oneMenuArea"
+									value="#{resultadosBean.areaSelec}" converter="areaConverter"
+									effect="fade" var="pa" filter="true"
+									filterMatchMode="startsWith">
+
+
+									<f:selectItem itemLabel="Todas" noSelectionOption="true"></f:selectItem>
+
+									<f:selectItems value="#{persistEncuestaBean.catAreas}" var="p"
+										itemLabel="#{p.descripcion}" itemValue="#{p}" />
+
+									<p:column>
+										<h:outputText value="#{pa.descripcion}" />
+									</p:column>
+
+
+								</p:selectOneMenu>
+							</div>
+
+						</div>
+						<div class="ui-g">
+
+							<div class="ui-g-12 ui-md-6 ui-lg-3">
+
+								<p:outputLabel for="oneMenuProfesion" value="Profesión:"></p:outputLabel>
+								<br></br>
+
+								<p:selectOneMenu id="oneMenuProfesion"
+									value="#{resultadosBean.profesionSelec}"
+									converter="profesionConverter" effect="fade" var="pa"
+									filter="true" filterMatchMode="startsWith">
+
+									<f:selectItem itemLabel="Todas" noSelectionOption="true"></f:selectItem>
+
+									<f:selectItems value="#{persistEncuestaBean.catProfesiones}"
+										var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
+
+									<p:column>
+										<h:outputText value="#{pa.descripcion}" />
+									</p:column>
+
+
+								</p:selectOneMenu>
+							</div>
+
+							<div class="ui-g-12 ui-md-6 ui-lg-3">
+
+								<p:outputLabel for="oneMenuJornada" value="Jornada:"></p:outputLabel>
+								<br></br>
+
+								<p:selectOneMenu id="oneMenuJornada"
+									value="#{resultadosBean.jornadaSelec}"
+									converter="jornadaConverter" effect="fade" var="pa"
+									filter="true" filterMatchMode="startsWith">
+
+
+									<f:selectItem itemLabel="Todas" noSelectionOption="true"></f:selectItem>
+
+									<f:selectItems value="#{persistEncuestaBean.catJornadas}"
+										var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
+
+									<p:column>
+										<h:outputText value="#{pa.descripcion}" />
+									</p:column>
+
+
+								</p:selectOneMenu>
+							</div>
+
+
+						</div>
+
+						<div class="ui-g">
+							<div class="ui-g-12 ui-md-6 ui-lg-3">
+								<p:commandButton value=" Generar
+							Gráfica"
+									actionListener="#{resultadosBean.updateGrafica}">
+								</p:commandButton>
+							</div>
+						</div>
+
+					</h:panelGroup>
+				</h:form>
+				<br></br> <br></br>
 
 				<p:outputPanel id="panelGroupGeneral">
 					<p:autoUpdate></p:autoUpdate>
@@ -23,10 +118,17 @@
 
 					<h:panelGroup style="height: 600px;">
 
-						<h1>Resultados de la Encuesta de Clima Laboral 2018</h1>
+
 
 						<h:panelGroup rendered="#{resultadosBean.modoPanel eq 0}">
-							<p:outputLabel for="graficaGeneral" value="Vista General"></p:outputLabel>
+
+
+							<h:panelGroup>
+								<p:outputLabel for="graficaGeneral" value="Vista General:"></p:outputLabel>
+
+								<h:outputText
+									value=" ( #{resultadosBean.totalRegistros} ) #{resultadosBean.totalRegistros eq 1 ? 'encuestado' : 'encuestados'}"></h:outputText>
+							</h:panelGroup>
 
 							<p:chart id="graficaGeneral" type="bar"
 								model="#{resultadosBean.modeloGrafica}"

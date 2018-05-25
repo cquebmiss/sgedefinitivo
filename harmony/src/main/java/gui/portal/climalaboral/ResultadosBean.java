@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 
 import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.model.chart.Axis;
@@ -15,8 +14,11 @@ import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
+import modelo.climalaboral.Area;
 import modelo.climalaboral.Encuesta;
+import modelo.climalaboral.Jornada;
 import modelo.climalaboral.Pregunta;
+import modelo.climalaboral.Profesion;
 import modelo.climalaboral.Respuesta;
 import modelo.climalaboral.Seccion;
 import util.climalaboral.UtilidadesClimaLaboral;
@@ -37,6 +39,11 @@ public class ResultadosBean
 	//modoPanel 0 vista general, 1 detalle de sección
 	private int				modoPanel;
 
+	private Area			areaSelec;
+	private Profesion		profesionSelec;
+	private Jornada			jornadaSelec;
+	private int				totalRegistros;
+
 	public ResultadosBean()
 	{
 
@@ -46,16 +53,21 @@ public class ResultadosBean
 	public void postConstruct()
 	{
 		this.modoPanel = 0;
+		updateGrafica();
+
+	}
+
+	public void updateGrafica()
+	{
 		getResultadosFromBD();
 		createBarModel();
-
 	}
 
 	public void getResultadosFromBD()
 	{
 		this.encuesta = UtilidadesClimaLaboral.getEncuestaFromBD();
 		this.encuesta.initEncuesta();
-		this.encuesta.getResultadosEncuesta();
+		this.encuesta.getResultadosEncuesta(this.areaSelec, this.profesionSelec, this.jornadaSelec);
 	}
 
 	private void createBarModel()
@@ -97,11 +109,19 @@ public class ResultadosBean
 
 			for (Pregunta preg : sec.getPreguntas())
 			{
-				totalRespuestas += preg.getRespuestasResultados().size();
+				if (preg.getRespuestasResultados() != null)
+				{
+					totalRespuestas += preg.getRespuestasResultados().size();
+				}
 
 				if (preg.getTipoPregunta().getIdTipoPregunta() == 3)
 				{
 					totalPreguntasOpcionMultiple++;
+
+					if (preg.getRespuestasResultados() == null)
+					{
+						continue;
+					}
 
 					for (Respuesta resp : preg.getRespuestasResultados())
 					{
@@ -125,6 +145,7 @@ public class ResultadosBean
 					porcentajeSatisfaccion = (totalSiempre * 100) / totalRespuestas;
 				}
 
+				this.totalRegistros = totalRespuestas / sec.getPreguntas().size();
 				secChart.set(" ", porcentajeSatisfaccion);
 				secEnGrafica.add(sec);
 
@@ -285,6 +306,46 @@ public class ResultadosBean
 	public void setModoPanel(int modoPanel)
 	{
 		this.modoPanel = modoPanel;
+	}
+
+	public Area getAreaSelec()
+	{
+		return areaSelec;
+	}
+
+	public void setAreaSelec(Area areaSelec)
+	{
+		this.areaSelec = areaSelec;
+	}
+
+	public Profesion getProfesionSelec()
+	{
+		return profesionSelec;
+	}
+
+	public void setProfesionSelec(Profesion profesionSelec)
+	{
+		this.profesionSelec = profesionSelec;
+	}
+
+	public Jornada getJornadaSelec()
+	{
+		return jornadaSelec;
+	}
+
+	public void setJornadaSelec(Jornada jornadaSelec)
+	{
+		this.jornadaSelec = jornadaSelec;
+	}
+
+	public int getTotalRegistros()
+	{
+		return totalRegistros;
+	}
+
+	public void setTotalRegistros(int totalRegistros)
+	{
+		this.totalRegistros = totalRegistros;
 	}
 
 }

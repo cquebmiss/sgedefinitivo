@@ -75,7 +75,8 @@
 							<p:outputLabel value="Folio"></p:outputLabel>
 							<p:separator></p:separator>
 
-							<p:inputText id="inputFolio" value="#{persistEncuestaBean.folio}"></p:inputText>
+							<p:inputText id="inputFolio"
+								value="#{persistEncuestaBean.folioString}"></p:inputText>
 							<br></br>
 							<br></br>
 
@@ -256,7 +257,7 @@
 
 
 							<h1>Gracias por responder la encuesta.</h1>
-					
+
 							<p:commandButton value="Reiniciar Encuesta"
 								actionListener="#{encuestasBean.actionReiniciarEncuesta}"></p:commandButton>
 

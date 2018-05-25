@@ -34,6 +34,7 @@ public class PersistEncuestaBean
 	private Profesion		profesionSelec;
 	private Jornada			jornadaSelec;
 	private int				folio;
+	private String			folioString;
 
 	public PersistEncuestaBean()
 	{
@@ -45,6 +46,7 @@ public class PersistEncuestaBean
 	public void postConstruct()
 	{
 		this.folio = 0;
+		this.folioString = "";
 		iniciarCatalogos();
 
 	}
@@ -52,6 +54,7 @@ public class PersistEncuestaBean
 	public void iniciarCatalogos()
 	{
 		this.folio = 0;
+		this.folioString = "";
 		this.catAreas = UtilidadesClimaLaboral.getCatAreas();
 		this.catProfesiones = UtilidadesClimaLaboral.getCatProfesiones();
 		this.catJornadas = UtilidadesClimaLaboral.getCatJornadas();
@@ -102,8 +105,7 @@ public class PersistEncuestaBean
 			}
 		}
 
-		
-		if( this.folio == 246 )
+		if (this.folioString.equalsIgnoreCase("246") )
 		{
 			return 0;
 		}
@@ -111,7 +113,6 @@ public class PersistEncuestaBean
 		{
 			return -1;
 		}
-		
 
 	}
 
@@ -212,6 +213,16 @@ public class PersistEncuestaBean
 	public void setFolio(int folio)
 	{
 		this.folio = folio;
+	}
+
+	public String getFolioString()
+	{
+		return folioString;
+	}
+
+	public void setFolioString(String folioString)
+	{
+		this.folioString = folioString;
 	}
 
 }

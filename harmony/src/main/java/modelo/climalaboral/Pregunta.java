@@ -215,7 +215,7 @@ public class Pregunta
 
 	public List<Respuesta> getRespuestasResultados()
 	{
-		return respuestasResultados.get();
+		return respuestasResultados == null ? null : this.respuestasResultados.get();
 	}
 
 	public void setRespuestasResultados(List<Respuesta> respuestasResultados)

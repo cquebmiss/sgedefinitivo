@@ -23,10 +23,30 @@ public class ProfesionConverter implements Converter
 			return null;
 		}
 
-		Optional<Profesion> res = bean.getCatProfesiones().stream()
-				.filter(v -> v.getIdProfesion() == Integer.parseInt(id)).findFirst();
+		Optional<Profesion> res = bean.getCatProfesiones().stream().filter(v ->
+		{
+			try
+			{
+				if (v.getIdProfesion() == Integer.parseInt(id))
+					return true;
 
-		return res.get();
+			}
+			catch (NumberFormatException e)
+			{
+				return false;
+			}
+
+			return false;
+
+		}).findFirst();
+
+		if (res.isPresent())
+		{
+			return res.get();
+
+		}
+
+		return null;
 	}
 
 	@Override

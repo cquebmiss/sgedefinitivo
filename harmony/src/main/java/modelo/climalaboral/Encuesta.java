@@ -52,7 +52,7 @@ public class Encuesta
 	}
 
 	//Método que debe ejecutarse después de obtener las secciones de la base de datos
-	public void getResultadosEncuesta()
+	public void getResultadosEncuesta(Area area, Profesion profesion, Jornada jornada)
 	{
 		if (this.getSecciones() == null && this.getSecciones().isEmpty())
 		{
@@ -65,13 +65,30 @@ public class Encuesta
 
 		PreparedStatement prep = null;
 		ResultSet rBD = null;
+		
+		String complementoQuery = "";
+		
+		if( area != null)
+		{
+			complementoQuery+=" AND reg.idArea="+area.getIdArea()+" ";
+		}
+		
+		if( profesion != null)
+		{
+			complementoQuery+=" AND reg.idProfesion="+profesion.getIdProfesion()+" ";
+		}
+		
+		if( jornada != null)
+		{
+			complementoQuery+=" AND reg.idJornada="+jornada.getIdJornada();
+		}
 
 		//Ahora obtener las respuestas y enlazarlas con las preguntas
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionClimaLaboral();)
 		{
 			prep = conexion.prepareStatement(
 					" SELECT r.idRegistro, p.idSeccion, s.Orden AS ordenSec, r.idPregunta, p.idTipoPregunta, p.Orden AS ordenPreg, r.idOpcion AS idOpcionElegida, r.RespuestaAbierta, r.idRespuesta  from respuesta r, pregunta p, seccion s \n"
-							+ "where r.idPregunta = p.idPregunta AND p.idSeccion = s.idSeccion AND s.idEncuesta=? \n"
+							+ "where r.idPregunta = p.idPregunta AND p.idSeccion = s.idSeccion AND s.idEncuesta=? AND r.idRegistro IN (SELECT reg.idRegistro FROM registro reg WHERE reg.idEncuesta=0 "+complementoQuery+"  ) \n"
 							+ "order by r.idRegistro ASC, ordenSec ASC, ordenPreg ASC");
 
 			prep.setInt(1, this.idEncuesta);

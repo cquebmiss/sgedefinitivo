@@ -20,6 +20,7 @@ import modelo.minutas.Compromiso;
 import modelo.minutas.Minuta;
 import modelo.minutas.Participante;
 import modelo.minutas.StatusMinuta;
+import modelo.minutas.TipoMinuta;
 import resources.DataBase;
 import util.FacesUtils;
 import util.UtilidadesCalendario;
@@ -89,7 +90,7 @@ public class UtilidadesMinutas
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT m.*, st.Descripcion AS descStatus FROm minutas.minuta m, minutas.status st WHERE m.idStatus = st.idStatus ORDER BY m.idMinuta DESC ");
+					" SELECT m.*, st.Descripcion AS descStatus, tm.descripcion AS descTipoMinuta FROm minutas.minuta m, minutas.status st, tipominuta tm WHERE m.idStatus = st.idStatus AND m.idTipoMinuta = tm.idTipoMinuta ORDER BY m.idMinuta DESC ");
 
 			rBD = prep.executeQuery();
 
@@ -102,6 +103,8 @@ public class UtilidadesMinutas
 
 					Minuta m = new Minuta(rBD.getInt("idMinuta"), rBD.getString("Descripcion"), fechaHora,
 							new StatusMinuta(rBD.getInt("idStatus"), rBD.getString("descStatus")));
+
+					m.setTipoMinuta(new TipoMinuta(rBD.getInt("idTipoMinuta"), rBD.getString("descTipoMinuta")));
 
 					m.updateFechaHoraString();
 

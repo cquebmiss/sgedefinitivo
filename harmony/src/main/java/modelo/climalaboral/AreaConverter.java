@@ -23,9 +23,29 @@ public class AreaConverter implements Converter
 			return null;
 		}
 
-		Optional<Area> res = bean.getCatAreas().stream().filter(v -> v.getIdArea() == Integer.parseInt(id)).findFirst();
+		Optional<Area> res = bean.getCatAreas().stream().filter(v ->
+		{
+			try
+			{
+				if (v.getIdArea() == Integer.parseInt(id))
+					return true;
 
-		return res.get();
+			}
+			catch (NumberFormatException e)
+			{
+				return false;
+			}
+
+			return false;
+
+		}).findFirst();
+
+		if (res.isPresent())
+		{
+			return res.get();
+		}
+
+		return null;
 	}
 
 	@Override

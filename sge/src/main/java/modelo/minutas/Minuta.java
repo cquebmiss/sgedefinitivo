@@ -21,19 +21,22 @@ import java.util.Optional;
 public class Minuta
 {
 
-	private int idMinuta;
-	private String descripcion;
-	private String lugar;
-	private Date FechaHora;
-	private String fechaHoraString;
-	private String introduccion;
-	private String desarrollo;
-	private String conclusion;
-	private StatusMinuta status;
+	private int					idMinuta;
+	private String				descripcion;
+	private String				lugar;
+	private Date				FechaHora;
+	private String				fechaHoraString;
+	private String				introduccion;
+	private String				desarrollo;
+	private String				conclusion;
+	private StatusMinuta		status;
+	private String				motivoVisita;
 
-	private List<Participante> participantes;
-	private List<TemaMinuta> temas;
-	private List<Compromiso> compromisos;
+	private List<Participante>	participantes;
+	private List<TemaMinuta>	temas;
+	private List<Compromiso>	compromisos;
+	private List<Acuerdo>		acuerdos;
+	private TipoMinuta			tipoMinuta;
 
 	public Minuta()
 	{
@@ -51,9 +54,13 @@ public class Minuta
 		this.introduccion = "";
 		this.desarrollo = "";
 		this.conclusion = "";
+		this.lugar = "";
+		this.motivoVisita = "";
 		this.participantes = new ArrayList<>();
 		this.temas = new ArrayList<>();
 		this.compromisos = new ArrayList<>();
+		this.acuerdos = new ArrayList<>();
+		this.tipoMinuta = new TipoMinuta(0, "Reunión de Trabajo");
 	}
 
 	public void crearMinutaBD()
@@ -85,8 +92,8 @@ public class Minuta
 				try
 				{
 					prep = conexion.prepareStatement(
-							" INSERT INTO minuta (idMinuta, Fecha, Hora, Descripcion, Lugar, Introduccion, Desarrollo, Finalizacion, idStatus) "
-									+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?); ");
+							" INSERT INTO minuta (idMinuta, Fecha, Hora, Descripcion, Lugar, Introduccion, Desarrollo, Finalizacion, idStatus, idTipoMinuta) "
+									+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ");
 
 					prep.setInt(1, idInsercion);
 					prep.setDate(2, new java.sql.Date(this.FechaHora.getTime()));
@@ -98,6 +105,7 @@ public class Minuta
 					prep.setNull(8, java.sql.Types.LONGVARCHAR);
 					//Status 0 = Creada
 					prep.setInt(9, 0);
+					prep.setInt(10, this.tipoMinuta.getIdTipoMinuta());
 
 					prep.executeUpdate();
 
@@ -147,23 +155,68 @@ public class Minuta
 		getParticipantesFromBD();
 		getTemasFromBD();
 		getCompromisosFromBD();
+		getAcuerdosFromBD();
 	}
 
-	public void updateDatosBasicosMinuta()
+	public void updateDatosBasicosMinuta(String campoAActualizar)
 	{
 		PreparedStatement prep = null;
+
+		String campo = "";
+		String valorCampo = "";
+		java.sql.Date fecha = null;
+		java.sql.Time hora = null;
+
+		switch (campoAActualizar)
+		{
+			case "descripcion":
+				campo = "Descripcion=?";
+				valorCampo = this.getDescripcion();
+			break;
+
+			case "lugar":
+				campo = "Lugar=?";
+				valorCampo = this.getLugar();
+			break;
+
+			case "motivo":
+				campo = "MotivoVisita=?";
+				valorCampo = this.getMotivoVisita();
+			break;
+
+			case "fecha":
+				campo = "Fecha=?, Hora=?";
+				fecha = new java.sql.Date(this.FechaHora.getTime());
+				hora = new java.sql.Time(this.getFechaHora().getTime());
+			break;
+
+		}
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
 
-			prep = conexion
-					.prepareStatement("UPDATE minuta set Descripcion=?, Lugar=?, Fecha=?, Hora=? WHERE idMinuta=?");
-			prep.setString(1, this.getDescripcion());
-			prep.setString(2, this.getLugar());
-			prep.setDate(3, new java.sql.Date(this.FechaHora.getTime()));
-			prep.setTime(4, new java.sql.Time(this.getFechaHora().getTime()));
+			prep = conexion.prepareStatement("UPDATE minuta set " + campo + " WHERE idMinuta=?");
 
-			prep.setInt(5, this.idMinuta);
+			switch (campoAActualizar)
+			{
+				case "descripcion":
+				case "lugar":
+				case "motivo":
+
+					prep.setString(1, valorCampo);
+					prep.setInt(2, this.idMinuta);
+
+				break;
+
+				case "fecha":
+
+					prep.setDate(1, fecha);
+					prep.setTime(2, hora);
+					prep.setInt(3, this.idMinuta);
+
+				break;
+
+			}
 
 			prep.executeUpdate();
 
@@ -202,7 +255,8 @@ public class Minuta
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
 
-			prep = conexion.prepareStatement("SELECT * FROM minuta WHERE idMinuta=?");
+			prep = conexion.prepareStatement(
+					"SELECT tm.descripcion AS descTipoMinuta, m.* FROM minuta m, tipominuta tm WHERE m.idTipoMinuta = tm.idTipoMinuta AND m.idMinuta=?");
 			prep.setInt(1, this.idMinuta);
 
 			rBD = prep.executeQuery();
@@ -212,6 +266,8 @@ public class Minuta
 				this.setLugar(rBD.getString("Lugar"));
 				this.setIntroduccion(rBD.getString("Introduccion"));
 				this.setConclusion(rBD.getString("Finalizacion"));
+				this.setMotivoVisita(rBD.getString("MotivoVisita"));
+				this.setTipoMinuta(new TipoMinuta(rBD.getInt("idTipoMinuta"), rBD.getString("descTipoMinuta")));
 
 				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date fechaHora = formatter.parse(rBD.getString("Fecha") + " " + rBD.getString("Hora"));
@@ -1165,6 +1221,286 @@ public class Minuta
 
 	//FIN DE MÉTODOS PARA COMPROMISOS
 
+	//MÉTODOS PARA ACUERDOS
+
+	public boolean addAcuerdoBD(Acuerdo acuerdo)
+	{
+		acuerdo.setOrden(this.acuerdos.size());
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+			try
+			{
+
+				conexion.setAutoCommit(false);
+				conexion.rollback();
+
+				prep = conexion
+						.prepareStatement("INSERT INTO acuerdo (idMinuta,Descripcion,Involucrados,FechaInicio,Orden)\n"
+								+ "VALUES ( ?,?,?,?,?) ;\n" + " ", PreparedStatement.RETURN_GENERATED_KEYS);
+				prep.setInt(1, this.idMinuta);
+				prep.setString(2, acuerdo.getDescripcion());
+				prep.setString(3, acuerdo.getInvolucrados());
+				prep.setDate(4, new java.sql.Date(acuerdo.getFechaInicio().getTime()));
+				prep.setInt(5, acuerdo.getOrden());
+
+				prep.executeUpdate();
+
+				rBD = prep.getGeneratedKeys();
+
+				if (rBD.next())
+				{
+					acuerdo.setIdAcuerdo(rBD.getInt(1));
+				}
+
+				rBD.close();
+
+				conexion.commit();
+
+				this.acuerdos.add(acuerdo);
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				conexion.rollback();
+			}
+
+		}
+		catch (
+
+		Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al añadir un nuevo acuerdo a la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+
+			return false;
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return true;
+
+	}
+
+	public boolean updateAcuerdoBD(Acuerdo acuerdo)
+	{
+
+		PreparedStatement prep = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			prep = conexion.prepareStatement(
+					" UPDATE acuerdo SET Descripcion=?, Involucrados=?, FechaInicio=? WHERE idAcuerdo=?");
+			prep.setString(1, acuerdo.getDescripcion());
+			prep.setString(2, acuerdo.getInvolucrados());
+			prep.setDate(3, new java.sql.Date(acuerdo.getFechaInicio().getTime()));
+			prep.setInt(4, acuerdo.getIdAcuerdo());
+
+			prep.executeUpdate();
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al actualizar el acuerdo de la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+			return false;
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return true;
+
+	}
+
+	public void removeAcuerdo(Acuerdo acuerdo)
+	{
+		PreparedStatement prep = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			prep = conexion.prepareStatement("DELETE FROM acuerdo WHERE idAcuerdo=? ");
+			prep.setInt(1, acuerdo.getIdAcuerdo());
+			prep.executeUpdate();
+			prep.close();
+
+			this.acuerdos.remove(acuerdo);
+			reordenarIndicesAcuerdos();
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al remover el acuerdo de la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	//reordena el índice de orden dentro de la minuta
+	public void reordenarIndicesAcuerdos()
+	{
+		PreparedStatement prep = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			for (int x = 0; x < this.acuerdos.size(); x++)
+			{
+
+				prep = conexion.prepareStatement("UPDATE acuerdo SET Orden=? WHERE idAcuerdo=?");
+				prep.setInt(1, x);
+				prep.setInt(2, this.acuerdos.get(x).getIdAcuerdo());
+				prep.executeUpdate();
+
+				this.acuerdos.get(x).setOrden(x);
+
+				prep.close();
+
+			}
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al reordenar los acuerdos de la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	//Obtiene los acuerdos de la bd
+	public void getAcuerdosFromBD()
+	{
+		this.acuerdos = new ArrayList<>();
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			prep = conexion.prepareStatement("SELECT * FROM acuerdo WHERE idMinuta=?");
+			prep.setInt(1, this.idMinuta);
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+
+				do
+				{
+					Acuerdo acuerdo = new Acuerdo();
+
+					acuerdo.setIdAcuerdo(rBD.getInt("idAcuerdo"));
+					acuerdo.setMinuta(this);
+					acuerdo.setDescripcion(rBD.getString("Descripcion"));
+					acuerdo.setOrden(rBD.getInt("Orden"));
+					acuerdo.setFechaInicio(rBD.getDate("FechaInicio"));
+					acuerdo.setInvolucrados(rBD.getString("Involucrados"));
+
+					this.acuerdos.add(acuerdo);
+
+				} while (rBD.next());
+			}
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener los acuerdos de la bd, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	//FIN DE MÉTODOS PARA ACUERDOS
+
 	//MÉTODOS PARA INTRODUCCION
 
 	public void updateIntroduccionMinuta()
@@ -1374,6 +1710,36 @@ public class Minuta
 	{
 		setFechaHoraString(new SimpleDateFormat("yyyy-MM-dd - HH:mm:dd").format(this.FechaHora));
 
+	}
+
+	public List<Acuerdo> getAcuerdos()
+	{
+		return acuerdos;
+	}
+
+	public void setAcuerdos(List<Acuerdo> acuerdos)
+	{
+		this.acuerdos = acuerdos;
+	}
+
+	public String getMotivoVisita()
+	{
+		return motivoVisita;
+	}
+
+	public void setMotivoVisita(String motivoVisita)
+	{
+		this.motivoVisita = motivoVisita;
+	}
+
+	public TipoMinuta getTipoMinuta()
+	{
+		return tipoMinuta;
+	}
+
+	public void setTipoMinuta(TipoMinuta tipoMinuta)
+	{
+		this.tipoMinuta = tipoMinuta;
 	}
 
 }
