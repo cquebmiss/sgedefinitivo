@@ -37,6 +37,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 import modelo.minutas.Acuerdo;
+import modelo.minutas.AreaOportunidad;
 import modelo.minutas.Compromiso;
 import modelo.minutas.Minuta;
 import modelo.minutas.Participante;
@@ -323,6 +324,14 @@ public class MinutaBean
 		this.minuta.removeAcuerdo(acuerdo);
 	}
 
+	// *******************************************************
+
+	// MÉTODOS FUNCIONALES PARA LA SECCIÓN DE AREAS DE OPORTUNIDAD
+	public void removeAreaOportunidadDeMinuta(AreaOportunidad area)
+	{
+		this.minuta.removeAreaOportunidad(area);
+	}
+	
 	// *******************************************************
 
 	public void generarPDF()

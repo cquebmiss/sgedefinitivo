@@ -18,7 +18,7 @@ public class SigGen
 {
 	private static final String IMAGE_FORMAT = "png";
 	private static final int SIGNATURE_HEIGHT = 200;
-	private static final int SIGNATURE_WIDTH = 400;
+	private static final int SIGNATURE_WIDTH = 280;
 
 	/**
 	* A point along a line within a signature.

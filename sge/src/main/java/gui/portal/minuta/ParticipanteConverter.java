@@ -32,7 +32,7 @@ public class ParticipanteConverter implements Converter
 		Optional<Participante> res = bean.getResultadosAutoCompleteParticipante().stream()
 				.filter(v -> v.getIdParticipante() == Integer.parseInt(string)).findFirst();
 
-		return res.get();
+		return res.isPresent() ? res.get() : null;
 	}
 
 	// EL método getAsString lo que realiza es convertir el objeto en una cadena

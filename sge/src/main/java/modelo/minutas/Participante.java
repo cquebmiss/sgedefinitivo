@@ -14,13 +14,13 @@ import util.FacesUtils;
 
 public class Participante
 {
-	private int idParticipante;
-	private Persona persona;
-	private Minuta minuta;
+	private int		idParticipante;
+	private Persona	persona;
+	private Minuta	minuta;
 	//indica únicamente el orden de aparición dentro de la minuta
-	private int orden;
-	private String firma;
-	private String email;
+	private int		orden;
+	private String	firma;
+	private String	email;
 
 	public Participante()
 	{
@@ -95,7 +95,7 @@ public class Participante
 	}
 
 	public void updateEmailPersona()
-	{	
+	{
 		this.persona.updateEmail();
 
 	}

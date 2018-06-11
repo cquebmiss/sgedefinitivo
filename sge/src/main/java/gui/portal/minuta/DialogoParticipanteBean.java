@@ -19,14 +19,14 @@ import util.FacesUtils;
 @RequestScoped
 public class DialogoParticipanteBean
 {
-	private String nombres;
-	private String apellidoPaterno;
-	private String apellidoMaterno;
-	private String cargo;
-	private String sexo;
-	private String titulo;
+	private String	nombres;
+	private String	apellidoPaterno;
+	private String	apellidoMaterno;
+	private String	cargo;
+	private String	sexo;
+	private String	titulo;
 
-	private boolean valido;
+	private boolean	valido;
 
 	public DialogoParticipanteBean()
 	{
@@ -36,6 +36,16 @@ public class DialogoParticipanteBean
 	public void postConstruct()
 	{
 
+	}
+
+	public void addParticipanteNuevo()
+	{
+		this.nombres = "";
+		this.apellidoPaterno = "";
+		this.apellidoMaterno = "";
+		this.cargo = "";
+		this.sexo = "";
+		this.titulo = "";
 	}
 
 	public void crearPersona()
@@ -106,8 +116,8 @@ public class DialogoParticipanteBean
 			if (rBD.next())
 			{
 				return new Participante(rBD.getInt("idPersona"), rBD.getString("Nombre"), rBD.getString("ApPaterno"),
-						rBD.getString("ApMaterno"), rBD.getString("Sexo"), rBD.getString("Titulo"),
-						rBD.getString("Cargo"), -1, null, -1, rBD.getString("Email"));
+						rBD.getString("ApMaterno"), rBD.getString("Cargo"), rBD.getString("Sexo"),
+						rBD.getString("Titulo"), -1, null, -1, rBD.getString("Email"));
 
 			}
 

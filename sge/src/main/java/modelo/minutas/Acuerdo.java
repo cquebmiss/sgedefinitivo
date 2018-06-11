@@ -8,7 +8,7 @@ public class Acuerdo
 	private Minuta	minuta;
 	private String	descripcion;
 	private int		orden;
-	private String	involucrados;
+	private String	observaciones;
 	private Date	fechaInicio;
 
 	public Acuerdo()
@@ -17,14 +17,14 @@ public class Acuerdo
 		// TODO Auto-generated constructor stub
 	}
 
-	public Acuerdo(int idAcuerdo, Minuta minuta, String descripcion, int orden, String involucrados, Date fechaInicio)
+	public Acuerdo(int idAcuerdo, Minuta minuta, String descripcion, int orden, String observaciones, Date fechaInicio)
 	{
 		super();
 		this.idAcuerdo = idAcuerdo;
 		this.minuta = minuta;
 		this.descripcion = descripcion;
 		this.orden = orden;
-		this.involucrados = involucrados;
+		this.observaciones = observaciones;
 		this.fechaInicio = fechaInicio;
 	}
 
@@ -68,16 +68,6 @@ public class Acuerdo
 		this.orden = orden;
 	}
 
-	public String getInvolucrados()
-	{
-		return involucrados;
-	}
-
-	public void setInvolucrados(String involucrados)
-	{
-		this.involucrados = involucrados;
-	}
-
 	public Date getFechaInicio()
 	{
 		return fechaInicio;
@@ -86,6 +76,16 @@ public class Acuerdo
 	public void setFechaInicio(Date fechaInicio)
 	{
 		this.fechaInicio = fechaInicio;
+	}
+
+	public String getObservaciones()
+	{
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones)
+	{
+		this.observaciones = observaciones;
 	}
 
 }

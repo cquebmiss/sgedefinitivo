@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import modelo.Persona;
+import modelo.actividades.Actividad;
+import modelo.actividades.StatusActividad;
 import resources.DataBase;
 import util.FacesUtils;
 import java.util.Optional;
@@ -21,22 +24,23 @@ import java.util.Optional;
 public class Minuta
 {
 
-	private int					idMinuta;
-	private String				descripcion;
-	private String				lugar;
-	private Date				FechaHora;
-	private String				fechaHoraString;
-	private String				introduccion;
-	private String				desarrollo;
-	private String				conclusion;
-	private StatusMinuta		status;
-	private String				motivoVisita;
+	private int						idMinuta;
+	private String					descripcion;
+	private String					lugar;
+	private Date					FechaHora;
+	private String					fechaHoraString;
+	private String					introduccion;
+	private String					desarrollo;
+	private String					conclusion;
+	private StatusMinuta			status;
+	private String					motivoVisita;
 
-	private List<Participante>	participantes;
-	private List<TemaMinuta>	temas;
-	private List<Compromiso>	compromisos;
-	private List<Acuerdo>		acuerdos;
-	private TipoMinuta			tipoMinuta;
+	private List<Participante>		participantes;
+	private List<TemaMinuta>		temas;
+	private List<Compromiso>		compromisos;
+	private List<Acuerdo>			acuerdos;
+	private List<AreaOportunidad>	areasOportunidad;
+	private TipoMinuta				tipoMinuta;
 
 	public Minuta()
 	{
@@ -60,6 +64,7 @@ public class Minuta
 		this.temas = new ArrayList<>();
 		this.compromisos = new ArrayList<>();
 		this.acuerdos = new ArrayList<>();
+		this.areasOportunidad = new ArrayList<>();
 		this.tipoMinuta = new TipoMinuta(0, "Reunión de Trabajo");
 	}
 
@@ -156,6 +161,7 @@ public class Minuta
 		getTemasFromBD();
 		getCompromisosFromBD();
 		getAcuerdosFromBD();
+		getAreasOportunidadFromBD();
 	}
 
 	public void updateDatosBasicosMinuta(String campoAActualizar)
@@ -1160,7 +1166,8 @@ public class Minuta
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
 
-			prep = conexion.prepareStatement("SELECT * FROM compromiso WHERE idMinuta=?");
+			prep = conexion.prepareStatement(
+					"SELECT ac.idStatus AS idStatusAct, st.Descripcion AS descStatusAct, c.* FROM compromiso c, gestiones.actividad ac, gestiones.status st WHERE c.idActividad = ac.idActividad AND ac.idStatus = st.idStatus AND c.idMinuta=?");
 			prep.setInt(1, this.idMinuta);
 			rBD = prep.executeQuery();
 
@@ -1186,6 +1193,12 @@ public class Minuta
 					{
 						compromiso.setResponsable(responsable.get());
 					}
+
+					//Añade la actividad
+					Actividad act = new Actividad(rBD.getInt("idActividad"), rBD.getString("Descripcion"),
+							new StatusActividad(rBD.getInt("idStatusAct"), rBD.getString("descStatusAct")));
+
+					compromiso.setActividad(act);
 
 					this.compromisos.add(compromiso);
 
@@ -1239,12 +1252,30 @@ public class Minuta
 				conexion.rollback();
 
 				prep = conexion
-						.prepareStatement("INSERT INTO acuerdo (idMinuta,Descripcion,Involucrados,FechaInicio,Orden)\n"
+						.prepareStatement("INSERT INTO acuerdo (idMinuta,Descripcion,Observaciones,FechaInicio,Orden)\n"
 								+ "VALUES ( ?,?,?,?,?) ;\n" + " ", PreparedStatement.RETURN_GENERATED_KEYS);
 				prep.setInt(1, this.idMinuta);
 				prep.setString(2, acuerdo.getDescripcion());
-				prep.setString(3, acuerdo.getInvolucrados());
-				prep.setDate(4, new java.sql.Date(acuerdo.getFechaInicio().getTime()));
+
+				if (acuerdo.getObservaciones() == null || acuerdo.getObservaciones().isEmpty())
+				{
+					prep.setNull(3, Types.VARCHAR);
+				}
+				else
+				{
+					prep.setString(3, acuerdo.getObservaciones());
+				}
+
+				if (acuerdo.getFechaInicio() == null)
+				{
+					prep.setNull(4, Types.DATE);
+
+				}
+				else
+				{
+					prep.setDate(4, new java.sql.Date(acuerdo.getFechaInicio().getTime()));
+				}
+
 				prep.setInt(5, acuerdo.getOrden());
 
 				prep.executeUpdate();
@@ -1311,9 +1342,9 @@ public class Minuta
 		{
 
 			prep = conexion.prepareStatement(
-					" UPDATE acuerdo SET Descripcion=?, Involucrados=?, FechaInicio=? WHERE idAcuerdo=?");
+					" UPDATE acuerdo SET Descripcion=?, Observaciones=?, FechaInicio=? WHERE idAcuerdo=?");
 			prep.setString(1, acuerdo.getDescripcion());
-			prep.setString(2, acuerdo.getInvolucrados());
+			prep.setString(2, acuerdo.getObservaciones());
 			prep.setDate(3, new java.sql.Date(acuerdo.getFechaInicio().getTime()));
 			prep.setInt(4, acuerdo.getIdAcuerdo());
 
@@ -1465,7 +1496,7 @@ public class Minuta
 					acuerdo.setDescripcion(rBD.getString("Descripcion"));
 					acuerdo.setOrden(rBD.getInt("Orden"));
 					acuerdo.setFechaInicio(rBD.getDate("FechaInicio"));
-					acuerdo.setInvolucrados(rBD.getString("Involucrados"));
+					acuerdo.setObservaciones(rBD.getString("Observaciones"));
 
 					this.acuerdos.add(acuerdo);
 
@@ -1500,6 +1531,291 @@ public class Minuta
 	}
 
 	//FIN DE MÉTODOS PARA ACUERDOS
+
+	//MÉTODOS PARA AREAS DE OPORTUNIDAD
+
+	public boolean addAreaOportunidadBD(AreaOportunidad areaOportunidad)
+	{
+		areaOportunidad.setOrden(this.areasOportunidad.size());
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+			try
+			{
+
+				conexion.setAutoCommit(false);
+				conexion.rollback();
+
+				prep = conexion.prepareStatement(
+						"INSERT INTO areaoportunidad (idMinuta,Descripcion,PropuestaSolucion,Orden) VALUES (?, ?, ?,?) ;",
+						PreparedStatement.RETURN_GENERATED_KEYS);
+				prep.setInt(1, this.idMinuta);
+				prep.setString(2, areaOportunidad.getDescripcion());
+
+				if (areaOportunidad.getPropuestaSolucion() == null || areaOportunidad.getPropuestaSolucion().isEmpty())
+				{
+					prep.setNull(3, Types.VARCHAR);
+				}
+				else
+				{
+					prep.setString(3, areaOportunidad.getPropuestaSolucion());
+				}
+				prep.setInt(4, areaOportunidad.getOrden());
+
+				prep.executeUpdate();
+
+				rBD = prep.getGeneratedKeys();
+
+				if (rBD.next())
+				{
+					areaOportunidad.setIdAreaOportunidad(rBD.getInt(1));
+				}
+
+				rBD.close();
+
+				conexion.commit();
+
+				this.areasOportunidad.add(areaOportunidad);
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				conexion.rollback();
+			}
+
+		}
+		catch (
+
+		Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al añadir una nueva área de oportunidad a la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+
+			return false;
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return true;
+
+	}
+
+	public boolean updateAreaOportunidadBD(AreaOportunidad areaOportunidad)
+	{
+
+		PreparedStatement prep = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			prep = conexion.prepareStatement(
+					" UPDATE areaoportunidad SET Descripcion=?, PropuestaSolucion=? WHERE idAreaOportunidad=?");
+			prep.setString(1, areaOportunidad.getDescripcion());
+			prep.setString(2, areaOportunidad.getPropuestaSolucion());
+			prep.setInt(3, areaOportunidad.getIdAreaOportunidad());
+
+			prep.executeUpdate();
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al actualizar el área de oportunidad de la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+			return false;
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return true;
+
+	}
+
+	public void removeAreaOportunidad(AreaOportunidad areaOportunidad)
+	{
+		PreparedStatement prep = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			prep = conexion.prepareStatement("DELETE FROM areaoportunidad WHERE idAreaOportunidad=? ");
+			prep.setInt(1, areaOportunidad.getIdAreaOportunidad());
+			prep.executeUpdate();
+			prep.close();
+
+			this.areasOportunidad.remove(areaOportunidad);
+			reordenarIndicesAcuerdos();
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al remover el área de oportunidad de la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	//reordena el índice de orden dentro de la minuta
+	public void reordenarIndicesAreaOportunidad()
+	{
+		PreparedStatement prep = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			for (int x = 0; x < this.areasOportunidad.size(); x++)
+			{
+
+				prep = conexion.prepareStatement("UPDATE areaoportunidad SET Orden=? WHERE idAreaOportunidad=?");
+				prep.setInt(1, x);
+				prep.setInt(2, this.areasOportunidad.get(x).getIdAreaOportunidad());
+				prep.executeUpdate();
+
+				this.areasOportunidad.get(x).setOrden(x);
+
+				prep.close();
+
+			}
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al reordenar las áreas de oportunidad de la minuta, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	//Obtiene las áreas de oportunidad de la bd
+	public void getAreasOportunidadFromBD()
+	{
+		this.areasOportunidad = new ArrayList<>();
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
+		{
+
+			prep = conexion.prepareStatement("SELECT * FROM areaoportunidad WHERE idMinuta=?");
+			prep.setInt(1, this.idMinuta);
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+
+				do
+				{
+					AreaOportunidad areaOportunidad = new AreaOportunidad();
+
+					areaOportunidad.setIdAreaOportunidad(rBD.getInt("idAreaOportunidad"));
+					areaOportunidad.setMinuta(this);
+					areaOportunidad.setDescripcion(rBD.getString("Descripcion"));
+					areaOportunidad.setPropuestaSolucion(rBD.getString("PropuestaSolucion"));
+					areaOportunidad.setOrden(rBD.getInt("Orden"));
+
+					this.areasOportunidad.add(areaOportunidad);
+
+				} while (rBD.next());
+			}
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener las áreas de oportunidad de la bd, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	//FIN DE MÉTODOS PARA AREAS DE OPORTUNIDAD
 
 	//MÉTODOS PARA INTRODUCCION
 
@@ -1740,6 +2056,16 @@ public class Minuta
 	public void setTipoMinuta(TipoMinuta tipoMinuta)
 	{
 		this.tipoMinuta = tipoMinuta;
+	}
+
+	public List<AreaOportunidad> getAreasOportunidad()
+	{
+		return areasOportunidad;
+	}
+
+	public void setAreasOportunidad(List<AreaOportunidad> areasOportunidad)
+	{
+		this.areasOportunidad = areasOportunidad;
 	}
 
 }

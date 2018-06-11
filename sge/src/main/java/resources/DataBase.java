@@ -66,7 +66,8 @@ public class DataBase
 
 					if (getDataSourceArchivoDigital() == null)
 					{
-						setDataSourceArchivoDigital((DataSource) context.lookup("java:comp/env/archivodigitalweb"));
+						setDataSourceArchivoDigital((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceArchivoDigital((DataSource) context.lookup("java:comp/env/archivodigitalweb"));
 					}
 
 				break;
@@ -75,7 +76,8 @@ public class DataBase
 
 					if (getDataSourceSIRI() == null)
 					{
-						setDataSourceSIRI((DataSource) context.lookup("java:comp/env/siri"));
+						setDataSourceSIRI((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceSIRI((DataSource) context.lookup("java:comp/env/siri"));
 					}
 
 				break;
@@ -84,7 +86,8 @@ public class DataBase
 
 					if (getDataSourceNominas() == null)
 					{
-						setDataSourceNominas((DataSource) context.lookup("java:comp/env/nominas"));
+						setDataSourceNominas((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceNominas((DataSource) context.lookup("java:comp/env/nominas"));
 					}
 
 				break;
@@ -93,7 +96,8 @@ public class DataBase
 
 					if (getDataSourceTimbrado() == null)
 					{
-						setDataSourceTimbrado((DataSource) context.lookup("java:comp/env/timbrado"));
+						setDataSourceTimbrado((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceTimbrado((DataSource) context.lookup("java:comp/env/timbrado"));
 					}
 
 				break;
@@ -102,7 +106,8 @@ public class DataBase
 
 					if (getDataSourceSpoolerPdf() == null)
 					{
-						setDataSourceSpoolerPdf((DataSource) context.lookup("java:comp/env/spoolerpdf"));
+						setDataSourceSpoolerPdf((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceSpoolerPdf((DataSource) context.lookup("java:comp/env/spoolerpdf"));
 					}
 
 				break;
@@ -111,7 +116,8 @@ public class DataBase
 
 					if (getDataSourceMinutas() == null)
 					{
-						setDataSourceMinutas((DataSource) context.lookup("java:comp/env/minutas"));
+						setDataSourceMinutas((DataSource) context.lookup("java:comp/env/webrh"));
+						//setDataSourceMinutas((DataSource) context.lookup("java:comp/env/minutas"));
 					}
 
 				break;
@@ -120,7 +126,8 @@ public class DataBase
 
 					if (getDataSourceGestiones() == null)
 					{
-						setDataSourceGestiones((DataSource) context.lookup("java:comp/env/gestiones"));
+						setDataSourceGestiones((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceGestiones((DataSource) context.lookup("java:comp/env/gestiones"));
 					}
 
 				break;
@@ -128,7 +135,8 @@ public class DataBase
 
 					if (getDataSourceClimaLaboral() == null)
 					{
-						setDataSourceClimaLaboral((DataSource) context.lookup("java:comp/env/climalaboral"));
+						setDataSourceClimaLaboral((DataSource) context.lookup("java:comp/env/webrh"));
+						//						setDataSourceClimaLaboral((DataSource) context.lookup("java:comp/env/climalaboral"));
 					}
 
 				break;

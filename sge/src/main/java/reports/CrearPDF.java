@@ -13,8 +13,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.faces.context.ExternalContext;
@@ -36,24 +38,25 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.property.AreaBreakType;
 import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
-import com.itextpdf.layout.property.VerticalAlignment;
 import com.itextpdf.layout.renderer.TableRenderer;
 
+import modelo.minutas.Acuerdo;
+import modelo.minutas.AreaOportunidad;
 import modelo.minutas.Compromiso;
 import modelo.minutas.Minuta;
 import modelo.minutas.Participante;
@@ -66,22 +69,23 @@ import util.minutas.SigGen;
  */
 public class CrearPDF
 {
-	private Minuta minuta;
-	private String ruta;
+	private Minuta		minuta;
+	private String		ruta;
 
 	/** The HTML-string that we are going to convert to PDF. */
-	public String HTML;
+	public String		HTML;
 	/** The target folder for the result. */
-	public String TARGET;
-	public String TARGETHTML;
-	public String targetLogoSalud;
-	public String targetLogoSaludGris;
-	public String targetLogoCampeche;
+	public String		TARGET;
+	public String		TARGETHTML;
+	public String		TARGETHTMLFirmas;
+	public String		targetLogoSalud;
+	public String		targetLogoSaludGris;
+	public String		targetLogoCampeche;
 	/** The path to the resulting PDF file. */
-	public String DESTFIRMAS;
-	public String BASEURI;
-	private String[] meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre",
-			"Octubre", "Noviembre", "Diciembre" };
+	public String		DESTFIRMAS;
+	public String		BASEURI;
+	private String[]	meses	= { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto",
+			"Septiembre", "Octubre", "Noviembre", "Diciembre" };
 
 	public CrearPDF(Minuta minuta)
 	{
@@ -91,6 +95,8 @@ public class CrearPDF
 		ExternalContext ext = FacesContext.getCurrentInstance().getExternalContext();
 		this.TARGET = ext.getRealPath(String.format("/resources/minutas/%s", this.minuta.getIdMinuta() + ".pdf"));
 		this.TARGETHTML = ext.getRealPath(String.format("/resources/minutas/%s", this.minuta.getIdMinuta() + ".html"));
+		this.TARGETHTMLFirmas = ext
+				.getRealPath(String.format("/resources/minutas/%s", this.minuta.getIdMinuta() + "firmas.html"));
 		this.targetLogoSalud = ext.getRealPath(String.format("/resources/minutas/css/%s", "saludlogo.jpeg"));
 		this.targetLogoSaludGris = ext.getRealPath(String.format("/resources/minutas/css/%s", "footer1.png"));
 		this.targetLogoCampeche = ext.getRealPath(String.format("/resources/minutas/css/%s", "escudologo.png"));
@@ -102,7 +108,6 @@ public class CrearPDF
 
 		this.BASEURI = ext.getRealPath("/resources/minutas/");
 
-		File file = new File(TARGET);
 	}
 
 	public void createHTML()
@@ -135,22 +140,28 @@ public class CrearPDF
 		}
 
 		File archivo = new File(this.TARGETHTML);
+		File archivoFirmas = new File(this.TARGETHTMLFirmas);
 
 		if (archivo.exists())
 		{
 			archivo.delete();
 		}
 
+		if (archivoFirmas.exists())
+		{
+			archivoFirmas.delete();
+		}
+
 		String htmlFinal = "<html>\n" + "\n" + "<head>\n" + "<title>Minuta No. " + this.minuta.getIdMinuta()
 				+ "</title>\n" + "<meta name=\"description\" content=\"Minuta No. " + this.minuta.getIdMinuta()
 				+ "\" />\n" + "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/pdf.css\">\n" + "</head>\n" + "\n"
-				+ "<body> <h2>MINUTA</h2>";
+				+ "<body> <h2>MINUTA</h2><h2 style='border-bottom: 25px solid white;'>" + this.minuta.getDescripcion()
+				+ "</h2>";
 
-		htmlFinal += getPresentacion() + "</p>";
+		htmlFinal += getPresentacion() + "<p> </p>";
 
 		if (!this.minuta.getTemas().isEmpty())
 		{
-
 			htmlFinal += "<ol>";
 
 			for (TemaMinuta tema : this.minuta.getTemas())
@@ -165,7 +176,8 @@ public class CrearPDF
 
 		if (this.minuta.getIntroduccion() != null && !this.minuta.getIntroduccion().isEmpty())
 		{
-			htmlFinal += this.minuta.getIntroduccion().trim();
+
+			htmlFinal += "<br/>" + this.minuta.getIntroduccion().trim() + "<br/>";
 		}
 
 		if (!this.minuta.getTemas().isEmpty())
@@ -182,49 +194,103 @@ public class CrearPDF
 
 		}
 
-		if (!this.minuta.getCompromisos().isEmpty())
+		if (!this.minuta.getCompromisos().isEmpty() || !this.minuta.getAcuerdos().isEmpty()
+				|| !this.minuta.getAreasOportunidad().isEmpty())
+		{
+			//	htmlFinal += "<p><h1>Derivado de la presente minuta, se observa lo siguiente: </h1></p>";
+		}
+
+		if (!this.minuta.getAcuerdos().isEmpty())
 		{
 
-			htmlFinal += "<h1>Derivado de la presente minuta, se toman los siguientes acuedos y/o compromisos:</h1>"
-					+ "<ol>";
+			htmlFinal += "<h1>Acuerdos</h1>";
+			htmlFinal += "<ol>";
 
-			LocalDateTime ldt = null;
-			String fFinalizacion;
-
-			for (Compromiso compromiso : this.minuta.getCompromisos())
+			for (Acuerdo acuerdo : this.minuta.getAcuerdos())
 			{
-				fFinalizacion = compromiso.getFechaFinalizacionEstimada() != null
-						? ", fecha de finalización estimada: " + ldt.getDayOfMonth() + " de "
-								+ this.meses[ldt.getMonthValue() - 1] + " de " + ldt.getYear()
-						: "";
 
-				fFinalizacion += ".";
-
-				if (compromiso.getFechaFinalizacionEstimada() != null)
-				{
-					ldt = LocalDateTime.ofInstant(compromiso.getFechaFinalizacionEstimada().toInstant(),
-							ZoneId.systemDefault());
-				}
-
-				htmlFinal += "<li>" + compromiso.getResponsable().getPersona().getNombreCompleto() + " - "
-						+ compromiso.getActividad().getDescripcion() + fFinalizacion + "</li>";
+				htmlFinal += "<li>" + acuerdo.getDescripcion()
+						+ (acuerdo.getObservaciones() != null && !acuerdo.getObservaciones().isEmpty()
+								? ", " + acuerdo.getObservaciones()
+								: "")
+						+ ".</li>";
 			}
 
 			htmlFinal += "</ol>";
-
 		}
 
-		if (this.minuta.getConclusion() != null && !this.minuta.getConclusion().isEmpty())
+		if (!this.minuta.getCompromisos().isEmpty())
 		{
-			htmlFinal += this.minuta.getConclusion();
+			htmlFinal += "<h1>Compromisos</h1>";
+			htmlFinal += "<ol>";
+
+			LocalDate ldt = null;
+			String fFinalizacion = null;
+
+			for (Compromiso compromiso : this.minuta.getCompromisos())
+			{
+				if (compromiso.getFechaFinalizacionEstimada() != null)
+				{
+					System.out.print(compromiso.getFechaFinalizacionEstimada());
+					compromiso.updateFechaFinalizacionEstimadaString();
+
+					DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					ldt = LocalDate.parse(compromiso.getFechaFinalizacionEstimadaString(), dateformatter);
+
+					fFinalizacion = compromiso.getFechaFinalizacionEstimada() != null
+							? ", fecha compromiso: " + ldt.getDayOfMonth() + " de "
+									+ this.meses[ldt.getMonthValue() - 1] + " de " + ldt.getYear()
+							: "";
+				}
+
+				htmlFinal += "<li>"
+						+ (compromiso.getResponsable() != null
+								? compromiso.getResponsable().getPersona().getNombreCompleto() + " - "
+								: "")
+						+ compromiso.getDescripcion() + (fFinalizacion != null ? fFinalizacion : "") + ".</li>";
+			}
+
+			htmlFinal += "</ol>";
 		}
 
-		htmlFinal += "<p>De esta forma se da por terminada la presente reunión, firmando de conformidad todas las partes que intervienen.</p><br></br>";
-		htmlFinal += "<h1>Firmas</h1>";
+		if (!this.minuta.getAreasOportunidad().isEmpty())
+		{
+			htmlFinal += "<h1>Áreas de Oportunidad</h1>";
+			htmlFinal += "<ol>";
+
+			for (AreaOportunidad areaOportunidad : this.minuta.getAreasOportunidad())
+			{
+				htmlFinal += "<li>" + areaOportunidad.getDescripcion()
+						+ (!areaOportunidad.getPropuestaSolucion().isEmpty()
+								? ". " + areaOportunidad.getPropuestaSolucion()
+								: "")
+						+ ".</li>";
+			}
+
+			htmlFinal += "</ol>";
+		}
+
+		/*
+		 * if (this.minuta.getConclusion() != null &&
+		 * !this.minuta.getConclusion().isEmpty()) { htmlFinal +=
+		 * this.minuta.getConclusion(); }
+		 */
+
+		if (this.minuta.getTipoMinuta().getIdTipoMinuta() == 0)
+		{
+			htmlFinal += "<p>De esta forma se da por terminada la presente reunión, firmando de conformidad todas las partes que intervienen.</p><br></br>";
+		}
+
+		htmlFinal += "\n" + "</body>\n" + "\n" + "</html>";
+
+		String htmlFinalFirmas = " <html>\n" + "\n" + "<head>\n"
+				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/pdf.css\">\n" + "</head>\n" + "\n" + "<body> ";
+
+		htmlFinalFirmas += "<h1>Firmas de los participantes.</h1>";
 
 		if (this.minuta.getParticipantes() != null && !this.minuta.getParticipantes().isEmpty())
 		{
-			htmlFinal += "<table>";
+			htmlFinalFirmas += "<table>";
 
 			int columnas = 1;
 
@@ -232,17 +298,16 @@ public class CrearPDF
 			{
 				if (columnas == 1)
 				{
-					htmlFinal += "<tr>";
+					htmlFinalFirmas += "<tr>";
 				}
 
-				htmlFinal += "<td >" + part.getPersona().getTitulo() + " " + part.getPersona().getNombreCompleto()
-						+ "   <br></br><img src=\"firmasm" + this.minuta.getIdMinuta() + "/" + "f"
-						+ part.getIdParticipante() + ".png" + "\"></a>\n" + "    <br></br>\n" + "    "
-						+ part.getPersona().getCargo() + " \n" + "    </td>\n";
+				htmlFinalFirmas += "<td >" + part.getPersona().getTitulo() + " " + part.getPersona().getNombreCompleto()
+						+ "   <img src=\"firmasm" + this.minuta.getIdMinuta() + "/" + "f" + part.getIdParticipante()
+						+ ".png" + "\">\n" + "   \n" + "    " + part.getPersona().getCargo() + " \n" + "    </td>\n";
 
-				if (columnas == 2)
+				if (columnas == 3)
 				{
-					htmlFinal += "</tr>";
+					htmlFinalFirmas += "</tr>";
 					columnas = 1;
 					continue;
 				}
@@ -251,21 +316,26 @@ public class CrearPDF
 
 			}
 
-			if (columnas == 2)
+			if (columnas == 3)
 			{
-				htmlFinal += "</tr>";
+				htmlFinalFirmas += "</tr>";
 
 			}
 
-			htmlFinal += "</table>";
+			htmlFinalFirmas += "</table>";
 
 		}
 
-		htmlFinal += "\n" + "</body>\n" + "\n" + "</html>";
+		htmlFinalFirmas += "\n" + "</body>\n" + "\n" + "</html>";
 
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo)))
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo));
+				BufferedWriter bwFirmas = new BufferedWriter(new FileWriter(archivoFirmas)))
 		{
 			bw.write(htmlFinal);
+			bwFirmas.write(htmlFinalFirmas);
+
+			bw.close();
+			bwFirmas.close();
 
 		}
 		catch (Exception e)
@@ -321,10 +391,21 @@ public class CrearPDF
 		pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new TableFooterEventHandler(table));
 
 		List<IElement> elements = HtmlConverter.convertToElements(new FileInputStream(TARGETHTML), properties);
+		List<IElement> elementsFirmas = HtmlConverter.convertToElements(new FileInputStream(TARGETHTMLFirmas),
+				properties);
+
 		//Añadir introducción
 		for (IElement element : elements)
 		{
 			document.add((IBlockElement) element).setFont(bold);
+		}
+
+		document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+
+		//Añadir Firmas
+		for (IElement elementFirmas : elementsFirmas)
+		{
+			document.add((IBlockElement) elementFirmas).setFont(bold);
 		}
 
 		document.close();
@@ -334,13 +415,7 @@ public class CrearPDF
 	private String getPresentacion()
 	{
 		String texto = "";
-
-		LocalDateTime ldt = LocalDateTime.ofInstant(this.minuta.getFechaHora().toInstant(), ZoneId.systemDefault());
-
-		texto = "<p>Siendo las " + ldt.getHour() + ":" + ldt.getMinute() + " hrs. del día " + ldt.getDayOfMonth()
-				+ " del mes de " + this.meses[ldt.getMonthValue() - 1] + " del " + ldt.getYear()
-				+ ", estando reunidos en " + this.minuta.getLugar();
-		texto += ". ";
+		String participantesString = "";
 
 		List<Participante> participantes = this.minuta.getParticipantes();
 
@@ -350,20 +425,49 @@ public class CrearPDF
 
 			if (x == participantes.size() - 1)
 			{
-				texto = texto.substring(0, texto.length() - 1) + " y "
-						+ (par.getPersona().getSexo().equalsIgnoreCase("m") ? "el " : "la ")
+				participantesString = (participantes.size() > 1
+						? participantesString.substring(0, participantesString.length() - 1) + " y "
+						: "") + (par.getPersona().getSexo().equalsIgnoreCase("m") ? "el " : "la ")
 						+ par.getPersona().getTitulo() + " " + par.getPersona().getNombreCompletoYCargo();
 
 			}
 			else
 			{
-				texto += (par.getPersona().getSexo().equalsIgnoreCase("m") ? "el " : "la ")
+				participantesString += (par.getPersona().getSexo().equalsIgnoreCase("m") ? "el " : "la ")
 						+ par.getPersona().getTitulo() + " " + par.getPersona().getNombreCompletoYCargo() + ", ";
 			}
 		}
 
-		texto += ", para la revisión de los temas que se enlistan a continuación y dar cumplimiento a los acuerdos y"
-				+ " compromisos del siguiente orden del día:</p>";
+		LocalDateTime ldt = LocalDateTime.ofInstant(this.minuta.getFechaHora().toInstant(), ZoneId.systemDefault());
+
+		if (this.minuta.getTipoMinuta().getIdTipoMinuta() == 0)
+		{
+			texto = "<p>Siendo las " + ldt.getHour() + ":" + ldt.getMinute() + " hrs. del día " + ldt.getDayOfMonth()
+					+ " del mes de " + this.meses[ldt.getMonthValue() - 1] + " del " + ldt.getYear()
+					+ ", estando reunidos en " + this.minuta.getLugar();
+			texto += ", se contó con la presencia de ";
+			texto += participantesString;
+
+			if (this.minuta.getTemas().size() > 0)
+			{
+				texto += ", para la revisión de los temas que se enlistan a continuación y dar cumplimiento a los acuerdos y"
+						+ " compromisos del siguiente orden del día:";
+			}
+			else
+			{
+				texto += ", donde se llegó a los siguientes acuerdos y/o compromisos.";
+			}
+
+			texto += " Se anexa listado de firmas.";
+
+		}
+		else
+		{
+			texto = "<p>Derivado de la Gira de Trabajo realizada el día " + ldt.getDayOfMonth() + " del mes de "
+					+ this.meses[ldt.getMonthValue() - 1] + " del " + ldt.getYear() + ", en " + this.minuta.getLugar()
+					+ " con motivo de " + this.minuta.getMotivoVisita() + ", donde se reunieron: " + participantesString
+					+ ". Se anexa listado de firmas.</p>";
+		}
 
 		return texto;
 
@@ -371,10 +475,10 @@ public class CrearPDF
 
 	public class TableHeaderEventHandler implements IEventHandler
 	{
-		protected Table table;
-		protected float tableHeight;
-		protected float tableWidth;
-		protected Document doc;
+		protected Table		table;
+		protected float		tableHeight;
+		protected float		tableWidth;
+		protected Document	doc;
 
 		public TableHeaderEventHandler(Document doc, String rutaLogoSalud, String rutaLogoCampeche)
 		{

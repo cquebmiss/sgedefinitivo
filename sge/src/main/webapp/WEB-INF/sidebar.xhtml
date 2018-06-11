@@ -11,10 +11,28 @@
 			<div class="nano-content menu-scroll-content">
 				<h:form id="menuform">
 					<ph:menu widgetVar="me">
-						<p:menuitem id="om_dashboard" value="Dashboard" 
+						<p:menuitem id="om_dashboard" value="Dashboard"
 							icon="fa fa-fw fa-dashboard" outcome="/portal/dashboard" />
-						
-						<p:submenu id="om_minutas" label="Minutas"  
+
+						<p:submenu id="om_gestiones" label="Gestiones"
+							icon="fa fa-fw fa-clipboard">
+							<p:menuitem id="om_histgestion" value="Historial"
+								icon="fa fa-fw fa-history" />
+							<p:menuitem id="om_nuevagestion" value="Nueva Gestión"
+								icon="fa fa-fw fa-plus"
+								action="#{nuevaGestionBean.actionNuevaGestion}">
+							</p:menuitem>
+							<p:menuitem id="om_reportesgestion" value="Reportes"
+								icon="fa fa-fw fa-list" action="#{minutaBean.actionNuevaMinuta}">
+							</p:menuitem>
+							<p:menuitem id="om_catalogogestion" value="Catálogos"
+								icon="fa fa-fw fa-leanpub"
+								action="#{minutaBean.actionNuevaMinuta}">
+							</p:menuitem>
+
+						</p:submenu>
+
+						<p:submenu id="om_minutas" label="Minutas"
 							icon="fa fa-fw fa-file-text">
 							<p:menuitem id="om_histMinutas" value="Historial"
 								icon="fa fa-fw fa-history" outcome="/portal/historialminutas" />
@@ -24,9 +42,9 @@
 							</p:menuitem>
 
 						</p:submenu>
- 
 
-						<p:menuitem id="om_buy" value="Compromisos" 
+
+						<p:menuitem id="om_buy" value="Compromisos"
 							icon="fa fa-fw fa-paperclip " outcome="/portal/compromisos" />
 
 						<p:submenu id="om_modEncuestas" label="Clima Laboral"

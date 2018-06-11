@@ -37,7 +37,7 @@ public class UtilidadesMinutas
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
-			prep = conexion.prepareStatement(" SELECT * FROM status");
+			prep = conexion.prepareStatement(" SELECT * FROM statusminuta");
 
 			rBD = prep.executeQuery();
 

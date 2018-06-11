@@ -1,0 +1,280 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Sistema de Gestión Empresarial - Encuestas de Clima Laboral</ui:define>
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li>Encuestas de Clima Laboral</li>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+
+
+							<p:outputPanel id="panelGroupGeneral">
+
+								<p:autoUpdate></p:autoUpdate>
+
+								<h:panelGroup
+									rendered="#{nuevaGestionBean.gestion.idGestion eq -1}">
+
+									<p:outputLabel value="Nueva Gestión"></p:outputLabel>
+
+									<h:form>
+
+										<p:panelGrid columns="1" cellpadding="10" cellspacing="10"
+											styleClass="ui-noborder">
+
+
+											<p:outputLabel value="Tipo:"></p:outputLabel>
+
+											<p:selectOneMenu
+												value="#{nuevaGestionBean.gestion.tipoGestion.idTipoGestion}">
+
+												<f:selectItem itemLabel="Atención y Servicios" itemValue="1"></f:selectItem>
+												<f:selectItem itemLabel="Mejoras" itemValue="2"></f:selectItem>
+											</p:selectOneMenu>
+
+											<p:commandButton id="botonCrearGestion" value="Crear"
+												icon="fa fa-save"
+												actionListener="#{nuevaGestionBean.gestion.crearGestionBD}"
+												update="@(.panelFormularioNuevaGestion)">
+											</p:commandButton>
+
+										</p:panelGrid>
+
+									</h:form>
+
+
+								</h:panelGroup>
+
+
+								<h:panelGroup styleClass="panelFormularioNuevaGestion"
+									rendered="#{nuevaGestionBean.gestion.idGestion gt -1}">
+
+									<h1>Gestión de Atención y Servicios</h1>
+
+									<h:form>
+
+										<p:panelGrid columns="4"
+											columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+											layout="grid"
+											styleClass="ui-panelgrid-blank form-group form-elements"
+											style="border:0px none; background-color:transparent;">
+
+											<p:outputLabel for="campoFechaRecepcion"
+												value="Fecha de Recepción:" />
+											<p:calendar id="campoFechaRecepcion" pattern="MM/dd/yyyy"
+												value="#{nuevaGestionBean.gestion.fechaRecepcion}" />
+
+											<p:column></p:column>
+											<p:column></p:column>
+
+										</p:panelGrid>
+
+										<h2>Datos del Paciente</h2>
+
+										<p:panelGrid columns="4"
+											columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+											layout="grid"
+											styleClass="ui-panelgrid-blank form-group form-elements"
+											style="border:0px none; background-color:transparent;">
+
+
+											<p:outputLabel for="campoNombres" value="Nombre" />
+											<p:inputText id="campoNombres"
+												value="#{nuevaGestionBean.gestion.paciente.nombre}"></p:inputText>
+
+											<p:outputLabel for="campoEdad" value="Edad" />
+											<p:inputMask id="campoEdad" mask="99"
+												value="#{nuevaGestion.gestion.paciente.edad}" />
+
+											<p:outputLabel for="campoSexo" value="Sexo" />
+											<p:selectOneMenu id="campoSexo"
+												value="#{nuevaGestion.gestion.paciente.sexo}">
+												<f:selectItem itemLabel="Masculino" itemValue="m" />
+												<f:selectItem itemLabel="Femenino" itemValue="f" />
+											</p:selectOneMenu>
+
+
+											<p:outputLabel for="campoLugarOrigen" value="Lugar de Origen" />
+
+											<h:panelGrid columns="2" style="width:100%">
+												<p:autoComplete id="campoLugarOrigen"></p:autoComplete>
+												<p:commandButton icon="fa fa-edit"></p:commandButton>
+											</h:panelGrid>
+
+											<p:outputLabel for="campoSeguridadSocial"
+												value="Seguridad Social" />
+											<p:selectOneMenu
+												value="#{nuevaGestionBean.gestion.paciente.seguridadSocial}"
+												id="campoSeguridadSocial">
+
+												<f:selectItems
+													value="#{nuevaGestionBean.catSeguridadSocial}" var="ss"
+													itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+
+											</p:selectOneMenu>
+
+
+											<p:outputLabel for="campoAfiliacion" value="Afiliación" />
+											<p:inputText id="campoAfiliacion"
+												value="#{nuevaGestionBean.gestion.paciente.afiliacion}"></p:inputText>
+
+
+										</p:panelGrid>
+
+
+
+
+										<p:outputLabel for="campoDiagnostico" value="Diagnostico" />
+										<p:inputTextarea id="campoDiagnostico"
+											value="#{nuevaGestionBean.gestion.paciente.diagnostico}"></p:inputTextarea>
+
+										<p:outputLabel for="campoObservaciones" value="Observaciones" />
+										<p:inputTextarea id="campoObservaciones"
+											value="#{nuevaGestionBean.gestion.detallesGenerales}"></p:inputTextarea>
+
+										<p:outputLabel for="campoSolicitud" value="Solicitud" />
+										<p:inputTextarea id="campoSolicitud"
+											value="#{nuevaGestionBean.gestion.solicitud}"></p:inputTextarea>
+
+
+
+										<h1>Contactos</h1>
+
+
+										<p:dataTable reflow="true" emptyMessage="...">
+
+											<p:column headerText="Nombre"></p:column>
+											<p:column headerText="Teléfono(s)"></p:column>
+											<p:column headerText="Email(s)"></p:column>
+											<p:column headerText="Observación"></p:column>
+											<p:column headerText="" style="width: 35px;">
+
+												<p:commandButton icon="fa fa-closethick"></p:commandButton>
+											</p:column>
+
+										</p:dataTable>
+										<p:commandButton icon="fa fa-plus"
+											update="@(.classDlgCompromiso)"
+											onclick="PF('dlgContacto').show()"></p:commandButton>
+
+
+									</h:form>
+
+								</h:panelGroup>
+
+							</p:outputPanel>
+
+
+
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+
+
+		<!-- DIALOGO PARA AÑADIR CONTACTO DE FAMILIAR O PARA LA GESTION -->
+
+		<h:form id="formDlgContacto">
+
+			<p:dialog header="Contacto" widgetVar="dlgContacto" modal="true"
+				responsive="true" draggable="false" width="300" minimizable="false"
+				maximizable="true" closeOnEscape="true" closable="true"
+				focus="inputNombreContacto">
+
+				<p:outputPanel styleClass="classDlgContacto">
+
+					<div class="card card-w-title">
+
+						<h1>Datos del Contacto</h1>
+
+						<p:messages styleClass="msjDlgContacto" closable="true"
+							showDetail="true">
+						</p:messages>
+
+						<p:panelGrid id="panelGridNDlgContacto" columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group">
+
+							<p:inputText id="inputNombreContacto" style="width: 95%;"
+								placeholder="Nombre" required="true"
+								requiredMessage="- Asunto del Compromiso">
+							</p:inputText>
+
+							<p:inputText id="inputTelefonos" style="width: 95%;"
+								placeholder="Teléfono(s)">
+							</p:inputText>
+
+							<p:inputText id="inputEmail" style="width: 95%;"
+								placeholder="Email(s)">
+							</p:inputText>
+
+							<p:inputText id="campoObservacion" style="width: 95%;"
+								placeholder="Observación">
+							</p:inputText>
+
+						</p:panelGrid>
+					</div>
+
+				</p:outputPanel>
+
+				<f:facet name="header">
+
+
+					<p:commandButton id="botonAceptarDlgContacto"
+						widgetVar="wbotonAceptarDlgContacto" value="Aceptar"
+						icon="fa fa-check"
+						actionListener="#{dialogoCompromisoBean.actionGuardarCompromiso}"
+						update="@(.msjDlgContacto), @(.classTablaContacto)"
+						oncomplete="handleAñadirContacto(xhr, status, args)"
+						process="@form" />
+
+
+					<p:commandButton id="botonCancelarDlgContacto"
+						widgetVar="wbotonCancelarDlgContacto" value="Cancelar"
+						type="button" styleClass="secondary-button" icon="fa fa-close"
+						onclick="PF('dlgContacto').hide()" />
+
+
+				</f:facet>
+
+
+
+			</p:dialog>
+
+		</h:form>
+
+		<script type="text/javascript">
+			function handleAñadirContacto(xhr, status, args) {
+
+				if (args.validationFailed || !args.contactoAñadido) {
+
+					PF('dlgContacto').jq.effect("shake", {
+						times : 2
+					}, 200);
+
+				} else {
+					PF('dlgContacto').hide();
+				}
+			}
+		</script>
+
+
+	</ui:define>
+
+
+
+
+</ui:composition>

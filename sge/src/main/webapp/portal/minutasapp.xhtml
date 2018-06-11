@@ -130,8 +130,8 @@
 
 						<div id="divParticipantes">
 							<div class="ui-inputgroup">
-								<h:form>
-									<p:dialog header="Crear Participante"
+								<h:form id="formCrearParticipante">
+									<p:dialog header="Crear Participante" id="idDlgParticipantes"
 										widgetVar="dlgParticipantes" modal="true" responsive="true"
 										draggable="false" width="300" minimizable="true" height="350"
 										maximizable="false" closeOnEscape="true" focus="inputNombre">
@@ -140,54 +140,60 @@
 											style="height: 100%; width: 350px; border: 0px solid;"
 											mode="native">
 
-											<div class="card card-w-title">
+											<p:outputPanel styleClass="outputDlgCrearParticipante">
 
 
-												<h1>Datos del Participante</h1>
-
-												<p:messages styleClass="msjFormParticipante" closable="true">
-												</p:messages>
-
-												<p:panelGrid id="panelGridNuevoParticipante" columns="1"
-													layout="grid" styleClass="ui-panelgrid-blank form-group">
-
-													<p:inputText id="inputNombre" placeholder="Nombres"
-														value="#{dialogoParticipanteBean.nombres}" required="true"
-														requiredMessage="- Nombre">
-													</p:inputText>
-
-													<p:inputText placeholder="Apellido Paterno"
-														value="#{dialogoParticipanteBean.apellidoPaterno}"
-														required="true" requiredMessage="- Apellido Paterno">
-													</p:inputText>
-
-													<p:inputText placeholder="Apelido Materno"
-														value="#{dialogoParticipanteBean.apellidoMaterno}">
-													</p:inputText>
-
-													<p:inputText placeholder="Cargo"
-														value="#{dialogoParticipanteBean.cargo}" required="true"
-														requiredMessage="- Cargo">
-													</p:inputText>
-
-													<p:selectOneMenu value="#{dialogoParticipanteBean.sexo}"
-														required="true" requiredMessage="- Sexo">
-
-														<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
-														<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
-
-													</p:selectOneMenu>
-
-													<p:inputText placeholder="Titulo de profesión"
-														value="#{dialogoParticipanteBean.titulo}" required="true"
-														requiredMessage="- Profesión">
-													</p:inputText>
-
-												</p:panelGrid>
+												<div class="card card-w-title">
 
 
+													<h1>Datos del Participante</h1>
 
-											</div>
+													<p:messages styleClass="msjFormParticipante"
+														closable="true">
+													</p:messages>
+
+													<p:panelGrid id="panelGridNuevoParticipante" columns="1"
+														layout="grid" styleClass="ui-panelgrid-blank form-group">
+
+														<p:inputText id="inputNombre" placeholder="Nombres"
+															value="#{dialogoParticipanteBean.nombres}"
+															required="true" requiredMessage="- Nombre">
+														</p:inputText>
+
+														<p:inputText placeholder="Apellido Paterno"
+															value="#{dialogoParticipanteBean.apellidoPaterno}"
+															required="true" requiredMessage="- Apellido Paterno">
+														</p:inputText>
+
+														<p:inputText placeholder="Apelido Materno"
+															value="#{dialogoParticipanteBean.apellidoMaterno}">
+														</p:inputText>
+
+														<p:inputText placeholder="Cargo"
+															value="#{dialogoParticipanteBean.cargo}" required="true"
+															requiredMessage="- Cargo">
+														</p:inputText>
+
+														<p:selectOneMenu value="#{dialogoParticipanteBean.sexo}"
+															required="true" requiredMessage="- Sexo">
+
+															<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
+															<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
+
+														</p:selectOneMenu>
+
+														<p:inputText placeholder="Titulo de profesión"
+															value="#{dialogoParticipanteBean.titulo}" required="true"
+															requiredMessage="- Profesión">
+														</p:inputText>
+
+													</p:panelGrid>
+
+
+
+												</div>
+
+											</p:outputPanel>
 										</p:scrollPanel>
 
 										<f:facet name="footer">
@@ -208,9 +214,14 @@
 
 									</p:dialog>
 
+								</h:form>
+
+								<h:form>
+
 									<p:commandButton icon="fa fa-plus"
-										onclick="PF('dlgParticipantes').show()" type="button">
-										<p:resetInput target="panelGridNuevoParticipante" />
+										actionListener="#{dialogoParticipanteBean.addParticipanteNuevo}"
+										onclick="PF('dlgParticipantes').show()"
+										update="@(.outputDlgCrearParticipante)">
 									</p:commandButton>
 
 									<p:autoComplete placeholder="Buscar participante..."
@@ -259,24 +270,23 @@
 
 
 							<p:dialog header="Firmar Minuta" widgetVar="dlgFirmaMinuta"
-								modal="true" responsive="true" width="300" height="100%"
-								minimizable="false" draggable="false" closeOnEscape="true"
-								maximizable="false">
+								modal="true" responsive="true" width="300" minimizable="false"
+								draggable="false" closeOnEscape="true" maximizable="true">
 
 								<p:outputPanel styleClass="classDlgFirma">
-									<h1>
-										Participante
-										<h:outputText
-											value="#{dialogoFirmarBean.participante.persona.nombre} #{ dialogoFirmarBean.participante.persona.apellidoPaterno } #{ dialogoFirmarBean.participante.persona.apellidoPaterno }"></h:outputText>
-									</h1>
+									<p:outputLabel
+										value="#{dialogoFirmarBean.participante.persona.nombre} #{ dialogoFirmarBean.participante.persona.apellidoPaterno } #{ dialogoFirmarBean.participante.persona.apellidoPaterno }">
+									</p:outputLabel>
+									<br></br>
 
 									<p:commandButton value="Limpiar" icon="ui-icon-close"
 										type="button" onclick="PF('sig').clear()" />
+									<br></br>
 
 									<p:signature widgetVar="sig"
 										value="#{dialogoFirmarBean.participante.firma}"
-										guideline="true" style="width: 100%; height: 300px;"></p:signature>
-
+										guideline="true" style="width: 280px; height: 200px;"></p:signature>
+									<br></br>
 								</p:outputPanel>
 
 								<f:facet name="header">
@@ -826,7 +836,7 @@
 
 							<p:dialog header="Compromiso" widgetVar="dlgCompromiso"
 								modal="true" responsive="true" draggable="false" width="300"
-								minimizable="true" maximizable="true" closeOnEscape="true"
+								minimizable="false" maximizable="true" closeOnEscape="true"
 								closable="true" focus="inputDescripcionCompromiso">
 
 								<p:outputPanel styleClass="classDlgCompromiso">
@@ -843,14 +853,14 @@
 											layout="grid" styleClass="ui-panelgrid-blank form-group">
 
 											<p:inputText id="inputDescripcionCompromiso"
-												placeholder="Asunto o descripción"
+												style="width: 95%;" placeholder="Asunto o descripción"
 												value="#{dialogoCompromisoBean.compromiso.descripcion}"
 												required="true" requiredMessage="- Asunto del Compromiso">
 											</p:inputText>
 
 											<p:outputLabel for="oneMenuResponsables" value="Responsable"></p:outputLabel>
 
-											<p:selectOneMenu id="oneMenuResponsables"
+											<p:selectOneMenu id="oneMenuResponsables" style="width: 95%;"
 												value="#{dialogoCompromisoBean.compromiso.responsable}"
 												converter="participanteConverterDialogoTema" effect="fade"
 												var="pa" filter="true" filterMatchMode="startsWith"
@@ -880,7 +890,7 @@
 
 								</p:outputPanel>
 
-								<f:facet name="footer">
+								<f:facet name="header">
 
 
 									<p:commandButton id="botonAceptarDlgCompromiso"
@@ -1028,10 +1038,8 @@
 											</p:inputText>
 
 											<p:inputTextarea id="inputInvolucradosAcuerdo"
-												style="width: 95%;" placeholder="Involucrados"
-												value="#{dialogoAcuerdoBean.acuerdo.involucrados}"
-												required="true"
-												requiredMessage="- Personas o grupos involucrados">
+												style="width: 95%;" placeholder="Observaciones"
+												value="#{dialogoAcuerdoBean.acuerdo.observaciones}">
 											</p:inputTextarea>
 
 
@@ -1129,9 +1137,9 @@
 
 								</p:column>
 
-								<p:column headerText="Involucrados">
+								<p:column headerText="Observaciones">
 
-									<h:outputText value="#{acuerdo.involucrados}"></h:outputText>
+									<h:outputText value="#{acuerdo.observaciones}"></h:outputText>
 
 								</p:column>
 
@@ -1159,6 +1167,164 @@
 						<!-- FIN DE SECCIÓN DE ACUERDOS -->
 
 
+						<!-- SECCIÓN PARA AÑADIR AREAS DE OPORTUNIDAD -->
+						<h:panelGroup
+							rendered="#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 1}">
+
+							<h:form id="formDlgAreaOportunidadMinuta">
+
+								<p:dialog header="Area de Oportunidad"
+									widgetVar="dlgAreaOportunidad" modal="true" responsive="true"
+									draggable="false" width="300" minimizable="false"
+									maximizable="true" closeOnEscape="true" closable="true"
+									focus="inputDescripcionAreaOportunidad">
+
+									<p:outputPanel styleClass="classDlgAreaOportunidad">
+
+										<div class="card card-w-title">
+
+											<h1>Datos de la Propuesta</h1>
+
+											<p:messages styleClass="msjDlgAreaOportunidad"
+												closable="true" showDetail="true">
+											</p:messages>
+
+											<p:panelGrid id="panelGridNDlgAreaOportunidad" columns="1"
+												layout="grid" styleClass="ui-panelgrid-blank form-group">
+
+												<p:inputText id="inputDescripcionAreaOportunidad"
+													style="width: 95%;" placeholder="Asunto o descripción"
+													value="#{dialogoAreaOportunidadBean.areaOportunidad.descripcion}"
+													required="true" requiredMessage="- Asunto">
+												</p:inputText>
+
+												<p:inputTextarea id="inputPropuestaSolucionAreaOportunidad"
+													style="width: 95%;" placeholder="Propuesta de Solución"
+													value="#{dialogoAreaOportunidadBean.areaOportunidad.propuestaSolucion}"
+													>
+												</p:inputTextarea>
+
+
+											</p:panelGrid>
+										</div>
+
+									</p:outputPanel>
+
+									<f:facet name="header">
+
+
+										<p:commandButton id="botonAceptarDlgAreaOportunidad"
+											widgetVar="wbotonAceptarDlgAreaOportunidad" value="Aceptar"
+											icon="fa fa-check"
+											actionListener="#{dialogoAreaOportunidadBean.actionGuardarAreaOportunidad}"
+											update="@(.msjDlgAreaOportunidad), @(.classTablaAreaOportunidad)"
+											oncomplete="handleAñadirAreaOportunidad(xhr, status, args)"
+											process="@form" />
+
+
+										<p:commandButton id="botonCancelarDlgAreaOportunidad"
+											widgetVar="wbotonCancelarDlgAreaOportunidad" value="Cancelar"
+											type="button" styleClass="secondary-button"
+											icon="fa fa-close" onclick="PF('dlgAreaOportunidad').hide()" />
+
+
+									</f:facet>
+
+
+
+								</p:dialog>
+
+							</h:form>
+
+							<script type="text/javascript">
+								function handleAñadirAreaOportunidad(xhr,
+										status, args) {
+
+									if (args.validationFailed
+											|| !args.AreaOportunidadAñadido) {
+
+										PF('dlgAreaOportunidad').jq.effect(
+												"shake", {
+													times : 2
+												}, 200);
+
+									} else {
+										PF('dlgAreaOportunidad').hide();
+									}
+								}
+							</script>
+
+
+
+							<h1>Áreas de Oportunidad con Propuesta de Solución</h1>
+
+
+							<h:form>
+
+								<p:commandButton value="Añadir Área de Oportunidad"
+									icon="fa fa-plus"
+									actionListener="#{dialogoAreaOportunidadBean.addAreaOportunidadNuevo}"
+									update="@(.classDlgAreaOportunidad)"
+									onclick="PF('dlgAreaOportunidad').show()"></p:commandButton>
+
+
+							</h:form>
+
+							<br></br>
+
+
+							<h:form id="formTablaAreaOportunidad">
+
+								<p:dataTable id="tablaAreaOportunidadMinuta"
+									widgetVar="classTablaAreaOportunidad"
+									styleClass="classTablaAreaOportunidad" reflow="true"
+									emptyMessage="..."
+									value="#{minutaBean.minuta.areasOportunidad}" var="area"
+									paginator="true" paginatorPosition="top" rows="10"
+									paginatorAlwaysVisible="true">
+
+									<p:column headerText="Editar" style="width: 150px;">
+
+										<p:commandButton icon="fa fa-edit"
+											onclick="PF('dlgAreaOportunidad').show()"
+											update="@(.classDlgAreaOportunidad)">
+
+											<f:setPropertyActionListener value="#{area}"
+												target="#{dialogoAreaOportunidadBean.areaOportunidad}" />
+										</p:commandButton>
+									</p:column>
+
+									<p:column headerText="Descripción">
+
+										<h:outputText value="#{area.descripcion}"></h:outputText>
+
+									</p:column>
+
+									<p:column headerText="Propuesta de Solución">
+
+										<h:outputText value="#{area.propuestaSolucion}"></h:outputText>
+
+									</p:column>
+
+
+									<p:column style="width: 150px;">
+
+										<p:commandButton icon="fa fa-close"
+											actionListener="#{minutaBean.removeAreaOportunidadDeMinuta(area)}"
+											update="@(.classTablaAreaOportunidad)">
+										</p:commandButton>
+
+									</p:column>
+
+								</p:dataTable>
+
+							</h:form>
+
+						</h:panelGroup>
+
+						<!-- FIN DE SECCIÓN DE AREAS DE OPORTUNIDAD -->
+
+
 
 						<h:form>
 
@@ -1178,7 +1344,7 @@
 										<button class="ql-image"></button>
 									</span>
 								</f:facet>
-								<p:ajax event="blur"></p:ajax>
+								<p:ajax event="change"></p:ajax>
 							</p:textEditor>
 
 

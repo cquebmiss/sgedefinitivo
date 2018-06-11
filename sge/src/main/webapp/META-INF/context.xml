@@ -5,7 +5,7 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="webrh"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://localhost:3306/webrh" username="root" />
+		url="jdbc:mysql://localhost:3306/sge" username="root" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
