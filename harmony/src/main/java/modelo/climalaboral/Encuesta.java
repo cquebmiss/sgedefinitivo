@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.faces.application.FacesMessage;
@@ -18,10 +20,11 @@ import util.FacesUtils;
 public class Encuesta
 {
 
-	private int				idEncuesta;
-	private String			descripcion;
-	private List<Seccion>	secciones;
-	private List<Registro>	registrosRespuestas;
+	private int							idEncuesta;
+	private String						descripcion;
+	private List<Seccion>				secciones;
+	private List<Registro>				registrosRespuestas;
+	private List<Map<String, Integer>>	totalesClasificacion;
 
 	public Encuesta()
 	{
@@ -65,22 +68,22 @@ public class Encuesta
 
 		PreparedStatement prep = null;
 		ResultSet rBD = null;
-		
+
 		String complementoQuery = "";
-		
-		if( area != null)
+
+		if (area != null)
 		{
-			complementoQuery+=" AND reg.idArea="+area.getIdArea()+" ";
+			complementoQuery += " AND reg.idArea=" + area.getIdArea() + " ";
 		}
-		
-		if( profesion != null)
+
+		if (profesion != null)
 		{
-			complementoQuery+=" AND reg.idProfesion="+profesion.getIdProfesion()+" ";
+			complementoQuery += " AND reg.idProfesion=" + profesion.getIdProfesion() + " ";
 		}
-		
-		if( jornada != null)
+
+		if (jornada != null)
 		{
-			complementoQuery+=" AND reg.idJornada="+jornada.getIdJornada();
+			complementoQuery += " AND reg.idJornada=" + jornada.getIdJornada();
 		}
 
 		//Ahora obtener las respuestas y enlazarlas con las preguntas
@@ -88,8 +91,8 @@ public class Encuesta
 		{
 			prep = conexion.prepareStatement(
 					" SELECT r.idRegistro, p.idSeccion, s.Orden AS ordenSec, r.idPregunta, p.idTipoPregunta, p.Orden AS ordenPreg, r.idOpcion AS idOpcionElegida, r.RespuestaAbierta, r.idRespuesta  from respuesta r, pregunta p, seccion s \n"
-							+ "where r.idPregunta = p.idPregunta AND p.idSeccion = s.idSeccion AND s.idEncuesta=? AND r.idRegistro IN (SELECT reg.idRegistro FROM registro reg WHERE reg.idEncuesta=0 "+complementoQuery+"  ) \n"
-							+ "order by r.idRegistro ASC, ordenSec ASC, ordenPreg ASC");
+							+ "where r.idPregunta = p.idPregunta AND p.idSeccion = s.idSeccion AND s.idEncuesta=? AND r.idRegistro IN (SELECT reg.idRegistro FROM registro reg WHERE reg.idEncuesta=0 "
+							+ complementoQuery + "  ) \n" + "order by r.idRegistro ASC, ordenSec ASC, ordenPreg ASC");
 
 			prep.setInt(1, this.idEncuesta);
 
@@ -219,6 +222,137 @@ public class Encuesta
 
 	}
 
+	//Obtiene los totales de cada categoría para mostrar una vista de gráfica de pastel para cada área o categoría
+	public void getTotalesPorClasificacion(Area area, Profesion profesion, Jornada jornada)
+	{
+		if (this.getSecciones() == null && this.getSecciones().isEmpty())
+		{
+			return;
+		}
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		String complementoQuery = "";
+
+		if (area != null)
+		{
+			complementoQuery += " AND r.idArea=" + area.getIdArea() + " ";
+		}
+
+		if (profesion != null)
+		{
+			complementoQuery += " AND r.idProfesion=" + profesion.getIdProfesion() + " ";
+		}
+
+		if (jornada != null)
+		{
+			complementoQuery += " AND r.idJornada=" + jornada.getIdJornada();
+		}
+
+		this.totalesClasificacion = new ArrayList<>();
+
+		//Ahora obtener las respuestas y enlazarlas con las preguntas
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionClimaLaboral();)
+		{
+			//Primero se obtiene la clasificación por área, posteriormente por profesión y de último por jornada
+			prep = conexion.prepareStatement("SELECT tl.descripcion, COUNT(*) as total FROM registro r, area tl \n"
+					+ "WHERE r.idEncuesta=? AND r.idArea = tl.idArea " + complementoQuery + " GROUP BY tl.idArea ");
+
+			prep.setInt(1, this.idEncuesta);
+
+			rBD = prep.executeQuery();
+
+			Map<String, Integer> mapAreas = new HashMap<>();
+
+			if (rBD.next())
+			{
+				do
+				{
+					mapAreas.put("(" + rBD.getInt("total") + ") " + rBD.getString("descripcion") + "  ",
+							rBD.getInt("total"));
+				} while (rBD.next());
+			}
+
+			this.totalesClasificacion.add(mapAreas);
+
+			prep.close();
+
+			//PROFESIONES
+			prep = conexion.prepareStatement("SELECT tl.descripcion, COUNT(*) as total FROM registro r, profesion tl \n"
+					+ "WHERE r.idEncuesta=? AND r.idProfesion = tl.idProfesion " + complementoQuery
+					+ " GROUP BY tl.idProfesion ");
+
+			prep.setInt(1, this.idEncuesta);
+
+			rBD = prep.executeQuery();
+
+			Map<String, Integer> mapProfesiones = new HashMap<>();
+
+			if (rBD.next())
+			{
+				do
+				{
+					mapProfesiones.put("(" + rBD.getInt("total") + ") " + rBD.getString("descripcion") + "  ",
+							rBD.getInt("total"));
+				} while (rBD.next());
+			}
+
+			this.totalesClasificacion.add(mapProfesiones);
+
+			prep.close();
+
+			//JORNADAS
+			prep = conexion.prepareStatement("SELECT tl.descripcion, COUNT(*) as total FROM registro r, jornada tl \n"
+					+ "WHERE r.idEncuesta=? AND r.idJornada = tl.idJornada " + complementoQuery
+					+ " GROUP BY tl.idJornada ");
+
+			prep.setInt(1, this.idEncuesta);
+
+			rBD = prep.executeQuery();
+
+			Map<String, Integer> mapJornadas = new HashMap<>();
+
+			if (rBD.next())
+			{
+				do
+				{
+					mapJornadas.put("(" + rBD.getInt("total") + ") " + rBD.getString("descripcion") + "  ",
+							rBD.getInt("total"));
+				} while (rBD.next());
+			}
+
+			this.totalesClasificacion.add(mapJornadas);
+
+			prep.close();
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener los totales de las clasificaciones, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
 	public void getSeccionesFromBD()
 	{
 		PreparedStatement prep = null;
@@ -318,8 +452,8 @@ public class Encuesta
 					prep.setNull(5, Types.INTEGER);
 					prep.setNull(6, Types.INTEGER);
 				}
-				
-				if( registro.getFolio() == 0)
+
+				if (registro.getFolio() == 0)
 				{
 					prep.setNull(7, Types.INTEGER);
 				}
@@ -503,6 +637,16 @@ public class Encuesta
 	public void setRegistrosRespuestas(List<Registro> registrosRespuestas)
 	{
 		this.registrosRespuestas = registrosRespuestas;
+	}
+
+	public List<Map<String, Integer>> getTotalesClasificacion()
+	{
+		return totalesClasificacion;
+	}
+
+	public void setTotalesClasificacion(List<Map<String, Integer>> totalesClasificacion)
+	{
+		this.totalesClasificacion = totalesClasificacion;
 	}
 
 }

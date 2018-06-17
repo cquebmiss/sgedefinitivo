@@ -261,7 +261,7 @@ a {
 
 @media (max-width: 1024px) {
   .layout-wrapper .layout-topbar {
-    height: 128px;
+    height: 65px;
     text-align: center; }
     .layout-wrapper .layout-topbar .logo-container {
       float: none;
@@ -734,7 +734,7 @@ a {
   .layout-wrapper.layout-menu-horizontal .layout-sidebar .nano > .nano-pane, .layout-wrapper.layout-menu-slim .layout-sidebar .nano > .nano-pane {
     display: none !important; } }
 .layout-wrapper .layout-main {
-  padding-top: 64px; }
+  padding-top: 65px; }
   .layout-wrapper .layout-main .route-bar {
     background-color: #eaeaea;
     border-bottom: 1px solid #d0d0d0; }
@@ -782,7 +782,7 @@ a {
 
 @media (max-width: 1024px) {
   .layout-wrapper .layout-main {
-    padding-top: 128px; }
+    padding-top: 64px; }
     .layout-wrapper .layout-main .route-bar .route-bar-menu li a {
       padding: 14px 11px; }
       .layout-wrapper .layout-main .route-bar .route-bar-menu li a i {

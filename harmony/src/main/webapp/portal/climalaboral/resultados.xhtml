@@ -132,13 +132,35 @@
 
 							<p:chart id="graficaGeneral" type="bar"
 								model="#{resultadosBean.modeloGrafica}"
-								style="width:100%;height:550px">
+								style="width:100%;height:550px" responsive="true">
 
 								<p:ajax event="itemSelect"
 									listener="#{resultadosBean.itemSelect}" />
 							</p:chart>
 
+							<h1>Totales por Área</h1>
+
+							<p:chart type="pie" model="#{resultadosBean.modeloTotalesArea}"
+								style="width:100%;height:800px" widgetVar="chart" />
+							<br></br>
+
+
+							<h1>Totales por Profesión</h1>
+							<p:chart type="pie"
+								model="#{resultadosBean.modeloTotalesProfesion}"
+								style="width:100%;height:800px" widgetVar="chart1" />
+							<br></br>
+
+
+							<h1>Totales por Jornada</h1>
+							<p:chart type="pie"
+								model="#{resultadosBean.modeloTotalesJornada}"
+								style="width:100%;height:800px" widgetVar="chart2" />
+							<br></br>
+
+
 						</h:panelGroup>
+
 
 						<h:panelGroup rendered="#{resultadosBean.modoPanel eq 1}">
 
@@ -165,6 +187,9 @@
 											style="font-weight: bold" /></li>
 								</p:repeat>
 							</ol>
+
+
+
 
 						</h:panelGroup>
 

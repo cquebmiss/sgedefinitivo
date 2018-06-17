@@ -2,17 +2,18 @@ package gui.portal.climalaboral;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ValueChangeEvent;
 
 import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.PieChartModel;
 
 import modelo.climalaboral.Area;
 import modelo.climalaboral.Encuesta;
@@ -29,6 +30,10 @@ public class ResultadosBean
 {
 	private BarChartModel	modeloGrafica;
 	private BarChartModel	modeloSecSeleccionada;
+
+	private PieChartModel	modeloTotalesArea;
+	private PieChartModel	modeloTotalesProfesion;
+	private PieChartModel	modeloTotalesJornada;
 
 	private Encuesta		encuesta;
 	private Seccion			secSeleccionada;
@@ -61,6 +66,7 @@ public class ResultadosBean
 	{
 		getResultadosFromBD();
 		createBarModel();
+		createPieModel();
 	}
 
 	public void getResultadosFromBD()
@@ -68,6 +74,7 @@ public class ResultadosBean
 		this.encuesta = UtilidadesClimaLaboral.getEncuestaFromBD();
 		this.encuesta.initEncuesta();
 		this.encuesta.getResultadosEncuesta(this.areaSelec, this.profesionSelec, this.jornadaSelec);
+		this.encuesta.getTotalesPorClasificacion(this.areaSelec, this.profesionSelec, this.jornadaSelec);
 	}
 
 	private void createBarModel()
@@ -86,6 +93,59 @@ public class ResultadosBean
 		yAxis.setLabel("Grado de Satisfacción");
 		yAxis.setMin(0);
 		yAxis.setMax(100);
+
+	}
+
+	private void createPieModel()
+	{
+
+		this.modeloTotalesArea = new PieChartModel();
+		this.modeloTotalesProfesion = new PieChartModel();
+		this.modeloTotalesJornada = new PieChartModel();
+
+		Map<String, Integer> mapTotalesAreas = this.encuesta.getTotalesClasificacion().get(0);
+		Map<String, Integer> mapTotalesProfesion = this.encuesta.getTotalesClasificacion().get(1);
+		Map<String, Integer> mapTotalesJornada = this.encuesta.getTotalesClasificacion().get(2);
+
+		mapTotalesAreas.forEach((k, v) ->
+		{
+			this.modeloTotalesArea.set(k, v);
+
+		});
+
+		mapTotalesProfesion.forEach((k, v) ->
+		{
+			this.modeloTotalesProfesion.set(k, v);
+
+		});
+
+		mapTotalesJornada.forEach((k, v) ->
+		{
+			this.modeloTotalesJornada.set(k, v);
+
+		});
+
+		this.modeloTotalesArea.setTitle("Totales por Área");
+		this.modeloTotalesProfesion.setTitle("Totales por Profesión");
+		this.modeloTotalesJornada.setTitle("Totales por Jornada");
+
+		this.modeloTotalesArea.setLegendPosition("s");
+		this.modeloTotalesArea.setLegendRows(10);
+		this.modeloTotalesArea.setFill(true);
+		this.modeloTotalesArea.setShowDataLabels(true);
+		this.modeloTotalesArea.setDiameter(500);
+
+		this.modeloTotalesProfesion.setLegendPosition("s");
+		this.modeloTotalesProfesion.setLegendRows(10);
+		this.modeloTotalesProfesion.setFill(true);
+		this.modeloTotalesProfesion.setShowDataLabels(true);
+		this.modeloTotalesProfesion.setDiameter(500);
+
+		this.modeloTotalesJornada.setLegendPosition("s");
+		this.modeloTotalesJornada.setLegendRows(10);
+		this.modeloTotalesJornada.setFill(true);
+		this.modeloTotalesJornada.setShowDataLabels(true);
+		this.modeloTotalesJornada.setDiameter(500);
 
 	}
 
@@ -346,6 +406,36 @@ public class ResultadosBean
 	public void setTotalRegistros(int totalRegistros)
 	{
 		this.totalRegistros = totalRegistros;
+	}
+
+	public PieChartModel getModeloTotalesArea()
+	{
+		return modeloTotalesArea;
+	}
+
+	public void setModeloTotalesArea(PieChartModel modeloTotalesArea)
+	{
+		this.modeloTotalesArea = modeloTotalesArea;
+	}
+
+	public PieChartModel getModeloTotalesProfesion()
+	{
+		return modeloTotalesProfesion;
+	}
+
+	public void setModeloTotalesProfesion(PieChartModel modeloTotalesProfesion)
+	{
+		this.modeloTotalesProfesion = modeloTotalesProfesion;
+	}
+
+	public PieChartModel getModeloTotalesJornada()
+	{
+		return modeloTotalesJornada;
+	}
+
+	public void setModeloTotalesJornada(PieChartModel modeloTotalesJornada)
+	{
+		this.modeloTotalesJornada = modeloTotalesJornada;
 	}
 
 }
