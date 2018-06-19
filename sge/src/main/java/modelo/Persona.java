@@ -21,9 +21,6 @@ public class Persona
 	private String titulo;
 	private String email;
 
-	//En caso de que el objeto persona tenga registro vinculado como trabajador dentro de los registros de la nómina se enlaza con la clave foránea
-	private Plaza plaza;
-	private String numEmpleado;
 
 	public Persona()
 	{
@@ -140,26 +137,6 @@ public class Persona
 	public void setCargo(String cargo)
 	{
 		this.cargo = cargo;
-	}
-
-	public Plaza getPlaza()
-	{
-		return plaza;
-	}
-
-	public void setPlaza(Plaza plaza)
-	{
-		this.plaza = plaza;
-	}
-
-	public String getNumEmpleado()
-	{
-		return numEmpleado;
-	}
-
-	public void setNumEmpleado(String numEmpleado)
-	{
-		this.numEmpleado = numEmpleado;
 	}
 
 	public String getSexo()
