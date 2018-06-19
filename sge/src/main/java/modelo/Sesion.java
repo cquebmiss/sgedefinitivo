@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import util.utilidades;
@@ -18,12 +19,12 @@ import util.utilidades;
 public class Sesion implements Serializable
 {
 
-	private String sesionActiva = "";
-	private String nombreUsuario = "";
-	private String nombreReal = "";
-	private String idUsuario = "";
-	private String email = "";
-	private List<PermisoSistema> permisosSistemas;
+	private String					sesionActiva	= "";
+	private String					nombreUsuario	= "";
+	private String					nombreReal		= "";
+	private String					idUsuario		= "";
+	private String					email			= "";
+	private List<PermisoSistema>	permisosSistemas;
 
 	public Sesion()
 	{
@@ -89,7 +90,8 @@ public class Sesion implements Serializable
 	}
 
 	/**
-	 * @param permisosSistemas the permisosSistemas to set
+	 * @param permisosSistemas
+	 *            the permisosSistemas to set
 	 */
 	public void setPermisosSistemas(List<PermisoSistema> permisosSistemas)
 	{
@@ -134,7 +136,9 @@ public class Sesion implements Serializable
 			setPermisosSistemas(null);
 
 			FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-			FacesContext.getCurrentInstance().getExternalContext().redirect("/sge/login.jsf");
+
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			ec.redirect(ec.getRequestContextPath() + "/");
 
 		}
 		catch (Exception ex)
