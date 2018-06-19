@@ -18,6 +18,11 @@ import util.FacesUtils;
 
 public class UtilidadesGestion
 {
+	public static String	urlAccessToken	= "https://www.wunderlist.com/oauth/access_token";
+	public static String	urlLists		= "https://a.wunderlist.com/api/v1/lists";
+	public static String	urlTasks		= "https://a.wunderlist.com/api/v1/tasks";
+	public static String	urlNotes		= "https://a.wunderlist.com/api/v1/notes";
+	//Para consultar listas, tareas y notas en específico, se debe adicionar después de la url el id correspondiente, ejemplo: notes/7263526
 
 	public static List<StatusActividad> getCatStatusActividad()
 	{

@@ -16,11 +16,19 @@ public class Paciente
 	private SeguridadSocial	seguridadSocial;
 	private String			afiliacion;
 
-	public Paciente()
+	public Paciente(Gestion gestion)
 	{
 		super();
-		this.seguridadSocial = new SeguridadSocial(-1, "");
+		this.gestion = gestion;
+		this.nombre = "";
+		this.sexo = "";
+		this.edad = 0;
+		this.fechaNacimiento = new java.util.Date();
+		this.seguridadSocial = new SeguridadSocial(1, "Seguro Popular");
 		this.lugarResidencia = new LugarResidencia(-1, "");
+		this.diagnostico = "";
+		this.hospitalizadoEn = "";
+		this.afiliacion = "";
 		// TODO Auto-generated constructor stub
 	}
 

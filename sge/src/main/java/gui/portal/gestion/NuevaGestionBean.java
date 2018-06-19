@@ -1,17 +1,33 @@
 package gui.portal.gestion;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import modelo.Sesion;
 import modelo.actividades.StatusActividad;
+import modelo.gestion.Contacto;
 import modelo.gestion.Gestion;
+import modelo.gestion.ListElement;
+import modelo.gestion.Note;
 import modelo.gestion.SeguridadSocial;
+import modelo.gestion.Task;
 import modelo.gestion.TipoGestion;
+import modelo.gestion.WUsuario;
+import resources.DataBase;
+import util.FacesUtils;
 import util.gestion.UtilidadesGestion;
 
 @ManagedBean
@@ -24,8 +40,11 @@ public class NuevaGestionBean
 	private List<SeguridadSocial>	catSeguridadSocial;
 
 	private Gestion					gestion;
-	private int						estadoPanel;
 	private int						editarGestion;
+	private String					webservice;
+
+	private List<ListElement>		listasUsuario;
+	private List<Task>				listaTareas;
 
 	public NuevaGestionBean()
 	{
@@ -36,7 +55,18 @@ public class NuevaGestionBean
 	@PostConstruct
 	public void postConstruct()
 	{
-		this.estadoPanel = 0;
+
+		try
+		{
+			this.gestion = new Gestion();
+
+		}
+		catch (Exception e)
+		{
+			this.webservice = e.getMessage();
+			e.printStackTrace();
+		}
+
 	}
 
 	public void iniciaNuevaGestion()
@@ -46,8 +76,9 @@ public class NuevaGestionBean
 		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
 
 		this.gestion = new Gestion();
-		this.gestion.setStatus(this.catStatusActividad.get(0));
-		this.gestion.setTipoGestion(new TipoGestion(-1, ""));
+		//Se hardcodea en lugar de elegir desde el catálogo
+		//this.gestion.setStatus(this.catStatusActividad.get(0));
+		//this.gestion.setTipoGestion(new TipoGestion(-1, ""));
 
 	}
 
@@ -83,6 +114,291 @@ public class NuevaGestionBean
 		}
 	}
 
+	//MÉTODOS PARA CONTACTOS
+	public void actionEliminarContact(Contacto contacto)
+	{
+		this.gestion.getContactos().remove(contacto);
+
+	}
+
+	//FIN DE MÉTODOS PARA CONTACTOS
+
+	public void actionGuardarSolicitud()
+	{
+		System.out.println("Guardando solicitud");
+
+		if (this.gestion.getPaciente().getNombre().trim().isEmpty() || this.gestion.getSolicitud().trim().isEmpty())
+		{
+			String mensaje = "";
+
+			if (this.gestion.getPaciente().getNombre().trim().isEmpty())
+			{
+				mensaje = "Por favor, ingrese el nombre del paciente.";
+			}
+			else
+			{
+				mensaje = "Por favor, ingrese la solicitud deseada.";
+			}
+
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Formulario Incorrecto", mensaje));
+			return;
+		}
+
+		WUsuario wUsuario = new WUsuario();
+		wUsuario.initClient();
+		wUsuario.initToken();
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+
+			try
+			{
+
+				//Se obtiene el Usuario de la sesión
+				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
+				conexion.setAutoCommit(false);
+				conexion.rollback();
+
+				//Primer paso capturar la gestión en la base de datos del sistema
+				prep = conexion.prepareStatement(
+						"INSERT INTO gestion (Descripcion,FechaRecepcion,SolicitadoA,Solicitud,DetallesGenerales,ResumenFinal,"
+								+ "idUsuario,idStatusActividad,idTipoGestion)\n"
+								+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?) ; ",
+						PreparedStatement.RETURN_GENERATED_KEYS);
+
+				prep.setString(1, this.gestion.getDescripcion());
+				prep.setDate(2, new java.sql.Date(this.gestion.getFechaRecepcion().getTime()));
+				prep.setString(3, "");
+				prep.setString(4, this.gestion.getSolicitud());
+				prep.setString(5, this.gestion.getDetallesGenerales());
+				prep.setInt(6, Integer.parseInt(sesion.getIdUsuario()));
+				prep.setInt(7, this.gestion.getStatus().getIdStatusActividad());
+				prep.setInt(8, this.gestion.getTipoGestion().getIdTipoGestion());
+
+				prep.executeUpdate();
+
+				rBD = prep.getGeneratedKeys();
+
+				if (rBD.next())
+				{
+					this.gestion.setIdGestion(rBD.getInt(1));
+				}
+
+				prep.close();
+				rBD.close();
+
+				//Se busca el lugar de origen en el catálogo, si existe, se utiliza el id, en caso contrario se registra y se utiliza el nuevo Id
+
+				prep = conexion.prepareStatement("SELECT * FROM lugarresidencia WHERE descripcion = ? ");
+
+				prep.setString(1, this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim());
+
+				rBD = prep.executeQuery();
+
+				int idLugarResidenciaGenerado;
+
+				if (rBD.next())
+				{
+					idLugarResidenciaGenerado = rBD.getInt("idLugarResidencia");
+				}
+				else
+				{
+					//Se inserta y se obtiene el idGenerado
+
+					prep.close();
+
+					prep = conexion.prepareStatement("INSERT INTO lugarresidencia (Descripcion) VALUES (?)",
+							PreparedStatement.RETURN_GENERATED_KEYS);
+
+					prep.setString(1, this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim());
+
+					prep.executeUpdate();
+
+					idLugarResidenciaGenerado = rBD.getInt(1);
+
+				}
+
+				prep.close();
+
+				//Se inserta al paciente en la bd
+				prep = conexion.prepareStatement(
+						" INSERT INTO paciente (idGestion,Nombre,Sexo,Edad,CURP,idLugarResidencia,Diagnostico,HospitalizadoEn,"
+								+ "idSeguridadSocial,Afiliacion)\n" + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ",
+						PreparedStatement.RETURN_GENERATED_KEYS);
+
+				prep.setInt(1, this.gestion.getIdGestion());
+				prep.setString(2, this.gestion.getPaciente().getNombre());
+				prep.setString(3, this.gestion.getPaciente().getSexo());
+				prep.setInt(4, this.gestion.getPaciente().getEdad());
+				prep.setString(5, "");
+				prep.setInt(6, idLugarResidenciaGenerado);
+				prep.setString(7, this.gestion.getPaciente().getDiagnostico());
+				prep.setString(8, "");
+				prep.setInt(9, this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial());
+				prep.setString(10, this.gestion.getPaciente().getAfiliacion());
+
+				prep.executeUpdate();
+
+				rBD = prep.getGeneratedKeys();
+
+				this.gestion.getPaciente().setIdPaciente(rBD.getInt(1));
+
+				prep.close();
+
+				//Ahora se insertan los contactos de la gestión
+				for (Contacto contacto : this.gestion.getContactos())
+				{
+
+					prep = conexion.prepareStatement(
+							"INSERT INTO sge.contactogestion (idGestion,Nombre,Telefonos,Email,Observaciones)\n"
+									+ "VALUES (?, ?, ?, ?, ?) ",
+							PreparedStatement.RETURN_GENERATED_KEYS);
+
+					prep.setInt(1, this.gestion.getIdGestion());
+					prep.setString(2, contacto.getNombres());
+					prep.setString(3, contacto.getTelefonos());
+					prep.setString(4, contacto.getEmail());
+					prep.setString(5, contacto.getObservaciones());
+
+					prep.executeUpdate();
+
+					rBD = prep.getGeneratedKeys();
+
+					contacto.setIdContacto(rBD.getInt(1));
+
+					prep.close();
+
+				}
+
+				conexion.commit();
+				/*
+				 * //Se crea la tarea que se va a registrar en el WebService Task nuevaTarea =
+				 * new Task();
+				 * 
+				 * nuevaTarea = new Task(); nuevaTarea.setList_id(338456892);
+				 * 
+				 * LocalDate ldt = LocalDate.now();
+				 * 
+				 * nuevaTarea.setTitle("Pruebas SGE: F-" + ldt.getYear() + "-" +
+				 * this.gestion.getIdGestion() + ". - Paciente: " +
+				 * this.gestion.getPaciente().getNombre()); nuevaTarea.setCompleted(false);
+				 * nuevaTarea.setStarred(false);
+				 * 
+				 * //Devuelve la tarea creada en el atributo Tarea del objeto
+				 * wUsuario.postTareaWunderlist(nuevaTarea);
+				 * 
+				 * String contenidoNota = "Fecha de Recepción: " + new
+				 * SimpleDateFormat("yyyy-MM-dd - HH:mm:dd").format(this.gestion.
+				 * getFechaRecepcion()) + "\n"; contenidoNota += "Usuario: " +
+				 * sesion.getIdUsuario() + " - " + sesion.getNombreUsuario() + "\n\n";
+				 * contenidoNota += "Paciente: \n"; contenidoNota += "Nombre: " +
+				 * this.gestion.getPaciente().getNombre() + "\n"; contenidoNota += "Edad: " +
+				 * this.gestion.getPaciente().getEdad() + "\n"; contenidoNota += "Sexo: " +
+				 * (this.gestion.getPaciente().getSexo().equals("m") ? "Masculino" : "Femenino")
+				 * + "\n"; contenidoNota += "Lugar de Origen: " +
+				 * this.gestion.getPaciente().getLugarResidencia().getDescripcion() + "\n";
+				 * contenidoNota += "Seguridad Social: " +
+				 * this.gestion.getPaciente().getSeguridadSocial().getDescripcion() + "\n";
+				 * contenidoNota += "Número o Folio de Afiliación: " +
+				 * this.gestion.getPaciente().getAfiliacion() + "\n\n"; contenidoNota +=
+				 * "<DIAGNÓSTICO>: " + this.gestion.getPaciente().getDiagnostico() + "\n\n";
+				 * contenidoNota += "<OBSERVACIONES DEL CASO>: " +
+				 * this.gestion.getDetallesGenerales() + "\n\n"; contenidoNota +=
+				 * "<SOLICITUD>: " + this.gestion.getSolicitud() + "\n\n"; contenidoNota +=
+				 * "Contactos: \n";
+				 * 
+				 * for (Contacto contacto : this.gestion.getContactos()) { contenidoNota +=
+				 * " - " + contacto.getNombres() + " " + (contacto.getTelefonos().isEmpty() ? ""
+				 * : ", Teléfonos: " + contacto.getTelefonos()) + " " +
+				 * (contacto.getEmail().isEmpty() ? "" : ", Email: " + contacto.getEmail()) +
+				 * " " + (contacto.getObservaciones().isEmpty() ? "" : ", Observación: " +
+				 * contacto.getObservaciones()) + "\n";
+				 * 
+				 * }
+				 * 
+				 * Note nota = new Note(); nota.setTask_id(wUsuario.getTarea().getId());
+				 * nota.setContent(contenidoNota);
+				 * 
+				 * wUsuario.postNotaTareaWunderlist(nota);
+				 */
+
+				iniciaNuevaGestion();
+
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Solicitud Enviada", "La solicitud ha sido registrada exitosamente en el sistema."));
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				conexion.rollback();
+			}
+
+		}
+		catch (
+
+		Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Excepción",
+					"Ha ocurrido una excepción al registrar el folio de la gestión, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		/*
+		 * wUsuario.getListsWunderlist(); wUsuario.getListWunderlist(338456892);
+		 * 
+		 * this.listasUsuario = new ArrayList<>();
+		 * this.listasUsuario.add(wUsuario.getLista()); this.webservice =
+		 * wUsuario.getAccess_token().getAccess_token();
+		 * 
+		 * //Crear una tarea Task nuevaTarea = new Task();
+		 * nuevaTarea.setList_id(wUsuario.getLista().getId()); nuevaTarea.setTitle(
+		 * "Ignorar: Pruebas SGE: Folio-" + this.gestion.getFechaRecepcion() +
+		 * "-Nombre/Descripción Asunto"); nuevaTarea.setCompleted(false);
+		 * nuevaTarea.setStarred(true);
+		 * 
+		 * wUsuario.postTareaWunderlist(nuevaTarea); this.webservice =
+		 * wUsuario.getTarea().getTitle();
+		 * 
+		 * // wUsuario.getTarea().setTitle("IGNORAR:" + wUsuario.getTarea().getId() +
+		 * " MODIFICADO por SGE");
+		 * 
+		 * // wUsuario.patchTareaWunderlist(wUsuario.getTarea()); this.webservice =
+		 * wUsuario.getTarea().getTitle();
+		 * 
+		 * wUsuario.getNotaTareaWunderlist(wUsuario.getTarea());
+		 * 
+		 * Note nota = new Note(); nota.setTask_id(wUsuario.getTarea().getId());
+		 * nota.setContent(
+		 * "Prueba de la creación de las notas desde la plataforma del SGE modificado desde el código"
+		 * );
+		 * 
+		 * wUsuario.postNotaTareaWunderlist(nota);
+		 * 
+		 * System.out.println("Contenido de nota: " + wUsuario.getNota().getContent());
+		 */
+	}
+
 	public void desactivarModoEdicion()
 	{
 		this.editarGestion = -1;
@@ -96,16 +412,6 @@ public class NuevaGestionBean
 	public void setGestion(Gestion gestion)
 	{
 		this.gestion = gestion;
-	}
-
-	public int getEstadoPanel()
-	{
-		return estadoPanel;
-	}
-
-	public void setEstadoPanel(int estadoPanel)
-	{
-		this.estadoPanel = estadoPanel;
 	}
 
 	public int getEditarGestion()
@@ -146,6 +452,36 @@ public class NuevaGestionBean
 	public void setCatSeguridadSocial(List<SeguridadSocial> catSeguridadSocial)
 	{
 		this.catSeguridadSocial = catSeguridadSocial;
+	}
+
+	public String getWebservice()
+	{
+		return webservice;
+	}
+
+	public void setWebservice(String webservice)
+	{
+		this.webservice = webservice;
+	}
+
+	public List<ListElement> getListasUsuario()
+	{
+		return listasUsuario;
+	}
+
+	public void setListasUsuario(List<ListElement> listasUsuario)
+	{
+		this.listasUsuario = listasUsuario;
+	}
+
+	public List<Task> getListaTareas()
+	{
+		return listaTareas;
+	}
+
+	public void setListaTareas(List<Task> listaTareas)
+	{
+		this.listaTareas = listaTareas;
 	}
 
 }

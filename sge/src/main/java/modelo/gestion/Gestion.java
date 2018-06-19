@@ -43,8 +43,14 @@ public class Gestion
 		this.solicitud = "";
 		this.detallesGenerales = "";
 		this.resumenFinal = "";
-		this.paciente = new Paciente();
+		this.paciente = new Paciente(this);
 		this.contactos = new ArrayList<>();
+
+		//Se inicializa el objeto con el status en -1 que significa que la actividad está agendada, pasará a 0 iniciada al momento de que sea revisada por el departamento de gestión y enlace
+		this.status = new StatusActividad(-1, "Agendada");
+		//El tipo de gestión siempre será Atención y Servicios para éste módulo
+		this.tipoGestion = new TipoGestion(1, "Atención y Mejoras");
+
 		// TODO Auto-generated constructor stub
 	}
 

@@ -17,7 +17,7 @@ public class SeguridadSocialConverter implements Converter
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String id)
 	{
-		NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("NuevaGestionBean");
+		NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("nuevaGestionBean");
 
 		if (bean.getCatSeguridadSocial() == null || bean.getCatSeguridadSocial().isEmpty())
 		{
