@@ -25,9 +25,7 @@
 
 							<h:form>
 
-								<p:outputPanel>
-
-									<p:autoUpdate></p:autoUpdate>
+								<h:panelGroup>
 
 									<p:panelGrid columns="4"
 										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
@@ -133,6 +131,11 @@
 									</p:inputTextarea>
 
 
+								</h:panelGroup>
+
+								<p:outputPanel>
+
+									<p:autoUpdate></p:autoUpdate>
 									<br></br>
 									<h2>Contactos</h2>
 
@@ -193,8 +196,6 @@
 										actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
 
 								</p:outputPanel>
-
-
 							</h:form>
 						</div>
 

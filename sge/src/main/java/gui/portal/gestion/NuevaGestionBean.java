@@ -199,7 +199,7 @@ public class NuevaGestionBean
 
 				rBD = prep.executeQuery();
 
-				int idLugarResidenciaGenerado;
+				int idLugarResidenciaGenerado = 1;
 
 				if (rBD.next())
 				{
@@ -218,7 +218,12 @@ public class NuevaGestionBean
 
 					prep.executeUpdate();
 
-					idLugarResidenciaGenerado = rBD.getInt(1);
+					rBD = prep.getGeneratedKeys();
+
+					if (rBD.next())
+					{
+						idLugarResidenciaGenerado = rBD.getInt(1);
+					}
 
 				}
 
@@ -245,7 +250,10 @@ public class NuevaGestionBean
 
 				rBD = prep.getGeneratedKeys();
 
-				this.gestion.getPaciente().setIdPaciente(rBD.getInt(1));
+				if (rBD.next())
+				{
+					this.gestion.getPaciente().setIdPaciente(rBD.getInt(1));
+				}
 
 				prep.close();
 
@@ -268,7 +276,10 @@ public class NuevaGestionBean
 
 					rBD = prep.getGeneratedKeys();
 
-					contacto.setIdContacto(rBD.getInt(1));
+					if (rBD.next())
+					{
+						contacto.setIdContacto(rBD.getInt(1));
+					}
 
 					prep.close();
 
