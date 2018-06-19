@@ -45,9 +45,9 @@ public class WUsuario
 	{
 		//Se obtiene el access_token para las peticiones en Wunderlist
 		this.access_token = new Token();
-		this.access_token.setClient_id("f02cbc4336ca228a1ac6");
-		this.access_token.setClient_secret("5896f3ae5a7bd7ce6b964a618486efc2839a8c0a9ec00ff72bc1ac3d01cd");
-		this.access_token.setCode("a05aa3e501881789b0da");
+		this.access_token.setClient_id("2f9718b85bd8ee41d5f7");
+		this.access_token.setClient_secret("054e16a4b73698c0333f3fd8ac2f20a7406919a10a2d82b6a3426556197a");
+		this.access_token.setCode("c9ee49a30ce376f21f20");
 
 		this.invocation = this.client.target(UtilidadesGestion.urlAccessToken).request()
 				.buildPost(Entity.entity(this.access_token, MediaType.APPLICATION_JSON));
@@ -57,9 +57,9 @@ public class WUsuario
 		this.access_token = response.readEntity(Token.class);
 
 		//Se vuelven a establecer los parámetros del token para tener a la mano los datos del cliente
-		this.access_token.setClient_id("f02cbc4336ca228a1ac6");
-		this.access_token.setClient_secret("5896f3ae5a7bd7ce6b964a618486efc2839a8c0a9ec00ff72bc1ac3d01cd");
-		this.access_token.setCode("a05aa3e501881789b0da");
+		this.access_token.setClient_id("2f9718b85bd8ee41d5f7");
+		this.access_token.setClient_secret("054e16a4b73698c0333f3fd8ac2f20a7406919a10a2d82b6a3426556197a");
+		this.access_token.setCode("c9ee49a30ce376f21f20");
 
 	}
 
@@ -132,7 +132,7 @@ public class WUsuario
 	public void postTareaWunderlist(Task task)
 	{
 		Invocation invocationCrearTarea = client.target("https://a.wunderlist.com/api/v1/tasks")
-				.queryParam("client_id", "f02cbc4336ca228a1ac6")
+				.queryParam("client_id", this.access_token.getClient_id())
 				.queryParam("access_token", this.access_token.getAccess_token()).request()
 				.buildPost(Entity.entity(task, MediaType.APPLICATION_JSON));
 

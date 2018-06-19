@@ -4,11 +4,11 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
-	<ui:define name="title">Sistema de Gestión Empresarial - Encuestas de Clima Laboral</ui:define>
+	<ui:define name="title">Sistema de Gestión Empresarial - Nueva Solicitud de Gestión</ui:define>
 	<ui:define name="viewname">
 		<li>Portal</li>
 		<li>/</li>
-		<li>Encuestas de Clima Laboral</li>
+		<li>Solicitud de Gestión</li>
 	</ui:define>
 
 	<ui:define name="content">
@@ -25,7 +25,7 @@
 
 							<h:form>
 
-								<h:panelGroup>
+								<p:outputPanel styleClass="panelPrincipal">
 
 									<p:panelGrid columns="4"
 										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
@@ -48,7 +48,6 @@
 									</p:panelGrid>
 
 									<h2>Datos del Paciente</h2>
-
 
 									<p:panelGrid columns="4"
 										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
@@ -131,7 +130,7 @@
 									</p:inputTextarea>
 
 
-								</h:panelGroup>
+								</p:outputPanel>
 
 								<p:outputPanel>
 
@@ -192,10 +191,12 @@
 										closable="true"></p:messages>
 
 
-									<p:commandButton value="Guardar"
-										actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
 
 								</p:outputPanel>
+
+								<p:commandButton value="Guardar" update="@(.panelPrincipal)"
+									actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
+
 							</h:form>
 						</div>
 
