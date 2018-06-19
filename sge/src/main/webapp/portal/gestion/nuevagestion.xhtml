@@ -41,7 +41,7 @@
 										<p:calendar id="campoFechaRecepcion" pattern="MM/dd/yyyy"
 											value="#{nuevaGestionBean.gestion.fechaRecepcion}"
 											disabled="true">
-											<p:ajax event="blur"></p:ajax>
+											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:calendar>
 
 										<p:column></p:column>
@@ -62,13 +62,13 @@
 										<p:inputText id="campoNombre"
 											value="#{nuevaGestionBean.gestion.paciente.nombre}">
 
-											<p:ajax event="blur"></p:ajax>
+											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:inputText>
 
 										<p:outputLabel for="campoEdad" value="Edad"></p:outputLabel>
 										<p:inputMask mask="99" id="campoEdad"
 											value="#{nuevaGestionBean.gestion.paciente.edad}">
-											<p:ajax event="blur"></p:ajax>
+											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:inputMask>
 
 
@@ -85,7 +85,7 @@
 
 										<p:inputText id="campoLugarOrigen"
 											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.descripcion}">
-											<p:ajax event="blur"></p:ajax>
+											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:inputText>
 
 										<p:outputLabel for="campoSeguridadSocial"
@@ -95,7 +95,7 @@
 											id="campoSeguridadSocial"
 											converter="seguridadSocialConverter">
 
-											<p:ajax event="blur"></p:ajax>
+											<p:ajax event="blur" process="@this"></p:ajax>
 
 											<f:selectItems value="#{nuevaGestionBean.catSeguridadSocial}"
 												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
@@ -106,7 +106,7 @@
 											value="Código de Afiliación" />
 										<p:inputText id="campoAfiliacion"
 											value="#{nuevaGestionBean.gestion.paciente.afiliacion}">
-											<p:ajax event="blur"></p:ajax>
+											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:inputText>
 
 
@@ -115,21 +115,21 @@
 									<p:outputLabel for="campoDiagnostico" value="Diagnóstico" />
 									<p:inputTextarea id="campoDiagnostico"
 										value="#{nuevaGestionBean.gestion.paciente.diagnostico}">
-										<p:ajax event="blur"></p:ajax>
+										<p:ajax event="blur" process="@this"></p:ajax>
 									</p:inputTextarea>
 
 									<p:outputLabel for="campoObservaciones"
 										value="Observaciones y/o datos complementarios sobre el caso" />
 									<p:inputTextarea id="campoObservaciones"
 										value="#{nuevaGestionBean.gestion.detallesGenerales}">
-										<p:ajax event="blur"></p:ajax>
+										<p:ajax event="blur" process="@this"></p:ajax>
 									</p:inputTextarea>
 
 									<p:outputLabel for="campoSolicitud"
 										value="Solicitud que realiza *"></p:outputLabel>
 									<p:inputTextarea id="campoSolicitud"
 										value="#{nuevaGestionBean.gestion.solicitud}">
-										<p:ajax event="blur"></p:ajax>
+										<p:ajax event="blur" process="@this"></p:ajax>
 									</p:inputTextarea>
 
 
