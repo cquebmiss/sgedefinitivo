@@ -21,17 +21,29 @@
 
 
 
-							<h1>Solicitud de Gestión</h1>
+							<h1>
+								Solicitud de Gestión
+								<h:outputText style="font-weight: bolder;"
+									value=" #{nuevaGestionBean.gestion.idGestion gt -1 ? '(Edición)' : ''} "></h:outputText>
+							</h1>
 
-							<h:form>
+							<h:form id="formGeneral">
 
-								<p:outputPanel styleClass="panelPrincipal">
+								<p:outputPanel id="outputPanelPrincipal"
+									styleClass="panelPrincipal">
 
 									<p:panelGrid columns="4"
 										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
 										layout="grid"
 										styleClass="ui-panelgrid-blank form-group form-elements"
 										style="border:0px none; background-color:transparent;">
+
+										<p:outputLabel for="campoFolio" value="Folio:"></p:outputLabel>
+										<h:outputText id="campoFolio"
+											value="#{nuevaGestionBean.gestion.folio}"></h:outputText>
+
+										<p:column></p:column>
+										<p:column></p:column>
 
 										<p:outputLabel for="campoFechaRecepcion"
 											value="Fecha de Recepción:" />
@@ -132,7 +144,7 @@
 
 								</p:outputPanel>
 
-								<p:outputPanel>
+								<p:outputPanel id="outputContactos">
 
 									<p:autoUpdate></p:autoUpdate>
 									<br></br>
@@ -194,8 +206,20 @@
 
 								</p:outputPanel>
 
-								<p:commandButton value="Guardar" update="@(.panelPrincipal)"
+
+
+								<p:commandButton id="saveBtn" value="Guardar"
+									onclick="customfunction();" update="@(.panelPrincipal)"
 									actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
+
+								<script type="text/javascript">
+									function customfunction() {
+										if (!navigator.onLine) {
+											alert("No hay conexión a Internet, verifique la conexión de su navegador.");
+										}
+									}
+								</script>
+
 
 							</h:form>
 						</div>
@@ -205,6 +229,8 @@
 				</div>
 			</div>
 		</h:form>
+
+
 
 
 

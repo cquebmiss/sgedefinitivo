@@ -24,6 +24,7 @@ import modelo.gestion.ListElement;
 import modelo.gestion.Note;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Task;
+import modelo.gestion.TaskComment;
 import modelo.gestion.TipoGestion;
 import modelo.gestion.WUsuario;
 import resources.DataBase;
@@ -82,6 +83,19 @@ public class NuevaGestionBean
 
 	}
 
+	public void iniciaEdicionGestion(Gestion gestionEdicion)
+	{
+		this.catStatusActividad = UtilidadesGestion.getCatStatusActividad();
+		this.catTiposGestion = UtilidadesGestion.getCatTipoGestion();
+		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
+
+		this.gestion = gestionEdicion;
+		//Se hardcodea en lugar de elegir desde el catálogo
+		//this.gestion.setStatus(this.catStatusActividad.get(0));
+		//this.gestion.setTipoGestion(new TipoGestion(-1, ""));
+
+	}
+
 	public void actionNuevaGestion()
 	{
 		iniciaNuevaGestion();
@@ -98,7 +112,6 @@ public class NuevaGestionBean
 		}
 	}
 
-	
 	public void activarModoEdicion()
 	{
 		this.editarGestion = 0;
@@ -127,6 +140,7 @@ public class NuevaGestionBean
 
 	public void actionGuardarSolicitud()
 	{
+
 		System.out.println("Guardando solicitud");
 
 		if (this.gestion.getPaciente().getNombre().trim().isEmpty() || this.gestion.getSolicitud().trim().isEmpty())
@@ -165,33 +179,54 @@ public class NuevaGestionBean
 				conexion.setAutoCommit(false);
 				conexion.rollback();
 
-				//Primer paso capturar la gestión en la base de datos del sistema
-				prep = conexion.prepareStatement(
-						"INSERT INTO gestion (Descripcion,FechaRecepcion,SolicitadoA,Solicitud,DetallesGenerales,ResumenFinal,"
-								+ "idUsuario,idStatusActividad,idTipoGestion)\n"
-								+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?) ; ",
-						PreparedStatement.RETURN_GENERATED_KEYS);
-
-				prep.setString(1, this.gestion.getDescripcion());
-				prep.setDate(2, new java.sql.Date(this.gestion.getFechaRecepcion().getTime()));
-				prep.setString(3, "");
-				prep.setString(4, this.gestion.getSolicitud());
-				prep.setString(5, this.gestion.getDetallesGenerales());
-				prep.setInt(6, Integer.parseInt(sesion.getIdUsuario()));
-				prep.setInt(7, this.gestion.getStatus().getIdStatusActividad());
-				prep.setInt(8, this.gestion.getTipoGestion().getIdTipoGestion());
-
-				prep.executeUpdate();
-
-				rBD = prep.getGeneratedKeys();
-
-				if (rBD.next())
+				if (this.gestion.getIdGestion() < 0)
 				{
-					this.gestion.setIdGestion(rBD.getInt(1));
-				}
+					//Primer paso capturar la gestión en la base de datos del sistema
+					prep = conexion.prepareStatement(
+							"INSERT INTO gestion (Descripcion,FechaRecepcion,SolicitadoA,Solicitud,DetallesGenerales,ResumenFinal,"
+									+ "idUsuario,idStatusActividad,idTipoGestion)\n"
+									+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?) ; ",
+							PreparedStatement.RETURN_GENERATED_KEYS);
 
-				prep.close();
-				rBD.close();
+					prep.setString(1, this.gestion.getDescripcion());
+					prep.setDate(2, new java.sql.Date(this.gestion.getFechaRecepcion().getTime()));
+					prep.setString(3, "");
+					prep.setString(4, this.gestion.getSolicitud());
+					prep.setString(5, this.gestion.getDetallesGenerales());
+					prep.setInt(6, Integer.parseInt(sesion.getIdUsuario()));
+					prep.setInt(7, this.gestion.getStatus().getIdStatusActividad());
+					prep.setInt(8, this.gestion.getTipoGestion().getIdTipoGestion());
+
+					prep.executeUpdate();
+
+					rBD = prep.getGeneratedKeys();
+
+					if (rBD.next())
+					{
+						this.gestion.setIdGestion(rBD.getInt(1));
+					}
+
+					prep.close();
+					rBD.close();
+				}
+				else
+				{
+
+					prep = conexion.prepareStatement(
+							"UPDATE gestion SET descripcion=?, Solicitud=?, DetallesGenerales=?, idUsuario=? "
+									+ " WHERE idGestion=?");
+
+					prep.setString(1, this.gestion.getDescripcion());
+					prep.setString(2, this.gestion.getSolicitud());
+					prep.setString(3, this.gestion.getDetallesGenerales());
+					prep.setInt(4, Integer.parseInt(sesion.getIdUsuario()));
+					prep.setInt(5, this.gestion.getIdGestion());
+
+					prep.executeUpdate();
+
+					prep.close();
+
+				}
 
 				//Se busca el lugar de origen en el catálogo, si existe, se utiliza el id, en caso contrario se registra y se utiliza el nuevo Id
 
@@ -231,33 +266,65 @@ public class NuevaGestionBean
 
 				prep.close();
 
-				//Se inserta al paciente en la bd
-				prep = conexion.prepareStatement(
-						" INSERT INTO paciente (idGestion,Nombre,Sexo,Edad,CURP,idLugarResidencia,Diagnostico,HospitalizadoEn,"
-								+ "idSeguridadSocial,Afiliacion)\n" + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ",
-						PreparedStatement.RETURN_GENERATED_KEYS);
-
-				prep.setInt(1, this.gestion.getIdGestion());
-				prep.setString(2, this.gestion.getPaciente().getNombre());
-				prep.setString(3, this.gestion.getPaciente().getSexo());
-				prep.setInt(4, this.gestion.getPaciente().getEdad());
-				prep.setString(5, "");
-				prep.setInt(6, idLugarResidenciaGenerado);
-				prep.setString(7, this.gestion.getPaciente().getDiagnostico());
-				prep.setString(8, "");
-				prep.setInt(9, this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial());
-				prep.setString(10, this.gestion.getPaciente().getAfiliacion());
-
-				prep.executeUpdate();
-
-				rBD = prep.getGeneratedKeys();
-
-				if (rBD.next())
+				if (this.gestion.getIdGestion() < 0)
 				{
-					this.gestion.getPaciente().setIdPaciente(rBD.getInt(1));
-				}
+					//Se inserta al paciente en la bd
+					prep = conexion.prepareStatement(
+							" INSERT INTO paciente (idGestion,Nombre,Sexo,Edad,CURP,idLugarResidencia,Diagnostico,HospitalizadoEn,"
+									+ "idSeguridadSocial,Afiliacion)\n" + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ",
+							PreparedStatement.RETURN_GENERATED_KEYS);
 
-				prep.close();
+					prep.setInt(1, this.gestion.getIdGestion());
+					prep.setString(2, this.gestion.getPaciente().getNombre());
+					prep.setString(3, this.gestion.getPaciente().getSexo());
+					prep.setInt(4, this.gestion.getPaciente().getEdad());
+					prep.setString(5, "");
+					prep.setInt(6, idLugarResidenciaGenerado);
+					prep.setString(7, this.gestion.getPaciente().getDiagnostico());
+					prep.setString(8, "");
+					prep.setInt(9, this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial());
+					prep.setString(10, this.gestion.getPaciente().getAfiliacion());
+
+					prep.executeUpdate();
+
+					rBD = prep.getGeneratedKeys();
+
+					if (rBD.next())
+					{
+						this.gestion.getPaciente().setIdPaciente(rBD.getInt(1));
+					}
+
+					prep.close();
+
+				}
+				else
+				{
+
+					prep = conexion.prepareStatement(
+							"UPDATE paciente SET Nombre=?, Sexo=?, Edad=?, idLugarResidencia=?, Diagnostico=?,"
+									+ "idSeguridadSocial=?, Afiliacion=? WHERE idPaciente=?");
+
+					prep.setString(1, this.gestion.getPaciente().getNombre());
+					prep.setString(2, this.gestion.getPaciente().getSexo());
+					prep.setInt(3, this.gestion.getPaciente().getEdad());
+					prep.setInt(4, idLugarResidenciaGenerado);
+					prep.setString(5, this.gestion.getPaciente().getDiagnostico());
+					prep.setInt(6, this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial());
+					prep.setString(7, this.gestion.getPaciente().getAfiliacion());
+					prep.setInt(8, this.gestion.getPaciente().getIdPaciente());
+
+					prep.executeUpdate();
+					prep.close();
+
+					//Se borran a los contactos para antes de volver a insertar los de la edición
+
+					prep = conexion.prepareStatement("DELETE FROM contactogestion WHERE idGestion=?");
+					prep.setInt(1, this.gestion.getIdGestion());
+
+					prep.executeUpdate();
+					prep.close();
+
+				}
 
 				//Ahora se insertan los contactos de la gestión
 				for (Contacto contacto : this.gestion.getContactos())
@@ -291,7 +358,7 @@ public class NuevaGestionBean
 				Task nuevaTarea = new Task();
 
 				nuevaTarea = new Task();
-				nuevaTarea.setList_id(338456892);
+				nuevaTarea.setList_id(UtilidadesGestion.idListaGestiones);
 
 				LocalDate ldt = LocalDate.now();
 
@@ -302,8 +369,16 @@ public class NuevaGestionBean
 				nuevaTarea.setCompleted(false);
 				nuevaTarea.setStarred(false);
 
-				//Devuelve la tarea creada en el atributo Tarea del objeto
-				wUsuario.postTareaWunderlist(nuevaTarea);
+				if (this.gestion.getIdGestion() < 0)
+				{
+					//Devuelve la tarea creada en el atributo Tarea del objeto
+					wUsuario.postTareaWunderlist(nuevaTarea);
+				}
+				else
+				{
+					//Se obtiene la tarea a ser editada con el id en el objeto gestión
+					wUsuario.getTareaWunderlist(this.gestion.getIdTareaWunderlist());
+				}
 
 				//Se actualiza en la base de datos el id de la tarea de wunderlist y se añade a su registro
 				//Se inserta al paciente en la bd
@@ -348,18 +423,49 @@ public class NuevaGestionBean
 
 				}
 
-				Note nota = new Note();
-				nota.setTask_id(wUsuario.getTarea().getId());
-				nota.setContent(contenidoNota);
+				if (this.gestion.getIdGestion() < 0)
+				{
+					Note nota = new Note();
+					nota.setTask_id(wUsuario.getTarea().getId());
+					nota.setContent(contenidoNota);
 
-				wUsuario.postNotaTareaWunderlist(nota);
+					wUsuario.postNotaTareaWunderlist(nota);
+					iniciaNuevaGestion();
 
-				iniciaNuevaGestion();
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_INFO, "Solicitud Enviada, Folio: " + folio,
+									"La solicitud ha sido registrada exitosamente en el sistema."));
 
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Solicitud Enviada", "La solicitud ha sido registrada exitosamente en el sistema."));
+					System.out.println("Solicitud enviada");
 
-				System.out.println("Solicitud enviada");
+				}
+				else
+				{
+					//Se añade un comentario a la tarea indicando que la tarea o gestión fue editada
+					wUsuario.getTareaWunderlist(this.gestion.getIdTareaWunderlist());
+
+					//se pachea la nota
+					wUsuario.getNotaTareaWunderlist(wUsuario.getTarea());
+
+					//Se pachea la nota
+					wUsuario.getNotas().get(0).setContent(contenidoNota);
+
+					wUsuario.patchNotaWunderlist(wUsuario.getNotas().get(0));
+
+					TaskComment taskComment = new TaskComment();
+					taskComment.setTask_id(wUsuario.getTarea().getId());
+					taskComment.setList_id(wUsuario.getTarea().getList_id());
+					taskComment.setText("Datos Editados");
+
+					wUsuario.postComentarioTareaWunderlist(taskComment);
+
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_INFO, "Solicitud Editada, Folio: " + folio,
+									"La solicitud ha sido editada exitosamente en el sistema."));
+
+					System.out.println("Solicitud editada");
+
+				}
 
 			}
 			catch (Exception e)

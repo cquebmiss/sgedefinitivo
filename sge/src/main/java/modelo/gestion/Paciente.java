@@ -15,6 +15,13 @@ public class Paciente
 	private String			hospitalizadoEn;
 	private SeguridadSocial	seguridadSocial;
 	private String			afiliacion;
+	private String			CURP;
+
+	public Paciente()
+	{
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	public Paciente(Gestion gestion)
 	{
@@ -29,6 +36,7 @@ public class Paciente
 		this.diagnostico = "";
 		this.hospitalizadoEn = "";
 		this.afiliacion = "";
+		this.CURP = "";
 		// TODO Auto-generated constructor stub
 	}
 
@@ -140,6 +148,16 @@ public class Paciente
 	public void setSeguridadSocial(SeguridadSocial seguridadSocial)
 	{
 		this.seguridadSocial = seguridadSocial;
+	}
+
+	public String getCURP()
+	{
+		return CURP;
+	}
+
+	public void setCURP(String cURP)
+	{
+		CURP = cURP;
 	}
 
 }

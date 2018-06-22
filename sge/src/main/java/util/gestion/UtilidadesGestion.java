@@ -20,10 +20,14 @@ import util.FacesUtils;
 
 public class UtilidadesGestion
 {
-	public static String	urlAccessToken	= "https://www.wunderlist.com/oauth/access_token";
-	public static String	urlLists		= "https://a.wunderlist.com/api/v1/lists";
-	public static String	urlTasks		= "https://a.wunderlist.com/api/v1/tasks";
-	public static String	urlNotes		= "https://a.wunderlist.com/api/v1/notes";
+	public static int		idListaGestiones	= 338456892;
+	public static int		idListaPruebas		= 354697479;
+	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
+	public static String	urlLists			= "https://a.wunderlist.com/api/v1/lists";
+	public static String	urlTasks			= "https://a.wunderlist.com/api/v1/tasks";
+	public static String	urlNotes			= "https://a.wunderlist.com/api/v1/notes";
+	public static String	urlTaskComments		= "https://a.wunderlist.com/api/v1/task_comments";
+
 	//Para consultar listas, tareas y notas en específico, se debe adicionar después de la url el id correspondiente, ejemplo: notes/7263526
 
 	public static List<Gestion> getGestionesActivas(int idUsuario)
@@ -107,7 +111,7 @@ public class UtilidadesGestion
 		{
 			prep = conexion.prepareStatement(
 					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
-							+ "FROM sge.gestion ges, usuario us, statusactividad st WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idUsuario=? AND ges.idStatusActividad = 1 1 ORDER BY ges.idGestion DESC");
+							+ "FROM sge.gestion ges, usuario us, statusactividad st WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idUsuario=? AND ges.idStatusActividad = 1 ORDER BY ges.idGestion DESC");
 
 			prep.setInt(1, idUsuario);
 

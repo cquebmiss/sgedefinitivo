@@ -30,6 +30,9 @@ public class WUsuario
 	private List<Note>			notas;
 	private Note				nota;
 
+	private List<TaskComment>	taskComments;
+	private TaskComment			taskComment;
+
 	public WUsuario()
 	{
 		super();
@@ -113,11 +116,43 @@ public class WUsuario
 
 	}
 
+	public void getTareasListWunderlist(String idLista)
+	{
+
+		Invocation invocationTask = client.target(UtilidadesGestion.urlTasks).queryParam("list_id", idLista)
+				.queryParam("client_id", this.access_token.getClient_id())
+				.queryParam("access_token", this.access_token.getAccess_token()).request(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8")).buildGet();
+
+		Response response = invocationTask.invoke();
+
+		this.tareas = response.readEntity(new GenericType<List<Task>>()
+		{
+		});
+
+	}
+
 	public void getTareaWunderlist(String idTarea, String revision)
 	{
 
 		Invocation invocationTask = client.target("https://a.wunderlist.com/api/v1/tasks/" + idTarea)
 				.queryParam("revision", revision).queryParam("client_id", this.access_token.getClient_id())
+				.queryParam("access_token", this.access_token.getAccess_token()).request(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8")).buildGet();
+
+		Response response = invocationTask.invoke();
+
+		this.tarea = response.readEntity(new GenericType<Task>()
+		{
+		});
+
+	}
+
+	public void getTareaWunderlist(String idTarea)
+	{
+
+		Invocation invocationTask = client.target("https://a.wunderlist.com/api/v1/tasks/" + idTarea)
+				.queryParam("client_id", this.access_token.getClient_id())
 				.queryParam("access_token", this.access_token.getAccess_token()).request(MediaType.APPLICATION_JSON)
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8")).buildGet();
 
@@ -192,24 +227,74 @@ public class WUsuario
 
 	}
 
-	public void patchNotaWunderlist(Task task)
+	public void patchNotaWunderlist(Note nota)
 	{
-		Invocation invocation = this.client.target("https://a.wunderlist.com/api/v1/tasks/" + task.getId())
-				.queryParam("revision", task.getRevision()).queryParam("client_id", this.access_token.getClient_id())
+		Invocation invocation = this.client.target(UtilidadesGestion.urlNotes + "/" + nota.getId())
+				.queryParam("revision", nota.getRevision()).queryParam("client_id", this.access_token.getClient_id())
 				.queryParam("access_token", this.access_token.getAccess_token()).request()
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8"))
-				.build("PATCH", Entity.entity(task, MediaType.APPLICATION_JSON))
+				.build("PATCH", Entity.entity(nota, MediaType.APPLICATION_JSON))
 				.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
 
 		Response response = invocation.invoke();
 
-		this.tarea = response.readEntity(new GenericType<Task>()
+		this.nota = response.readEntity(new GenericType<Note>()
 		{
 		});
 
 	}
 
 	//FIN DE MÉTODOS PARA NOTAS
+
+	//MÉTODOS PARA COMENTARIOS
+
+	public void getComentariosTareaWunderlist(Task task)
+	{
+
+		Invocation invocationTask = this.client.target(UtilidadesGestion.urlNotes).queryParam("task_id", task.getId())
+				.queryParam("client_id", this.access_token.getClient_id())
+				.queryParam("access_token", this.access_token.getAccess_token()).request(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8")).buildGet();
+
+		Response response = invocationTask.invoke();
+
+		this.notas = response.readEntity(new GenericType<List<Note>>()
+		{
+		});
+
+	}
+
+	public void postComentarioTareaWunderlist(TaskComment comentario)
+	{
+		Invocation invocation = this.client.target(UtilidadesGestion.urlTaskComments)
+				.queryParam("client_id", this.access_token.getClient_id())
+				.queryParam("access_token", this.access_token.getAccess_token()).request()
+				.buildPost(Entity.entity(comentario, MediaType.APPLICATION_JSON));
+
+		Response response = invocation.invoke();
+
+		this.taskComment = response.readEntity(TaskComment.class);
+
+	}
+
+	public void patchComentarioTareaWunderlist(Note nota)
+	{
+		Invocation invocation = this.client.target(UtilidadesGestion.urlNotes + "/" + nota.getId())
+				.queryParam("revision", nota.getRevision()).queryParam("client_id", this.access_token.getClient_id())
+				.queryParam("access_token", this.access_token.getAccess_token()).request()
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8"))
+				.build("PATCH", Entity.entity(nota, MediaType.APPLICATION_JSON))
+				.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
+
+		Response response = invocation.invoke();
+
+		this.nota = response.readEntity(new GenericType<Note>()
+		{
+		});
+
+	}
+
+	//FIN DE MÉTODOS PARA COMENTARIOS
 
 	public Token getAccess_token()
 	{
@@ -309,6 +394,26 @@ public class WUsuario
 	public void setNota(Note nota)
 	{
 		this.nota = nota;
+	}
+
+	public List<TaskComment> getTaskComments()
+	{
+		return taskComments;
+	}
+
+	public void setTaskComments(List<TaskComment> taskComments)
+	{
+		this.taskComments = taskComments;
+	}
+
+	public TaskComment getTaskComment()
+	{
+		return taskComment;
+	}
+
+	public void setTaskComment(TaskComment taskComment)
+	{
+		this.taskComment = taskComment;
 	}
 
 }

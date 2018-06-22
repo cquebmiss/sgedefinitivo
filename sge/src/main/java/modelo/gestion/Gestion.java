@@ -20,6 +20,7 @@ import util.FacesUtils;
 public class Gestion
 {
 	private int				idGestion;
+	private String			folio;
 	private String			descripcion;
 	private Date			fechaRecepcion;
 	private String			solicitadoA;
@@ -32,11 +33,14 @@ public class Gestion
 	private List<Contacto>	contactos;
 	private Paciente		paciente;
 	private TipoGestion		tipoGestion;
+	private String			idTareaWunderlist;
+	private String			idListaWunderlist;
 
 	public Gestion()
 	{
 		super();
 		this.idGestion = -1;
+		this.folio = "";
 		this.descripcion = "";
 		this.fechaRecepcion = new java.util.Date();
 		this.solicitadoA = "";
@@ -74,9 +78,150 @@ public class Gestion
 		this.tipoGestion = tipoGestion;
 	}
 
+	public void ajustarFolioSegunDescripcion()
+	{
+		if (!this.descripcion.isEmpty())
+		{
+			this.folio = this.descripcion.substring(this.descripcion.indexOf(':') + 1, this.descripcion.indexOf('.'));
+		}
+	}
+
 	//Actualizar todos los datos de la gestión desde la base de datos
 	public void updateAllDataBD()
 	{
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			try
+			{
+
+				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
+
+				prep = conexion.prepareStatement(
+						"SELECT  ges.SolicitadoA, ges.DetallesGenerales,ges.FechaFinalizacion, ges.ResumenFinal, ges.idListaWunderlist, ges.idTareaWunderlist, ges.idTipoGestion, tg.descripcion as descTipoGestion, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
+								+ "FROM sge.gestion ges, usuario us, statusactividad st, tipogestion tg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idTipoGestion = tg.idTipoGestion AND ges.idGestion=?");
+
+				prep.setInt(1, this.idGestion);
+
+				rBD = prep.executeQuery();
+
+				if (rBD.next())
+				{
+					setDescripcion(rBD.getString("Descripcion"));
+					setFechaRecepcion(rBD.getDate("FechaRecepcion"));
+					setSolicitadoA(rBD.getString("SolicitadoA"));
+					setSolicitud(rBD.getString("Solicitud"));
+					setDetallesGenerales(rBD.getString("DetallesGenerales"));
+					setFechaFinalizacion(rBD.getDate("FechaFinalizacion"));
+					setResumenFinal(rBD.getString("ResumenFinal"));
+					setIdTareaWunderlist(rBD.getString("idTareaWunderlist"));
+					setIdListaWunderlist(rBD.getString("idListaWunderlist"));
+
+					setStatus(new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
+
+					Usuario usuario = new Usuario();
+					usuario.setIdUsuario(rBD.getInt("idUsuario"));
+					usuario.setNombre(rBD.getString("nombreUsuario"));
+					setUsuario(usuario);
+
+					//Se añade ahora el paciente a la gestión
+
+					prep.close();
+
+					prep = conexion.prepareStatement(
+							"SELECT p.*, lr.descripcion AS descLugarResidencia, ss.descripcion AS descSeguridadSocial\n"
+									+ "FROM paciente p, lugarresidencia lr, seguridadsocial ss\n"
+									+ "WHERE p.idGestion=? AND p.idLugarResidencia = lr.idLugarResidencia AND p.idSeguridadSocial = ss.idSeguridadSocial");
+
+					prep.setInt(1, getIdGestion());
+
+					rBD = prep.executeQuery();
+
+					if (rBD.next())
+					{
+
+						Paciente objPaciente = new Paciente();
+						objPaciente.setIdPaciente(rBD.getInt("idPaciente"));
+						objPaciente.setGestion(this);
+						objPaciente.setNombre(rBD.getString("Nombre"));
+						objPaciente.setSexo(rBD.getString("Sexo"));
+						objPaciente.setEdad(rBD.getInt("Edad"));
+						objPaciente.setFechaNacimiento(rBD.getDate("FechaNacimiento"));
+						objPaciente.setCURP(rBD.getString("CURP"));
+						objPaciente.setLugarResidencia(new LugarResidencia(rBD.getInt("idLugarResidencia"),
+								rBD.getString("descLugarResidencia")));
+						objPaciente.setDiagnostico(rBD.getString("Diagnostico"));
+						objPaciente.setHospitalizadoEn(rBD.getString("HospitalizadoEn"));
+						objPaciente.setSeguridadSocial(new SeguridadSocial(rBD.getInt("idSeguridadSocial"),
+								rBD.getString("descSeguridadSocial")));
+						objPaciente.setAfiliacion(rBD.getString("Afiliacion"));
+
+						setPaciente(objPaciente);
+
+					}
+
+					ajustarFolioSegunDescripcion();
+
+					//Finalmente los contactos de la gestión
+					prep = conexion.prepareStatement("SELECT * FROM contactogestion WHERE idGestion=?");
+
+					prep.setInt(1, getIdGestion());
+
+					rBD = prep.executeQuery();
+
+					List<Contacto> contactos = new ArrayList<>();
+
+					if (rBD.next())
+					{
+						do
+						{
+							contactos.add(new Contacto(rBD.getInt("idContactoGestion"), rBD.getString("Nombre"),
+									rBD.getString("Telefonos"), rBD.getString("Email"),
+									rBD.getString("Observaciones")));
+
+						} while (rBD.next());
+					}
+
+					setContactos(contactos);
+
+				}
+
+				prep.close();
+				rBD.close();
+
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				conexion.rollback();
+			}
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al actualizar los datos de la gestión, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 
 	}
 
@@ -282,6 +427,36 @@ public class Gestion
 	public void setTipoGestion(TipoGestion tipoGestion)
 	{
 		this.tipoGestion = tipoGestion;
+	}
+
+	public String getIdTareaWunderlist()
+	{
+		return idTareaWunderlist;
+	}
+
+	public void setIdTareaWunderlist(String idTareaWunderlist)
+	{
+		this.idTareaWunderlist = idTareaWunderlist;
+	}
+
+	public String getIdListaWunderlist()
+	{
+		return idListaWunderlist;
+	}
+
+	public void setIdListaWunderlist(String idListaWunderlist)
+	{
+		this.idListaWunderlist = idListaWunderlist;
+	}
+
+	public String getFolio()
+	{
+		return folio;
+	}
+
+	public void setFolio(String folio)
+	{
+		this.folio = folio;
 	}
 
 }

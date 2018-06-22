@@ -24,6 +24,8 @@
 
 								<p:outputPanel styleClass="panelPrincipal">
 
+									<p:messages globalOnly="true" showDetail="true" closable="true"></p:messages>
+
 									<p:dataTable id="tablaGestionesActivas"
 										widgetVar="wTablaGestionesActivas"
 										styleClass="classTablaGestionesActivas" reflow="true"
@@ -43,6 +45,11 @@
 
 										<p:column style="width:50px; ">
 											<p:commandButton icon="fa fa-search"></p:commandButton>
+										</p:column>
+										<p:column style="width:50px; ">
+											<p:commandButton icon="fa fa-edit"
+												actionListener="#{historialGestionBean.actionEdicionGestion(gestion)}">
+											</p:commandButton>
 										</p:column>
 
 										<p:column headerText="Folio / Descripción"
@@ -117,7 +124,7 @@
 											<h:outputText value="#{gestion.solicitud}"></h:outputText>
 										</p:column>
 										<p:column headerText="Conclusión">
-											<h:outputText value="#{gestion.conclusion}"></h:outputText>
+											<h:outputText value="#{gestion.resumenFinal}"></h:outputText>
 										</p:column>
 
 									</p:dataTable>
@@ -125,8 +132,6 @@
 
 								</p:outputPanel>
 
-								<p:commandButton value="Guardar" update="@(.panelPrincipal)"
-									actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
 
 							</h:form>
 						</div>
@@ -155,15 +160,15 @@
 							showDetail="true">
 						</p:messages>
 
-						<h:panelGrid columns="1" cellspacing="15">
 
-							<p:inputTextarea id="inputFinalizarGestion"
-								style="width: 95%; height: 95%;"
-								value="#{historialGestionBean.gestionActivaSelec.resumenFinal}"></p:inputTextarea>
+						<p:inputTextarea id="inputFinalizarGestion" style="width: 95%;"
+							value="#{historialGestionBean.gestionActivaSelec.resumenFinal}"
+							scrollHeight="300" rows="10">
+							<p:ajax event="blur"></p:ajax>
+						</p:inputTextarea>
 
-							<p:commandButton value="Finalizar"></p:commandButton>
+						<br></br>
 
-						</h:panelGrid>
 
 
 
@@ -173,14 +178,11 @@
 
 				<f:facet name="header">
 
-
-					<p:commandButton id="botonAceptarDlgFinalizarGestion"
-						widgetVar="wbotonAceptarDlgFinalizarGestion" value="Aceptar"
-						icon="fa fa-check"
-						actionListener="#{dialogoTemaBean.actionUpdateDesarrolloTemaMinuta}"
-						update="@(.msjDlgFinalizarGestion)"
+					<p:commandButton value="Finalizar"
+						actionListener="#{historialGestionBean.actionFinalizarGestion}"
 						oncomplete="handleFinalizarGestion(xhr, status, args)"
-						process="@form" />
+						process="@form" update="@(.panelPrincipal)"></p:commandButton>
+
 
 
 					<p:commandButton id="botonCancelarDlgFinalizarGestion"
@@ -191,8 +193,6 @@
 
 				</f:facet>
 
-
-
 			</p:dialog>
 
 		</h:form>
@@ -200,11 +200,9 @@
 		<script type="text/javascript">
 			function handleFinalizarGestion(xhr, status, args) {
 
-				if (args.validationFailed || !args.gestionFinalizada) {
+				if (args.validationFailed || !args.concluido) {
 
-					PF('dlgFinalizarGestion').jq.effect("shake", {
-						times : 2
-					}, 200);
+					PF('dlgFinalizarGestion').hide()
 
 				} else {
 					PF('dlgFinalizarGestion').hide();
