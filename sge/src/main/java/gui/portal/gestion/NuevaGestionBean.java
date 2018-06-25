@@ -167,6 +167,8 @@ public class NuevaGestionBean
 
 		PreparedStatement prep = null;
 		ResultSet rBD = null;
+		
+		boolean nuevaGestion = this.gestion.getIdGestion() < 0 ? true : false;
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -266,7 +268,7 @@ public class NuevaGestionBean
 
 				prep.close();
 
-				if (this.gestion.getIdGestion() < 0)
+				if ( nuevaGestion )
 				{
 					//Se inserta al paciente en la bd
 					prep = conexion.prepareStatement(
@@ -369,7 +371,7 @@ public class NuevaGestionBean
 				nuevaTarea.setCompleted(false);
 				nuevaTarea.setStarred(false);
 
-				if (this.gestion.getIdGestion() < 0)
+				if ( nuevaGestion)
 				{
 					//Devuelve la tarea creada en el atributo Tarea del objeto
 					wUsuario.postTareaWunderlist(nuevaTarea);
@@ -423,7 +425,7 @@ public class NuevaGestionBean
 
 				}
 
-				if (this.gestion.getIdGestion() < 0)
+				if ( nuevaGestion )
 				{
 					Note nota = new Note();
 					nota.setTask_id(wUsuario.getTarea().getId());
