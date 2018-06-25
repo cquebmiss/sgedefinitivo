@@ -21,6 +21,7 @@ import util.FacesUtils;
 public class UtilidadesGestion
 {
 	public static int		idListaGestiones	= 338456892;
+	//public static int		idListaGestiones	= 354697479; //pruebas
 	public static int		idListaPruebas		= 354697479;
 	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
 	public static String	urlLists			= "https://a.wunderlist.com/api/v1/lists";
