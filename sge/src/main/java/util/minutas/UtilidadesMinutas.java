@@ -45,7 +45,7 @@ public class UtilidadesMinutas
 			{
 				do
 				{
-					catStatusMinutas.add(new StatusMinuta(rBD.getInt("idStatus"), rBD.getString("Descripcion")));
+					catStatusMinutas.add(new StatusMinuta(rBD.getInt("idStatusMinuta"), rBD.getString("Descripcion")));
 
 				} while (rBD.next());
 

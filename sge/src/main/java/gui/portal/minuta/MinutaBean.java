@@ -103,7 +103,6 @@ public class MinutaBean
 
 	}
 
-
 	public void activarModoEdicion()
 	{
 		this.editarMinuta = 0;
@@ -142,7 +141,8 @@ public class MinutaBean
 
 		try
 		{
-			FacesContext.getCurrentInstance().getExternalContext().redirect("/sge/portal/minutas.jsf");
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			ec.redirect(ec.getRequestContextPath() + "/portal/minutas.jsf");
 		}
 		catch (IOException e)
 		{
@@ -242,7 +242,7 @@ public class MinutaBean
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();)
 		{
 			prep = conexion
-					.prepareStatement(" SELECT * FROM persona WHERE CONCAT(Nombre,ApPaterno,ApMaterno,Cargo) LIKE ?");
+					.prepareStatement(" SELECT * FROM persona WHERE CONCAT(Nombres,ApPaterno,ApMaterno,Cargo) LIKE ?");
 			prep.setString(1, "%" + query + "%");
 
 			rBD = prep.executeQuery();
@@ -252,7 +252,7 @@ public class MinutaBean
 				do
 				{
 					this.resultadosAutoCompleteParticipante.add(new Participante(rBD.getInt("idPersona"),
-							rBD.getString("Nombre"), rBD.getString("ApPaterno"), rBD.getString("ApMaterno"),
+							rBD.getString("Nombres"), rBD.getString("ApPaterno"), rBD.getString("ApMaterno"),
 							rBD.getString("Cargo"), rBD.getString("Sexo"), rBD.getString("Titulo"), ordenParticipantes,
 							this.minuta, ordenParticipantes, rBD.getString("Email")));
 					ordenParticipantes++;
@@ -331,7 +331,7 @@ public class MinutaBean
 	{
 		this.minuta.removeAreaOportunidad(area);
 	}
-	
+
 	// *******************************************************
 
 	public void generarPDF()

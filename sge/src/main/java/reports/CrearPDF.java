@@ -358,7 +358,7 @@ public class CrearPDF
 
 		PdfDocument pdf = new PdfDocument(new PdfWriter(this.TARGET));
 		Document document = new Document(pdf, PageSize.LETTER);
-		document.setMargins(75, 85, 75, 85);
+		document.setMargins(75, 85, 85, 85);
 
 		//HEADER
 		pdf.addEventHandler(PdfDocumentEvent.START_PAGE,
@@ -562,7 +562,7 @@ public class CrearPDF
 			PdfDocument pdfDoc = docEvent.getDocument();
 			PdfPage page = docEvent.getPage();
 			PdfCanvas canvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), pdfDoc);
-			new Canvas(canvas, pdfDoc, new Rectangle(25, 20, page.getPageSize().getWidth() - 72, 80)).add(table);
+			new Canvas(canvas, pdfDoc, new Rectangle(25, 8, page.getPageSize().getWidth() - 72, 80)).add(table);
 		}
 	}
 

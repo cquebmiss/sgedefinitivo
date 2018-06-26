@@ -57,7 +57,7 @@
 
 						<h1>
 							<h:outputText
-								value="#{minutaBean.editarMinuta gt -1 ? 'Edición de Minuta' : 'Nueva Minuta' } ( #{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0 ? 'Reunión de Trabajo' : 'Gira de Trabajo'} )"></h:outputText>
+								value="#{minutaBean.editarMinuta gt -1 ? 'Edición de Minuta' : 'Nueva Minuta' } (#{minutaBean.minuta.tipoMinuta.idTipoMinuta eq 0 ? 'Reunión de Trabajo' : 'Gira de Trabajo'})"></h:outputText>
 						</h1>
 
 						<div class="ui-fluid" id="div4">
@@ -74,9 +74,11 @@
 												style="border:0px none; background-color:transparent;">
 
 
-												<p:outputLabel for="outputIdMinuta" value="Folio Minuta:" />
+												<p:outputLabel for="outputIdMinuta" value="Folio Minuta:"
+													rendered="#{minutaBean.minuta.idMinuta gt 0}" />
 												<h:outputText id="outputIdMinuta"
-													value="#{minutaBean.minuta.idMinuta}" />
+													value="#{minutaBean.minuta.idMinuta}"
+													rendered="#{minutaBean.minuta.idMinuta gt 0}" />
 
 												<p:outputLabel for="inputAsunto" value="Título" />
 												<p:inputText id="inputAsunto"
@@ -270,12 +272,13 @@
 
 
 							<p:dialog header="Firmar Minuta" widgetVar="dlgFirmaMinuta"
-								modal="true" responsive="true" width="300" minimizable="false"
-								draggable="false" closeOnEscape="true" maximizable="true">
+								modal="true" responsive="true" width="330" height="420"
+								minimizable="false" draggable="false" closeOnEscape="true"
+								maximizable="true">
 
 								<p:outputPanel styleClass="classDlgFirma">
 									<p:outputLabel
-										value="#{dialogoFirmarBean.participante.persona.nombre} #{ dialogoFirmarBean.participante.persona.apellidoPaterno } #{ dialogoFirmarBean.participante.persona.apellidoPaterno }">
+										value="#{dialogoFirmarBean.participante.persona.nombre} #{ dialogoFirmarBean.participante.persona.apellidoPaterno } #{ dialogoFirmarBean.participante.persona.apellidoMaterno }">
 									</p:outputLabel>
 									<br></br>
 
@@ -285,7 +288,8 @@
 
 									<p:signature widgetVar="sig"
 										value="#{dialogoFirmarBean.participante.firma}"
-										guideline="true" style="width: 280px; height: 200px;"></p:signature>
+										guideline="true"
+										style="border: 1px solid black; width: 300px; height: 350px;"></p:signature>
 									<br></br>
 								</p:outputPanel>
 
@@ -1200,8 +1204,7 @@
 
 												<p:inputTextarea id="inputPropuestaSolucionAreaOportunidad"
 													style="width: 95%;" placeholder="Propuesta de Solución"
-													value="#{dialogoAreaOportunidadBean.areaOportunidad.propuestaSolucion}"
-													>
+													value="#{dialogoAreaOportunidadBean.areaOportunidad.propuestaSolucion}">
 												</p:inputTextarea>
 
 

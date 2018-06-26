@@ -97,7 +97,7 @@ public class Minuta
 				try
 				{
 					prep = conexion.prepareStatement(
-							" INSERT INTO minuta (idMinuta, Fecha, Hora, Descripcion, Lugar, Introduccion, Desarrollo, Finalizacion, idStatus, idTipoMinuta) "
+							" INSERT INTO minuta (idMinuta, Fecha, Hora, Descripcion, Lugar, Introduccion, Desarrollo, Finalizacion, idStatusMinuta, idTipoMinuta) "
 									+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?); ");
 
 					prep.setInt(1, idInsercion);
@@ -324,7 +324,7 @@ public class Minuta
 		{
 
 			prep = conexion.prepareStatement(
-					"SELECT par.*, per.* FROM minutas.participante par, webrh.persona per WHERE par.idPersona = per.idPersona AND par.idMinuta=?");
+					"SELECT par.*, per.* FROM sge.participante par, sge.persona per WHERE par.idPersona = per.idPersona AND par.idMinuta=?");
 			prep.setInt(1, this.idMinuta);
 			rBD = prep.executeQuery();
 
@@ -341,7 +341,7 @@ public class Minuta
 
 					Persona persona = new Persona();
 					persona.setIdPersona(rBD.getInt("idPersona"));
-					persona.setNombre(rBD.getString("Nombre"));
+					persona.setNombre(rBD.getString("Nombres"));
 					persona.setApellidoPaterno(rBD.getString("ApPaterno"));
 					persona.setApellidoMaterno(rBD.getString("ApMaterno"));
 					persona.setCargo(rBD.getString("Cargo"));
@@ -905,7 +905,8 @@ public class Minuta
 				conexion.setAutoCommit(false);
 				conexion.rollback();
 
-				prep = conexion.prepareStatement("INSERT INTO actividad (Descripcion, idStatus) VALUES (?, ?); ",
+				prep = conexion.prepareStatement(
+						"INSERT INTO actividad (Descripcion, idStatusActividad) VALUES (?, ?); ",
 						PreparedStatement.RETURN_GENERATED_KEYS);
 				prep.setString(1, compromiso.getDescripcion());
 				prep.setInt(2, -1);
@@ -923,7 +924,7 @@ public class Minuta
 				rBD.close();
 
 				prep = conexion.prepareStatement(
-						" INSERT INTO minutas.compromiso (idMinuta, idActividad, Descripcion, Orden, Responsable, FechaFinalizacionEstimada, Resolucion)"
+						" INSERT INTO sge.compromiso (idMinuta, idActividad, Descripcion, Orden, Responsable, FechaFinalizacionEstimada, Resolucion)"
 								+ " VALUES (?, ?, ?, ?, ?, ?, ?);",
 						PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -1006,7 +1007,7 @@ public class Minuta
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
 
-			prep = conexion.prepareStatement(" UPDATE gestiones.actividad SET Descripcion=? WHERE idActividad=?");
+			prep = conexion.prepareStatement(" UPDATE sge.actividad SET Descripcion=? WHERE idActividad=?");
 			prep.setString(1, compromiso.getActividad().getDescripcion());
 			prep.setInt(2, compromiso.getActividad().getIdActividad());
 			prep.executeUpdate();
@@ -1074,7 +1075,7 @@ public class Minuta
 			prep.executeUpdate();
 			prep.close();
 
-			prep = conexion.prepareStatement("DELETE FROM gestiones.actividad WHERE idActividad=? ");
+			prep = conexion.prepareStatement("DELETE FROM sge.actividad WHERE idActividad=? ");
 			prep.setInt(1, compromiso.getActividad().getIdActividad());
 			prep.executeUpdate();
 
@@ -1167,7 +1168,7 @@ public class Minuta
 		{
 
 			prep = conexion.prepareStatement(
-					"SELECT ac.idStatus AS idStatusAct, st.Descripcion AS descStatusAct, c.* FROM compromiso c, gestiones.actividad ac, gestiones.status st WHERE c.idActividad = ac.idActividad AND ac.idStatus = st.idStatus AND c.idMinuta=?");
+					"SELECT ac.idStatusActividad AS idStatusAct, st.Descripcion AS descStatusAct, c.* FROM compromiso c, sge.actividad ac, sge.statusactividad st WHERE c.idActividad = ac.idActividad AND ac.idStatusActividad = st.idStatusActividad AND c.idMinuta=?");
 			prep.setInt(1, this.idMinuta);
 			rBD = prep.executeQuery();
 

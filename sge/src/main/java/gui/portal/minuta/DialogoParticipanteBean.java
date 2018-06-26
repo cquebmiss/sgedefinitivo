@@ -56,7 +56,7 @@ public class DialogoParticipanteBean
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();)
 		{
 			prep = conexion.prepareStatement(
-					" INSERT INTO persona (Nombre, ApPaterno, ApMaterno, Cargo, Sexo, Titulo) VALUES (?, ?, ?, ?, ?, ?) ");
+					" INSERT INTO persona (Nombres, ApPaterno, ApMaterno, Cargo, Sexo, Titulo) VALUES (?, ?, ?, ?, ?, ?) ");
 
 			prep.setString(1, this.nombres.trim());
 			prep.setString(2, this.apellidoPaterno.trim());
@@ -104,7 +104,7 @@ public class DialogoParticipanteBean
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT * FROM persona WHERE Nombre = ? AND ApPaterno = ? AND ApMaterno = ? AND Cargo = ? ");
+					" SELECT * FROM persona WHERE Nombres = ? AND ApPaterno = ? AND ApMaterno = ? AND Cargo = ? ");
 
 			prep.setString(1, this.nombres.trim());
 			prep.setString(2, this.apellidoPaterno.trim());
@@ -115,7 +115,10 @@ public class DialogoParticipanteBean
 
 			if (rBD.next())
 			{
-				return new Participante(rBD.getInt("idPersona"), rBD.getString("Nombre"), rBD.getString("ApPaterno"),
+				
+				//Sacar el email de la última vez que estuvo la persona como participante de alguna minuta
+				
+				return new Participante(rBD.getInt("idPersona"), rBD.getString("Nombres"), rBD.getString("ApPaterno"),
 						rBD.getString("ApMaterno"), rBD.getString("Cargo"), rBD.getString("Sexo"),
 						rBD.getString("Titulo"), -1, null, -1, rBD.getString("Email"));
 
@@ -159,7 +162,7 @@ public class DialogoParticipanteBean
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT * FROM persona WHERE Nombre = ? AND ApPaterno = ? AND ApMaterno = ? AND Cargo = ? ");
+					" SELECT * FROM persona WHERE Nombres = ? AND ApPaterno = ? AND ApMaterno = ? AND Cargo = ? ");
 
 			prep.setString(1, this.nombres.trim());
 			prep.setString(2, this.apellidoPaterno.trim());
