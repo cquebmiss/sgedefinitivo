@@ -90,7 +90,7 @@ public class UtilidadesMinutas
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionMinutas();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT m.*, st.Descripcion AS descStatus, tm.descripcion AS descTipoMinuta FROm minutas.minuta m, minutas.status st, tipominuta tm WHERE m.idStatus = st.idStatus AND m.idTipoMinuta = tm.idTipoMinuta ORDER BY m.idMinuta DESC ");
+					" SELECT m.*, st.Descripcion AS descStatus, tm.descripcion AS descTipoMinuta FROm sge.minuta m, sge.statusminuta st, tipominuta tm WHERE m.idStatusMinuta = st.idStatusMinuta AND m.idTipoMinuta = tm.idTipoMinuta ORDER BY m.idMinuta DESC ");
 
 			rBD = prep.executeQuery();
 
@@ -102,7 +102,7 @@ public class UtilidadesMinutas
 					Date fechaHora = formatter.parse(rBD.getString("Fecha") + " " + rBD.getString("Hora"));
 
 					Minuta m = new Minuta(rBD.getInt("idMinuta"), rBD.getString("Descripcion"), fechaHora,
-							new StatusMinuta(rBD.getInt("idStatus"), rBD.getString("descStatus")));
+							new StatusMinuta(rBD.getInt("idStatusMinuta"), rBD.getString("descStatus")));
 
 					m.setTipoMinuta(new TipoMinuta(rBD.getInt("idTipoMinuta"), rBD.getString("descTipoMinuta")));
 
@@ -162,10 +162,10 @@ public class UtilidadesMinutas
 
 			prep = conexion.prepareStatement(
 					"SELECT com.idCompromiso, com.descripcion as descCompromiso, com.Orden, com.Responsable as idPersonaResponsable, com.FechaFinalizacionEstimada, com.idMinuta, act.descripcion AS descActividad, "
-							+ "act.idStatus AS statusActividad, st.Descripcion AS descStatus,min.Descripcion AS descMinuta, min.Fecha, min.Hora, min.Lugar,\n"
-							+ "per.Nombre, per.ApPaterno, per.ApMaterno, per.Cargo, com.idActividad\n"
-							+ "FROM minutas.compromiso com, gestiones.actividad act, gestiones.status st, minutas.minuta min, webrh.persona per\n"
-							+ "WHERE com.idActividad = act.idActividad AND act.idStatus = st.idStatus AND com.idMinuta = min.idMinuta AND per.idPersona = com.Responsable "
+							+ "act.idStatusActividad AS statusActividad, st.Descripcion AS descStatus,min.Descripcion AS descMinuta, min.Fecha, min.Hora, min.Lugar,\n"
+							+ "per.Nombres, per.ApPaterno, per.ApMaterno, per.Cargo, com.idActividad\n"
+							+ "FROM sge.compromiso com, sge.actividad act, sge.statusactividad st, sge.minuta min, sge.persona per\n"
+							+ "WHERE com.idActividad = act.idActividad AND act.idStatusActividad = st.idStatusActividad AND com.idMinuta = min.idMinuta AND per.idPersona = com.Responsable "
 							+ complementoNoFinalizados + " \n" + "ORDER BY com.idMinuta DESC, com.idCompromiso ASC  ");
 
 			rBD = prep.executeQuery();
@@ -187,7 +187,7 @@ public class UtilidadesMinutas
 					compromiso.setOrden(rBD.getInt("Orden"));
 					compromiso.setFechaFinalizacionEstimada(rBD.getDate("FechaFinalizacionEstimada"));
 					compromiso.setResponsable(new Participante(rBD.getInt("idPersonaResponsable"),
-							rBD.getString("Nombre"), rBD.getString("ApPaterno"), rBD.getString("ApMaterno"),
+							rBD.getString("Nombres"), rBD.getString("ApPaterno"), rBD.getString("ApMaterno"),
 							rBD.getString("Cargo"), "", "", rBD.getInt("idPersonaResponsable"), minutaOrigen, -1, ""));
 					compromiso.updateFechaFinalizacionEstimadaString();
 
