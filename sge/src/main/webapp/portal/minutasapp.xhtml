@@ -135,7 +135,7 @@
 								<h:form id="formCrearParticipante">
 									<p:dialog header="Crear Participante" id="idDlgParticipantes"
 										widgetVar="dlgParticipantes" modal="true" responsive="true"
-										draggable="false" width="300" minimizable="true" height="350"
+										draggable="false" width="300" minimizable="true" height="320"
 										maximizable="false" closeOnEscape="true" focus="inputNombre">
 
 										<p:scrollPanel
@@ -145,60 +145,57 @@
 											<p:outputPanel styleClass="outputDlgCrearParticipante">
 
 
-												<div class="card card-w-title">
 
 
-													<h1>Datos del Participante</h1>
+												<h1>Datos del Participante</h1>
 
-													<p:messages styleClass="msjFormParticipante"
-														closable="true">
-													</p:messages>
+												<p:messages styleClass="msjFormParticipante" closable="true">
+												</p:messages>
 
-													<p:panelGrid id="panelGridNuevoParticipante" columns="1"
-														layout="grid" styleClass="ui-panelgrid-blank form-group">
+												<p:panelGrid id="panelGridNuevoParticipante" columns="1"
+													layout="grid" styleClass="ui-panelgrid-blank form-group">
 
-														<p:inputText id="inputNombre" placeholder="Nombres"
-															value="#{dialogoParticipanteBean.nombres}"
-															required="true" requiredMessage="- Nombre">
-														</p:inputText>
+													<p:inputText id="inputNombre" placeholder="Nombres"
+														value="#{dialogoParticipanteBean.nombres}" required="true"
+														requiredMessage="- Nombre">
+													</p:inputText>
 
-														<p:inputText placeholder="Apellido Paterno"
-															value="#{dialogoParticipanteBean.apellidoPaterno}"
-															required="true" requiredMessage="- Apellido Paterno">
-														</p:inputText>
+													<p:inputText placeholder="Apellido Paterno"
+														value="#{dialogoParticipanteBean.apellidoPaterno}"
+														required="true" requiredMessage="- Apellido Paterno">
+													</p:inputText>
 
-														<p:inputText placeholder="Apelido Materno"
-															value="#{dialogoParticipanteBean.apellidoMaterno}">
-														</p:inputText>
+													<p:inputText placeholder="Apelido Materno"
+														value="#{dialogoParticipanteBean.apellidoMaterno}">
+													</p:inputText>
 
-														<p:inputText placeholder="Cargo"
-															value="#{dialogoParticipanteBean.cargo}" required="true"
-															requiredMessage="- Cargo">
-														</p:inputText>
+													<p:inputText placeholder="Cargo"
+														value="#{dialogoParticipanteBean.cargo}" required="true"
+														requiredMessage="- Cargo">
+													</p:inputText>
 
-														<p:selectOneMenu value="#{dialogoParticipanteBean.sexo}"
-															required="true" requiredMessage="- Sexo">
+													<p:selectOneMenu value="#{dialogoParticipanteBean.sexo}"
+														required="true" requiredMessage="- Sexo">
 
-															<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
-															<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
+														<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
+														<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
 
-														</p:selectOneMenu>
+													</p:selectOneMenu>
 
-														<p:inputText placeholder="Titulo de profesión"
-															value="#{dialogoParticipanteBean.titulo}" required="true"
-															requiredMessage="- Profesión">
-														</p:inputText>
+													<p:inputText placeholder="Titulo de profesión"
+														value="#{dialogoParticipanteBean.titulo}" required="true"
+														requiredMessage="- Profesión">
+													</p:inputText>
 
-													</p:panelGrid>
+												</p:panelGrid>
 
 
 
-												</div>
 
 											</p:outputPanel>
 										</p:scrollPanel>
 
-										<f:facet name="footer">
+										<f:facet name="header">
 											<p:commandButton id="botonAceptarDlgParticipante"
 												widgetVar="wbotonAceptarDlgParticipante" value="Aceptar"
 												icon="fa fa-check"
