@@ -144,6 +144,14 @@
 								style="width:100%;height:800px" widgetVar="chart" />
 							<br></br>
 
+							<p:chart id="graficaBarArea" type="bar"
+								model="#{resultadosBean.modeloBarTotalesArea}"
+								style="width:100%;height:1000px" responsive="true">
+
+							</p:chart>
+
+							<br></br>
+
 
 							<h1>Totales por Profesión</h1>
 							<p:chart type="pie"
@@ -151,11 +159,27 @@
 								style="width:100%;height:800px" widgetVar="chart1" />
 							<br></br>
 
+							<p:chart id="graficaBarProfesion" type="bar"
+								model="#{resultadosBean.modeloBarTotalesProfesion}"
+								style="width:100%;height:650px" responsive="true">
+
+							</p:chart>
+
+							<br></br>
+
 
 							<h1>Totales por Jornada</h1>
 							<p:chart type="pie"
 								model="#{resultadosBean.modeloTotalesJornada}"
 								style="width:100%;height:800px" widgetVar="chart2" />
+							<br></br>
+
+							<p:chart id="graficaBarJornada" type="bar"
+								model="#{resultadosBean.modeloBarTotalesJornada}"
+								style="width:100%;height:650px" responsive="true">
+
+							</p:chart>
+
 							<br></br>
 
 
