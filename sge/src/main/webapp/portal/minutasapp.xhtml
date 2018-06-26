@@ -131,134 +131,130 @@
 
 
 						<div id="divParticipantes">
-							<div class="ui-inputgroup">
-								<h:form id="formCrearParticipante">
-									<p:dialog header="Crear Participante" id="idDlgParticipantes"
-										widgetVar="dlgParticipantes" modal="true" responsive="true"
-										draggable="false" width="300" minimizable="true" height="320"
-										maximizable="false" closeOnEscape="true" focus="inputNombre">
 
-										<p:scrollPanel
-											style="height: 100%; width: 350px; border: 0px solid;"
-											mode="native">
+							<h:form id="formCrearParticipante">
+								<p:dialog header="Crear Participante" id="idDlgParticipantes"
+									widgetVar="dlgParticipantes" modal="true" responsive="true"
+									draggable="false" width="300" minimizable="true" height="320"
+									maximizable="false" closeOnEscape="true" focus="inputNombre">
 
-											<p:outputPanel styleClass="outputDlgCrearParticipante">
+									<p:scrollPanel
+										style="height: 100%; width: 350px; border: 0px solid;"
+										mode="native">
 
+										<p:outputPanel styleClass="outputDlgCrearParticipante">
 
+											<h1>Datos del Participante</h1>
 
+											<p:messages styleClass="msjFormParticipante" closable="true">
+											</p:messages>
 
-												<h1>Datos del Participante</h1>
+											<p:panelGrid id="panelGridNuevoParticipante" columns="1"
+												layout="grid" styleClass="ui-panelgrid-blank form-group">
 
-												<p:messages styleClass="msjFormParticipante" closable="true">
-												</p:messages>
+												<p:inputText id="inputNombre" placeholder="Nombres"
+													value="#{dialogoParticipanteBean.nombres}" required="true"
+													requiredMessage="- Nombre">
+												</p:inputText>
 
-												<p:panelGrid id="panelGridNuevoParticipante" columns="1"
-													layout="grid" styleClass="ui-panelgrid-blank form-group">
+												<p:inputText placeholder="Apellido Paterno"
+													value="#{dialogoParticipanteBean.apellidoPaterno}"
+													required="true" requiredMessage="- Apellido Paterno">
+												</p:inputText>
 
-													<p:inputText id="inputNombre" placeholder="Nombres"
-														value="#{dialogoParticipanteBean.nombres}" required="true"
-														requiredMessage="- Nombre">
-													</p:inputText>
+												<p:inputText placeholder="Apelido Materno"
+													value="#{dialogoParticipanteBean.apellidoMaterno}">
+												</p:inputText>
 
-													<p:inputText placeholder="Apellido Paterno"
-														value="#{dialogoParticipanteBean.apellidoPaterno}"
-														required="true" requiredMessage="- Apellido Paterno">
-													</p:inputText>
+												<p:inputText placeholder="Cargo"
+													value="#{dialogoParticipanteBean.cargo}" required="true"
+													requiredMessage="- Cargo">
+												</p:inputText>
 
-													<p:inputText placeholder="Apelido Materno"
-														value="#{dialogoParticipanteBean.apellidoMaterno}">
-													</p:inputText>
+												<p:selectOneMenu value="#{dialogoParticipanteBean.sexo}"
+													required="true" requiredMessage="- Sexo">
 
-													<p:inputText placeholder="Cargo"
-														value="#{dialogoParticipanteBean.cargo}" required="true"
-														requiredMessage="- Cargo">
-													</p:inputText>
+													<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
+													<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
 
-													<p:selectOneMenu value="#{dialogoParticipanteBean.sexo}"
-														required="true" requiredMessage="- Sexo">
+												</p:selectOneMenu>
 
-														<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
-														<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
+												<p:inputText placeholder="Titulo de profesión"
+													value="#{dialogoParticipanteBean.titulo}" required="true"
+													requiredMessage="- Profesión">
+												</p:inputText>
 
-													</p:selectOneMenu>
-
-													<p:inputText placeholder="Titulo de profesión"
-														value="#{dialogoParticipanteBean.titulo}" required="true"
-														requiredMessage="- Profesión">
-													</p:inputText>
-
-												</p:panelGrid>
+											</p:panelGrid>
 
 
 
 
-											</p:outputPanel>
-										</p:scrollPanel>
+										</p:outputPanel>
+									</p:scrollPanel>
 
-										<f:facet name="header">
-											<p:commandButton id="botonAceptarDlgParticipante"
-												widgetVar="wbotonAceptarDlgParticipante" value="Aceptar"
-												icon="fa fa-check"
-												actionListener="#{minutaBean.actionAñadirParticipanteDesdeDialogo}"
-												update="@(.msjFormParticipante), @(.classTablaParticipantes) "
-												oncomplete="handleAñadirParticipante(xhr, status, args)"
-												process="@form" />
-											<p:commandButton id="botonCancelarDlgParticipante"
-												widgetVar="wbotonCancelarDlgParticipante" value="Cancelar"
-												type="button" styleClass="secondary-button"
-												icon="fa fa-close" onclick="PF('dlgParticipantes').hide()" />
-										</f:facet>
-
-
-
-									</p:dialog>
-
-								</h:form>
-
-								<h:form>
-
-									<p:commandButton icon="fa fa-plus"
-										actionListener="#{dialogoParticipanteBean.addParticipanteNuevo}"
-										onclick="PF('dlgParticipantes').show()"
-										update="@(.outputDlgCrearParticipante)">
-									</p:commandButton>
-
-									<p:autoComplete placeholder="Buscar participante..."
-										minQueryLength="3" value="#{minutaBean.participanteSelec}"
-										var="participante"
-										itemLabel="#{participante == null ? '' : participante.persona.nombre.concat(' ' ).concat(participante.persona.apellidoPaterno).concat(' ').concat(participante.persona.apellidoMaterno).concat(' - ').concat(participante.persona.cargo) }"
-										itemValue="#{participante}"
-										completeMethod="#{minutaBean.getParticipantesRegistrados}"
-										converter="participanteConverter">
-
-										<p:ajax event="itemSelect"
-											listener="#{minutaBean.onItemSelectParticipante}"
-											update="@(.msjTablaParticipantes), @(.classTablaParticipantes), @this" />
-
-									</p:autoComplete>
-
-								</h:form>
+									<f:facet name="header">
+										<p:commandButton id="botonAceptarDlgParticipante"
+											widgetVar="wbotonAceptarDlgParticipante" value="Aceptar"
+											icon="fa fa-check"
+											actionListener="#{minutaBean.actionAñadirParticipanteDesdeDialogo}"
+											update="@(.msjFormParticipante), @(.classTablaParticipantes) "
+											oncomplete="handleAñadirParticipante(xhr, status, args)"
+											process="@form" />
+										<p:commandButton id="botonCancelarDlgParticipante"
+											widgetVar="wbotonCancelarDlgParticipante" value="Cancelar"
+											type="button" styleClass="secondary-button"
+											icon="fa fa-close" onclick="PF('dlgParticipantes').hide()" />
+									</f:facet>
 
 
-								<script type="text/javascript">
-									function handleAñadirParticipante(xhr,
-											status, args) {
 
-										if (args.validationFailed
-												|| args.participanteRepetido) {
+								</p:dialog>
 
-											PF('dlgParticipantes').jq.effect(
-													"shake", {
-														times : 2
-													}, 200);
+							</h:form>
 
-										} else {
-											PF('dlgParticipantes').hide();
-										}
+							<h:form>
+
+								<p:commandButton icon="fa fa-plus"
+									actionListener="#{dialogoParticipanteBean.addParticipanteNuevo}"
+									onclick="PF('dlgParticipantes').show()"
+									update="@(.outputDlgCrearParticipante)">
+								</p:commandButton>
+
+								<p:autoComplete placeholder="Buscar participante..."
+									minQueryLength="3" value="#{minutaBean.participanteSelec}"
+									var="participante"
+									itemLabel="#{participante == null ? '' : participante.persona.nombre.concat(' ' ).concat(participante.persona.apellidoPaterno).concat(' ').concat(participante.persona.apellidoMaterno).concat(' - ').concat(participante.persona.cargo) }"
+									itemValue="#{participante}"
+									completeMethod="#{minutaBean.getParticipantesRegistrados}"
+									converter="participanteConverter">
+
+									<p:ajax event="itemSelect"
+										listener="#{minutaBean.onItemSelectParticipante}"
+										update="@(.msjTablaParticipantes), @(.classTablaParticipantes), @this" />
+
+								</p:autoComplete>
+
+							</h:form>
+
+
+							<script type="text/javascript">
+								function handleAñadirParticipante(xhr, status,
+										args) {
+
+									if (args.validationFailed
+											|| args.participanteRepetido) {
+
+										PF('dlgParticipantes').jq.effect(
+												"shake", {
+													times : 2
+												}, 200);
+
+									} else {
+										PF('dlgParticipantes').hide();
 									}
-								</script>
+								}
+							</script>
 
-							</div>
 						</div>
 
 
