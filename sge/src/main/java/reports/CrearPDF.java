@@ -24,6 +24,7 @@ import javax.faces.context.FacesContext;
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -349,9 +350,9 @@ public class CrearPDF
 		createHTML();
 
 		// Create a PdfFont
-		PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-		PdfFont bold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
-		PdfFont fontFooter = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+		PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA, PdfEncodings.IDENTITY_H, true);
+		PdfFont bold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD, PdfEncodings.IDENTITY_H, true);
+		PdfFont fontFooter = PdfFontFactory.createFont(StandardFonts.HELVETICA, PdfEncodings.IDENTITY_H, true);
 
 		ConverterProperties properties = new ConverterProperties();
 		properties.setBaseUri(this.BASEURI);
