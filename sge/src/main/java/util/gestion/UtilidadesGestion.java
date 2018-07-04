@@ -20,8 +20,8 @@ import util.FacesUtils;
 
 public class UtilidadesGestion
 {
-	public static int		idListaGestiones	= 338456892;
-	//public static int		idListaGestiones	= 354697479; //pruebas
+	//public static int		idListaGestiones	= 338456892;
+	public static int		idListaGestiones	= 354697479;										//pruebas
 	public static int		idListaPruebas		= 354697479;
 	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
 	public static String	urlLists			= "https://a.wunderlist.com/api/v1/lists";
@@ -42,7 +42,7 @@ public class UtilidadesGestion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
+					" SELECT ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
 							+ "FROM sge.gestion ges, usuario us, statusactividad st WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idUsuario=? AND ges.idStatusActividad < 1 ORDER BY ges.idGestion DESC");
 
 			prep.setInt(1, idUsuario);
@@ -58,6 +58,7 @@ public class UtilidadesGestion
 					gestion.setDescripcion(rBD.getString("Descripcion"));
 					gestion.setFechaRecepcion(rBD.getDate("FechaRecepcion"));
 					gestion.setSolicitud(rBD.getString("Solicitud"));
+					gestion.setSolicitadoA(rBD.getString("SolicitadoA"));
 					gestion.setStatus(
 							new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
 
@@ -111,7 +112,7 @@ public class UtilidadesGestion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
+					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
 							+ "FROM sge.gestion ges, usuario us, statusactividad st WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idUsuario=? AND ges.idStatusActividad = 1 ORDER BY ges.idGestion DESC");
 
 			prep.setInt(1, idUsuario);
@@ -129,6 +130,7 @@ public class UtilidadesGestion
 					gestion.setDescripcion(rBD.getString("Descripcion"));
 					gestion.setFechaRecepcion(rBD.getDate("FechaRecepcion"));
 					gestion.setSolicitud(rBD.getString("Solicitud"));
+					gestion.setSolicitadoA(rBD.getString("SolicitadoA"));
 					gestion.setStatus(
 							new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
 

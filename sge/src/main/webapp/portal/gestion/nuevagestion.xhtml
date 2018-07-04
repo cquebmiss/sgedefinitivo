@@ -29,6 +29,8 @@
 
 							<h:form id="formGeneral">
 
+								<p:focus for="campoSolicitadoA"></p:focus>
+
 								<p:outputPanel id="outputPanelPrincipal"
 									styleClass="panelPrincipal">
 
@@ -53,6 +55,13 @@
 											disabled="true">
 											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:calendar>
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+										<p:outputLabel for="campoSolicitadoA" value="Solicitante"></p:outputLabel>
+										<p:inputText id="campoSolicitadoA"
+											value="#{nuevaGestionBean.gestion.solicitadoA}"></p:inputText>
 
 										<p:column></p:column>
 										<p:column></p:column>

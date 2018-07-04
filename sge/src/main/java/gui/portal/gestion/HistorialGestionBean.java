@@ -36,6 +36,8 @@ public class HistorialGestionBean
 	private List<Gestion>	gestionesFinalizadas;
 	private List<Gestion>	gestionesFinalizadasFilter;
 	private Gestion			gestinoFinalizadaSelec;
+	private int				totalGestionesActivas;
+	private int				totalGestionesFinalizadas;
 
 	public HistorialGestionBean()
 	{
@@ -55,6 +57,8 @@ public class HistorialGestionBean
 
 		this.gestionesActivas = UtilidadesGestion.getGestionesActivas(Integer.parseInt(sesion.getIdUsuario()));
 		this.gestionesFinalizadas = UtilidadesGestion.getGestionesFinalizadas(Integer.parseInt(sesion.getIdUsuario()));
+		this.totalGestionesActivas = this.gestionesActivas.size();
+		this.totalGestionesFinalizadas = this.gestionesFinalizadas.size();
 
 	}
 
@@ -263,6 +267,26 @@ public class HistorialGestionBean
 	public void setGestinoFinalizadaSelec(Gestion gestinoFinalizadaSelec)
 	{
 		this.gestinoFinalizadaSelec = gestinoFinalizadaSelec;
+	}
+
+	public int getTotalGestionesActivas()
+	{
+		return totalGestionesActivas;
+	}
+
+	public void setTotalGestionesActivas(int totalGestionesActivas)
+	{
+		this.totalGestionesActivas = totalGestionesActivas;
+	}
+
+	public int getTotalGestionesFinalizadas()
+	{
+		return totalGestionesFinalizadas;
+	}
+
+	public void setTotalGestionesFinalizadas(int totalGestionesFinalizadas)
+	{
+		this.totalGestionesFinalizadas = totalGestionesFinalizadas;
 	}
 
 }

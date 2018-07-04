@@ -20,11 +20,19 @@
 
 							<h:form>
 
-								<h1>Gestiones Activas</h1>
 
 								<p:outputPanel styleClass="panelPrincipal">
 
 									<p:messages globalOnly="true" showDetail="true" closable="true"></p:messages>
+
+									<h1>
+										Gestiones Activas (
+										<h:outputText
+											value="#{historialGestionBean.totalGestionesActivas}"></h:outputText>
+										)
+									</h1>
+
+
 
 									<p:dataTable id="tablaGestionesActivas"
 										widgetVar="wTablaGestionesActivas"
@@ -65,6 +73,11 @@
 											filterBy="#{gestion.solicitud}" filterMatchMode="contains">
 											<h:outputText value="#{gestion.solicitud}"></h:outputText>
 										</p:column>
+										<p:column headerText="Solicitado por"
+											sortBy="#{gestion.solicitadoA}"
+											filterBy="#{gestion.solicitadoA}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.solicitadoA}"></h:outputText>
+										</p:column>
 										<p:column headerText="Status" filterBy="#{gestion.solicitud}"
 											filterMatchMode="contains">
 											<h:outputText value="#{gestion.status.descripcion}"></h:outputText>
@@ -85,13 +98,16 @@
 										</p:column>
 
 									</p:dataTable>
-
-
 								</p:outputPanel>
 
-								<h1>Gestiones Finalizadas</h1>
+								<h1>
+									Gestiones Finalizadas (
+									<h:outputText
+										value="#{historialGestionBean.totalGestionesFinalizadas}"></h:outputText>
+									)
+								</h1>
 
-								<p:outputPanel>
+								<p:outputPanel styleClass="panelPrincipalGFinalizadas">
 
 									<p:dataTable id="tablaGestionesFinalizadas"
 										widgetVar="wTablaGestionesFinalizadas"
@@ -111,19 +127,35 @@
 											</p:outputPanel>
 										</f:facet>
 
-										<p:column headerText="Folio / Descripción">
+										<p:column headerText="Folio / Descripción"
+											sortBy="#{gestion.descripcion}"
+											filterBy="#{gestion.descripcion}" filterMatchMode="contains">
 											<h:outputText value="#{gestion.descripcion}"></h:outputText>
 										</p:column>
-										<p:column headerText="Fecha Recepción">
+										<p:column headerText="Fecha Recepción"
+											sortBy="#{gestion.fechaRecepcion}"
+											filterBy="#{gestion.fechaRecepcion}"
+											filterMatchMode="contains">
 											<h:outputText value="#{gestion.fechaRecepcion}"></h:outputText>
 										</p:column>
-										<p:column headerText="Fecha Finalización">
+										<p:column headerText="Fecha Finalización"
+											sortBy="#{gestion.fechaFinalizacion}"
+											filterBy="#{gestion.fechaFinalizacion}"
+											filterMatchMode="contains">
 											<h:outputText value="#{gestion.fechaFinalizacion}"></h:outputText>
 										</p:column>
-										<p:column headerText="Solicitud">
+										<p:column headerText="Solicitud" sortBy="#{gestion.solicitud}"
+											filterBy="#{gestion.solicitud}" filterMatchMode="contains">
 											<h:outputText value="#{gestion.solicitud}"></h:outputText>
 										</p:column>
-										<p:column headerText="Conclusión">
+										<p:column headerText="Solicitado por"
+											sortBy="#{gestion.solicitadoA}"
+											filterBy="#{gestion.solicitadoA}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.solicitadoA}"></h:outputText>
+										</p:column>
+										<p:column headerText="Conclusión"
+											sortBy="#{gestion.resumenFinal}"
+											filterBy="#{gestion.resumenFinal}" filterMatchMode="contains">
 											<h:outputText value="#{gestion.resumenFinal}"></h:outputText>
 										</p:column>
 
@@ -181,7 +213,8 @@
 					<p:commandButton value="Finalizar"
 						actionListener="#{historialGestionBean.actionFinalizarGestion}"
 						oncomplete="handleFinalizarGestion(xhr, status, args)"
-						process="@form" update="@(.panelPrincipal)"></p:commandButton>
+						process="@form"
+						update="@(.panelPrincipal) @(.panelPrincipalGFinalizadas)"></p:commandButton>
 
 
 

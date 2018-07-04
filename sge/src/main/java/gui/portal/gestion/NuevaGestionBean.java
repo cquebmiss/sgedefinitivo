@@ -167,7 +167,7 @@ public class NuevaGestionBean
 
 		PreparedStatement prep = null;
 		ResultSet rBD = null;
-		
+
 		boolean nuevaGestion = this.gestion.getIdGestion() < 0 ? true : false;
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
@@ -192,7 +192,7 @@ public class NuevaGestionBean
 
 					prep.setString(1, this.gestion.getDescripcion());
 					prep.setDate(2, new java.sql.Date(this.gestion.getFechaRecepcion().getTime()));
-					prep.setString(3, "");
+					prep.setString(3, this.gestion.getSolicitadoA());
 					prep.setString(4, this.gestion.getSolicitud());
 					prep.setString(5, this.gestion.getDetallesGenerales());
 					prep.setInt(6, Integer.parseInt(sesion.getIdUsuario()));
@@ -268,7 +268,7 @@ public class NuevaGestionBean
 
 				prep.close();
 
-				if ( nuevaGestion )
+				if (nuevaGestion)
 				{
 					//Se inserta al paciente en la bd
 					prep = conexion.prepareStatement(
@@ -304,7 +304,7 @@ public class NuevaGestionBean
 
 					prep = conexion.prepareStatement(
 							"UPDATE paciente SET Nombre=?, Sexo=?, Edad=?, idLugarResidencia=?, Diagnostico=?,"
-									+ "idSeguridadSocial=?, Afiliacion=? WHERE idPaciente=?");
+									+ "idSeguridadSocial=?, Afiliacion=?, SolicitadoA=? WHERE idPaciente=?");
 
 					prep.setString(1, this.gestion.getPaciente().getNombre());
 					prep.setString(2, this.gestion.getPaciente().getSexo());
@@ -313,7 +313,8 @@ public class NuevaGestionBean
 					prep.setString(5, this.gestion.getPaciente().getDiagnostico());
 					prep.setInt(6, this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial());
 					prep.setString(7, this.gestion.getPaciente().getAfiliacion());
-					prep.setInt(8, this.gestion.getPaciente().getIdPaciente());
+					prep.setString(8, this.gestion.getSolicitadoA());
+					prep.setInt(9, this.gestion.getPaciente().getIdPaciente());
 
 					prep.executeUpdate();
 					prep.close();
@@ -371,7 +372,7 @@ public class NuevaGestionBean
 				nuevaTarea.setCompleted(false);
 				nuevaTarea.setStarred(false);
 
-				if ( nuevaGestion)
+				if (nuevaGestion)
 				{
 					//Devuelve la tarea creada en el atributo Tarea del objeto
 					wUsuario.postTareaWunderlist(nuevaTarea);
@@ -399,6 +400,7 @@ public class NuevaGestionBean
 				String contenidoNota = "Fecha de Recepción: "
 						+ new SimpleDateFormat("yyyy-MM-dd - HH:mm:dd").format(this.gestion.getFechaRecepcion()) + "\n";
 				contenidoNota += "Usuario: " + sesion.getIdUsuario() + " - " + sesion.getNombreUsuario() + "\n\n";
+				contenidoNota += "Solicitado por: " + this.gestion.getSolicitadoA() + "\n\n";
 				contenidoNota += "Paciente: \n";
 				contenidoNota += "Nombre: " + this.gestion.getPaciente().getNombre() + "\n";
 				contenidoNota += "Edad: " + this.gestion.getPaciente().getEdad() + "\n";
@@ -425,7 +427,7 @@ public class NuevaGestionBean
 
 				}
 
-				if ( nuevaGestion )
+				if (nuevaGestion)
 				{
 					Note nota = new Note();
 					nota.setTask_id(wUsuario.getTarea().getId());
