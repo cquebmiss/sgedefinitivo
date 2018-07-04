@@ -13,6 +13,7 @@ public class Note
 
 	//Respuesta
 	private String	error;
+	private String	created_by_request_id;
 
 	public Note()
 	{
@@ -21,7 +22,7 @@ public class Note
 	}
 
 	public Note(long id, long task_id, String content, String created_at, String updated_at, int revision, String type,
-			String error)
+			String error, String created_by_request_id)
 	{
 		super();
 		this.id = id;
@@ -32,6 +33,7 @@ public class Note
 		this.revision = revision;
 		this.type = type;
 		this.error = error;
+		this.created_by_request_id = created_by_request_id;
 	}
 
 	public long getId()
@@ -112,6 +114,16 @@ public class Note
 	public void setError(String error)
 	{
 		this.error = error;
+	}
+
+	public String getCreated_by_request_id()
+	{
+		return created_by_request_id;
+	}
+
+	public void setCreated_by_request_id(String created_by_request_id)
+	{
+		this.created_by_request_id = created_by_request_id;
 	}
 
 }
