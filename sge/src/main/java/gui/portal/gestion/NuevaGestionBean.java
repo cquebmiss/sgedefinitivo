@@ -215,14 +215,15 @@ public class NuevaGestionBean
 				{
 
 					prep = conexion.prepareStatement(
-							"UPDATE gestion SET descripcion=?, Solicitud=?, DetallesGenerales=?, idUsuario=? "
+							"UPDATE gestion SET descripcion=?, Solicitud=?, DetallesGenerales=?, idUsuario=?, SolicitadoA=? "
 									+ " WHERE idGestion=?");
 
 					prep.setString(1, this.gestion.getDescripcion());
 					prep.setString(2, this.gestion.getSolicitud());
 					prep.setString(3, this.gestion.getDetallesGenerales());
 					prep.setInt(4, Integer.parseInt(sesion.getIdUsuario()));
-					prep.setInt(5, this.gestion.getIdGestion());
+					prep.setString(5, this.gestion.getSolicitadoA());
+					prep.setInt(6, this.gestion.getIdGestion());
 
 					prep.executeUpdate();
 
@@ -304,7 +305,7 @@ public class NuevaGestionBean
 
 					prep = conexion.prepareStatement(
 							"UPDATE paciente SET Nombre=?, Sexo=?, Edad=?, idLugarResidencia=?, Diagnostico=?,"
-									+ "idSeguridadSocial=?, Afiliacion=?, SolicitadoA=? WHERE idPaciente=?");
+									+ "idSeguridadSocial=?, Afiliacion=? WHERE idPaciente=?");
 
 					prep.setString(1, this.gestion.getPaciente().getNombre());
 					prep.setString(2, this.gestion.getPaciente().getSexo());
@@ -313,8 +314,7 @@ public class NuevaGestionBean
 					prep.setString(5, this.gestion.getPaciente().getDiagnostico());
 					prep.setInt(6, this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial());
 					prep.setString(7, this.gestion.getPaciente().getAfiliacion());
-					prep.setString(8, this.gestion.getSolicitadoA());
-					prep.setInt(9, this.gestion.getPaciente().getIdPaciente());
+					prep.setInt(8, this.gestion.getPaciente().getIdPaciente());
 
 					prep.executeUpdate();
 					prep.close();
