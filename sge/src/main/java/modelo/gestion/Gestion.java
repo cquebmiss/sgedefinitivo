@@ -19,22 +19,24 @@ import util.FacesUtils;
 
 public class Gestion
 {
-	private int				idGestion;
-	private String			folio;
-	private String			descripcion;
-	private Date			fechaRecepcion;
-	private String			solicitadoA;
-	private String			solicitud;
-	private String			detallesGenerales;
-	private Date			fechaFinalizacion;
-	private String			resumenFinal;
-	private Usuario			usuario;
-	private StatusActividad	status;
-	private List<Contacto>	contactos;
-	private Paciente		paciente;
-	private TipoGestion		tipoGestion;
-	private String			idTareaWunderlist;
-	private String			idListaWunderlist;
+	private int					idGestion;
+	private String				folio;
+	private String				descripcion;
+	private Date				fechaRecepcion;
+	private String				solicitadoA;
+	private String				solicitud;
+	private String				detallesGenerales;
+	private Date				fechaFinalizacion;
+	private String				resumenFinal;
+	private Usuario				usuario;
+	private StatusActividad		status;
+	private List<Contacto>		contactos;
+	private Paciente			paciente;
+	private TipoGestion			tipoGestion;
+	private String				idTareaWunderlist;
+	private String				idListaWunderlist;
+
+	private CategoriaGestion	categoria;
 
 	public Gestion()
 	{
@@ -457,6 +459,16 @@ public class Gestion
 	public void setFolio(String folio)
 	{
 		this.folio = folio;
+	}
+
+	public CategoriaGestion getCategoria()
+	{
+		return categoria;
+	}
+
+	public void setCategoria(CategoriaGestion categoria)
+	{
+		this.categoria = categoria;
 	}
 
 }

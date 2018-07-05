@@ -78,6 +78,12 @@
 											filterBy="#{gestion.solicitadoA}" filterMatchMode="contains">
 											<h:outputText value="#{gestion.solicitadoA}"></h:outputText>
 										</p:column>
+										<p:column headerText="Categoría"
+											sortBy="#{gestion.categoria.descripcion}"
+											filterBy="#{gestion.categoria.descripcion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.categoria.descripcion}"></h:outputText>
+										</p:column>
 										<p:column headerText="Status" filterBy="#{gestion.solicitud}"
 											filterMatchMode="contains">
 											<h:outputText value="#{gestion.status.descripcion}"></h:outputText>
@@ -152,6 +158,12 @@
 											sortBy="#{gestion.solicitadoA}"
 											filterBy="#{gestion.solicitadoA}" filterMatchMode="contains">
 											<h:outputText value="#{gestion.solicitadoA}"></h:outputText>
+										</p:column>
+										<p:column headerText="Categoría"
+											sortBy="#{gestion.categoria.descripcion}"
+											filterBy="#{gestion.categoria.descripcion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.categoria.descripcion}"></h:outputText>
 										</p:column>
 										<p:column headerText="Conclusión"
 											sortBy="#{gestion.resumenFinal}"

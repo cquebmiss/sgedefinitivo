@@ -40,7 +40,7 @@
 										styleClass="ui-panelgrid-blank form-group form-elements"
 										style="border:0px none; background-color:transparent;">
 
-										<p:outputLabel for="campoFolio" value="Folio:"></p:outputLabel>
+										<p:outputLabel for="campoFolio" value="Folio"></p:outputLabel>
 										<h:outputText id="campoFolio"
 											value="#{nuevaGestionBean.gestion.folio}"></h:outputText>
 
@@ -48,7 +48,7 @@
 										<p:column></p:column>
 
 										<p:outputLabel for="campoFechaRecepcion"
-											value="Fecha de Recepción:" />
+											value="Fecha de Recepción" />
 
 										<p:calendar id="campoFechaRecepcion" pattern="MM/dd/yyyy"
 											value="#{nuevaGestionBean.gestion.fechaRecepcion}"
@@ -62,6 +62,20 @@
 										<p:outputLabel for="campoSolicitadoA" value="Solicitante"></p:outputLabel>
 										<p:inputText id="campoSolicitadoA"
 											value="#{nuevaGestionBean.gestion.solicitadoA}"></p:inputText>
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+										<p:outputLabel for="listaCategoriaGestion"
+											value="Categoría de la Gestión"></p:outputLabel>
+										<p:selectOneMenu id="listaCategoriaGestion"
+											value="#{nuevaGestionBean.gestion.categoria}"
+											converter="categoriaGestionConverter">
+											<p:ajax event="change"></p:ajax>
+											<f:selectItems
+												value="#{nuevaGestionBean.catCategoriaGestion}" var="cat"
+												itemLabel="#{cat.descripcion}" itemValue="#{cat}"></f:selectItems>
+										</p:selectOneMenu>
 
 										<p:column></p:column>
 										<p:column></p:column>

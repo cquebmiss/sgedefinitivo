@@ -19,6 +19,7 @@ import javax.faces.context.FacesContext;
 import modelo.Sesion;
 import modelo.actividades.StatusActividad;
 import modelo.gestion.Contacto;
+import modelo.gestion.CategoriaGestion;
 import modelo.gestion.Gestion;
 import modelo.gestion.ListElement;
 import modelo.gestion.Note;
@@ -39,6 +40,7 @@ public class NuevaGestionBean
 	private List<StatusActividad>	catStatusActividad;
 	private List<TipoGestion>		catTiposGestion;
 	private List<SeguridadSocial>	catSeguridadSocial;
+	private List<CategoriaGestion>	catCategoriaGestion;
 
 	private Gestion					gestion;
 	private int						editarGestion;
@@ -75,6 +77,7 @@ public class NuevaGestionBean
 		this.catStatusActividad = UtilidadesGestion.getCatStatusActividad();
 		this.catTiposGestion = UtilidadesGestion.getCatTipoGestion();
 		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
+		this.catCategoriaGestion = UtilidadesGestion.getCatCategoriaGestion();
 
 		this.gestion = new Gestion();
 		//Se hardcodea en lugar de elegir desde el catálogo
@@ -88,6 +91,7 @@ public class NuevaGestionBean
 		this.catStatusActividad = UtilidadesGestion.getCatStatusActividad();
 		this.catTiposGestion = UtilidadesGestion.getCatTipoGestion();
 		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
+		this.catCategoriaGestion = UtilidadesGestion.getCatCategoriaGestion();
 
 		this.gestion = gestionEdicion;
 		//Se hardcodea en lugar de elegir desde el catálogo
@@ -186,8 +190,8 @@ public class NuevaGestionBean
 					//Primer paso capturar la gestión en la base de datos del sistema
 					prep = conexion.prepareStatement(
 							"INSERT INTO gestion (Descripcion,FechaRecepcion,SolicitadoA,Solicitud,DetallesGenerales,ResumenFinal,"
-									+ "idUsuario,idStatusActividad,idTipoGestion)\n"
-									+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?) ; ",
+									+ "idUsuario,idStatusActividad,idTipoGestion,idCategoriaGestion)\n"
+									+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?, ?) ; ",
 							PreparedStatement.RETURN_GENERATED_KEYS);
 
 					prep.setString(1, this.gestion.getDescripcion());
@@ -198,6 +202,7 @@ public class NuevaGestionBean
 					prep.setInt(6, Integer.parseInt(sesion.getIdUsuario()));
 					prep.setInt(7, this.gestion.getStatus().getIdStatusActividad());
 					prep.setInt(8, this.gestion.getTipoGestion().getIdTipoGestion());
+					prep.setInt(9, this.gestion.getCategoria().getIdCategoriaGestion());
 
 					prep.executeUpdate();
 
@@ -215,7 +220,7 @@ public class NuevaGestionBean
 				{
 
 					prep = conexion.prepareStatement(
-							"UPDATE gestion SET descripcion=?, Solicitud=?, DetallesGenerales=?, idUsuario=?, SolicitadoA=? "
+							"UPDATE gestion SET descripcion=?, Solicitud=?, DetallesGenerales=?, idUsuario=?, SolicitadoA=?, idCategoriaGestion=? "
 									+ " WHERE idGestion=?");
 
 					prep.setString(1, this.gestion.getDescripcion());
@@ -223,7 +228,8 @@ public class NuevaGestionBean
 					prep.setString(3, this.gestion.getDetallesGenerales());
 					prep.setInt(4, Integer.parseInt(sesion.getIdUsuario()));
 					prep.setString(5, this.gestion.getSolicitadoA());
-					prep.setInt(6, this.gestion.getIdGestion());
+					prep.setInt(6, this.gestion.getCategoria().getIdCategoriaGestion());
+					prep.setInt(7, this.gestion.getIdGestion());
 
 					prep.executeUpdate();
 
@@ -401,6 +407,7 @@ public class NuevaGestionBean
 						+ new SimpleDateFormat("yyyy-MM-dd - HH:mm:dd").format(this.gestion.getFechaRecepcion()) + "\n";
 				contenidoNota += "Usuario: " + sesion.getIdUsuario() + " - " + sesion.getNombreUsuario() + "\n\n";
 				contenidoNota += "Solicitado por: " + this.gestion.getSolicitadoA() + "\n\n";
+				contenidoNota += "Categoría de la gestión: " + this.gestion.getCategoria().getDescripcion() + "\n\n";
 				contenidoNota += "Paciente: \n";
 				contenidoNota += "Nombre: " + this.gestion.getPaciente().getNombre() + "\n";
 				contenidoNota += "Edad: " + this.gestion.getPaciente().getEdad() + "\n";
@@ -622,6 +629,16 @@ public class NuevaGestionBean
 	public void setListaTareas(List<Task> listaTareas)
 	{
 		this.listaTareas = listaTareas;
+	}
+
+	public List<CategoriaGestion> getCatCategoriaGestion()
+	{
+		return catCategoriaGestion;
+	}
+
+	public void setCatCategoriaGestion(List<CategoriaGestion> catCategoriaGestion)
+	{
+		this.catCategoriaGestion = catCategoriaGestion;
 	}
 
 }

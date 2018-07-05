@@ -15,13 +15,14 @@ import modelo.actividades.StatusActividad;
 import modelo.gestion.Gestion;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.TipoGestion;
+import modelo.gestion.CategoriaGestion;
 import resources.DataBase;
 import util.FacesUtils;
 
 public class UtilidadesGestion
 {
 	public static int		idListaGestiones	= 338456892;
-	//public static int		idListaGestiones	= 354697479; //pruebas
+	//public static int		idListaGestiones	= 354697479;										//pruebas
 	public static int		idListaPruebas		= 354697479;
 	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
 	public static String	urlLists			= "https://a.wunderlist.com/api/v1/lists";
@@ -42,8 +43,8 @@ public class UtilidadesGestion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
-							+ "FROM sge.gestion ges, usuario us, statusactividad st WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idUsuario=? AND ges.idStatusActividad < 1 ORDER BY ges.idGestion DESC");
+					" SELECT ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion \n"
+							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion AND ges.idUsuario=? AND ges.idStatusActividad < 1 ORDER BY ges.idGestion DESC");
 
 			prep.setInt(1, idUsuario);
 
@@ -61,6 +62,9 @@ public class UtilidadesGestion
 					gestion.setSolicitadoA(rBD.getString("SolicitadoA"));
 					gestion.setStatus(
 							new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
+
+					gestion.setCategoria(new CategoriaGestion(rBD.getInt("idCategoriaGestion"),
+							rBD.getString("descCategoriaGestion")));
 
 					Usuario usuario = new Usuario();
 					usuario.setIdUsuario(rBD.getInt("idUsuario"));
@@ -112,8 +116,8 @@ public class UtilidadesGestion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
-							+ "FROM sge.gestion ges, usuario us, statusactividad st WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idUsuario=? AND ges.idStatusActividad = 1 ORDER BY ges.idGestion DESC");
+					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion  \n"
+							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion  AND ges.idUsuario=? AND ges.idStatusActividad = 1 ORDER BY ges.idGestion DESC");
 
 			prep.setInt(1, idUsuario);
 
@@ -133,6 +137,9 @@ public class UtilidadesGestion
 					gestion.setSolicitadoA(rBD.getString("SolicitadoA"));
 					gestion.setStatus(
 							new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
+
+					gestion.setCategoria(new CategoriaGestion(rBD.getInt("idCategoriaGestion"),
+							rBD.getString("descCategoriaGestion")));
 
 					Usuario usuario = new Usuario();
 					usuario.setIdUsuario(rBD.getInt("idUsuario"));
@@ -308,6 +315,59 @@ public class UtilidadesGestion
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de seguridad social, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return catSeguridadSocial;
+
+	}
+
+	public static List<CategoriaGestion> getCatCategoriaGestion()
+	{
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		List<CategoriaGestion> catSeguridadSocial = new ArrayList<>();
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			prep = conexion.prepareStatement(" SELECT * FROM categoriagestion order by idCategoriaGestion");
+
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+				do
+				{
+					catSeguridadSocial
+							.add(new CategoriaGestion(rBD.getInt("idCategoriaGestion"), rBD.getString("Descripcion")));
+
+				} while (rBD.next());
+
+			}
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener el catálogo de categorías de gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
 		}
