@@ -97,10 +97,16 @@ public class HistorialGestionBean
 
 	}
 
+	public void actionPrepararDialogoFinalizacion()
+	{
+		this.gestionActivaSelec.setFechaFinalizacion(new java.util.Date());
+	}
+
 	//La gestión seleccionada
 	public void actionFinalizarGestion()
 	{
 		String resumenFinal = this.gestionActivaSelec.getResumenFinal();
+		java.util.Date fechaFinalizacion = this.gestionActivaSelec.getFechaFinalizacion();
 
 		this.gestionActivaSelec.updateAllDataBD();
 
@@ -112,7 +118,7 @@ public class HistorialGestionBean
 					"UPDATE gestion SET idStatusActividad=?, ResumenFinal=?, FechaFinalizacion=? WHERE idGestion=?");
 			prep.setInt(1, 1);
 			prep.setString(2, resumenFinal);
-			prep.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+			prep.setDate(3, new java.sql.Date(fechaFinalizacion.getTime()));
 			prep.setInt(4, this.gestionActivaSelec.getIdGestion());
 
 			prep.executeUpdate();

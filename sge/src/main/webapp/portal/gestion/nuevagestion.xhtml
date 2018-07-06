@@ -44,15 +44,27 @@
 										<h:outputText id="campoFolio"
 											value="#{nuevaGestionBean.gestion.folio}"></h:outputText>
 
-										<p:column></p:column>
-										<p:column></p:column>
+										<p:inputText placeholder="Folio"
+											value="#{nuevaGestionBean.gestion.folio}"
+											rendered="#{nuevaGestionBean.gestion.idGestion lt 0}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+										<p:inputText placeholder="Tarea Wunderlist"
+											value="#{nuevaGestionBean.gestion.idTareaWunderlist}"
+											rendered="#{nuevaGestionBean.gestion.idGestion lt 0}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+
+										<p:column
+											rendered="#{nuevaGestionBean.gestion.idGestion gt -1}"></p:column>
+										<p:column
+											rendered="#{nuevaGestionBean.gestion.idGestion gt -1}"></p:column>
 
 										<p:outputLabel for="campoFechaRecepcion"
 											value="Fecha de Recepción" />
 
 										<p:calendar id="campoFechaRecepcion" pattern="MM/dd/yyyy"
-											value="#{nuevaGestionBean.gestion.fechaRecepcion}"
-											disabled="true">
+											value="#{nuevaGestionBean.gestion.fechaRecepcion}">
 											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:calendar>
 
@@ -61,7 +73,9 @@
 
 										<p:outputLabel for="campoSolicitadoA" value="Solicitante"></p:outputLabel>
 										<p:inputText id="campoSolicitadoA"
-											value="#{nuevaGestionBean.gestion.solicitadoA}"></p:inputText>
+											value="#{nuevaGestionBean.gestion.solicitadoA}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
 
 										<p:column></p:column>
 										<p:column></p:column>

@@ -41,6 +41,7 @@
 										value="#{historialGestionBean.gestionesActivas}" var="gestion"
 										filteredValue="#{historialGestionBean.gestionesActivasFilter}"
 										paginator="true" paginatorPosition="top" rows="10"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
 										paginatorAlwaysVisible="true">
 
 										<f:facet name="header">
@@ -49,6 +50,16 @@
 													onkeyup="PF('wTablaGestionesActivas').filter()"
 													style="width:150px" placeholder="Buscar..." />
 											</p:outputPanel>
+										</f:facet>
+
+										<f:facet name="{Exporters}">
+
+											<p:commandButton style="font-weight: bolder;"
+												value="Exportar a Excel" ajax="false">
+												<p:dataExporter type="xls" target="tablaGestionesActivas"
+													fileName="SGE-Gestiones_Activas" />
+											</p:commandButton>
+
 										</f:facet>
 
 										<p:column style="width:50px; ">
@@ -96,6 +107,7 @@
 
 											<p:commandButton icon="fa fa-check "
 												onclick="PF('dlgFinalizarGestion').show();"
+												action="#{historialGestionBean.actionPrepararDialogoFinalizacion}"
 												update="@(.classDlgFinalizarGestion)">
 												<f:setPropertyActionListener value="#{gestion}"
 													target="#{historialGestionBean.gestionActivaSelec}" />
@@ -123,6 +135,7 @@
 										var="gestion"
 										filteredValue="#{historialGestionBean.gestionesFinalizadasFilter}"
 										paginator="true" paginatorPosition="top" rows="10"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
 										paginatorAlwaysVisible="true">
 
 										<f:facet name="header">
@@ -131,6 +144,17 @@
 													onkeyup="PF('wTablaGestionesFinalizadas').filter()"
 													style="width:150px" placeholder="Buscar..." />
 											</p:outputPanel>
+										</f:facet>
+
+										<f:facet name="{Exporters}">
+
+											<p:commandButton style="font-weight: bolder;"
+												value="Exportar a Excel" ajax="false">
+												<p:dataExporter type="xls"
+													target="tablaGestionesFinalizadas"
+													fileName="SGE-Gestiones_Finalizadas" />
+											</p:commandButton>
+
 										</f:facet>
 
 										<p:column headerText="Folio / Descripción"
@@ -203,6 +227,11 @@
 						<p:messages styleClass="msjDlgFinalizarGestion" closable="true"
 							showDetail="true">
 						</p:messages>
+
+						<p:calendar
+							value="#{historialGestionBean.gestionActivaSelec.fechaFinalizacion}">
+							<p:ajax event="blur"></p:ajax>
+						</p:calendar>
 
 
 						<p:inputTextarea id="inputFinalizarGestion" style="width: 95%;"

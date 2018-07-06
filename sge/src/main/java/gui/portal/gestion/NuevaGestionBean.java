@@ -94,6 +94,26 @@ public class NuevaGestionBean
 		this.catCategoriaGestion = UtilidadesGestion.getCatCategoriaGestion();
 
 		this.gestion = gestionEdicion;
+
+		//Se indica cual es la categoría y la seguridad social
+		for (CategoriaGestion cat : this.catCategoriaGestion)
+		{
+			if (this.gestion.getCategoria().getIdCategoriaGestion() == cat.getIdCategoriaGestion())
+			{
+				this.gestion.setCategoria(cat);
+			}
+
+		}
+
+		for (SeguridadSocial ss : this.catSeguridadSocial)
+		{
+			if (this.gestion.getPaciente().getSeguridadSocial().getIdSeguridadSocial() == ss.getIdSeguridadSocial())
+			{
+				this.gestion.getPaciente().setSeguridadSocial(ss);
+			}
+
+		}
+
 		//Se hardcodea en lugar de elegir desde el catálogo
 		//this.gestion.setStatus(this.catStatusActividad.get(0));
 		//this.gestion.setTipoGestion(new TipoGestion(-1, ""));
@@ -187,11 +207,33 @@ public class NuevaGestionBean
 
 				if (this.gestion.getIdGestion() < 0)
 				{
+					int indiceComplemento = 10;
+					String complementoAtributo = "";
+					String complementoValor = "";
+
+					String complementoAtributoW = "";
+					String complementoValorW = "";
+
+					if (!this.gestion.getFolio().trim().isEmpty())
+					{
+						complementoAtributo = ", idGestion";
+						complementoValor += ",?";
+					}
+
+					if (!this.gestion.getIdTareaWunderlist().trim().isEmpty())
+					{
+						complementoAtributoW = ", idTareaWunderlist";
+						complementoValorW += ",?";
+
+					}
+
 					//Primer paso capturar la gestión en la base de datos del sistema
 					prep = conexion.prepareStatement(
 							"INSERT INTO gestion (Descripcion,FechaRecepcion,SolicitadoA,Solicitud,DetallesGenerales,ResumenFinal,"
-									+ "idUsuario,idStatusActividad,idTipoGestion,idCategoriaGestion)\n"
-									+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?, ?) ; ",
+									+ "idUsuario,idStatusActividad,idTipoGestion,idCategoriaGestion"
+									+ complementoAtributo + complementoAtributoW + ")\n"
+									+ "VALUES (?, ?, ?, ?, ?, '', ?, ?, ?, ?" + complementoValor + complementoValorW
+									+ ") ; ",
 							PreparedStatement.RETURN_GENERATED_KEYS);
 
 					prep.setString(1, this.gestion.getDescripcion());
@@ -204,17 +246,39 @@ public class NuevaGestionBean
 					prep.setInt(8, this.gestion.getTipoGestion().getIdTipoGestion());
 					prep.setInt(9, this.gestion.getCategoria().getIdCategoriaGestion());
 
+					if (!this.gestion.getFolio().trim().isEmpty())
+					{
+						prep.setInt(indiceComplemento, Integer.parseInt(this.gestion.getFolio()));
+						indiceComplemento++;
+					}
+
+					if (!this.gestion.getIdTareaWunderlist().trim().isEmpty())
+					{
+						prep.setLong(indiceComplemento, Long.parseLong(this.gestion.getIdTareaWunderlist()));
+						indiceComplemento++;
+					}
+
 					prep.executeUpdate();
 
-					rBD = prep.getGeneratedKeys();
-
-					if (rBD.next())
+					if (!this.gestion.getFolio().trim().isEmpty())
 					{
-						this.gestion.setIdGestion(rBD.getInt(1));
+						this.gestion.setIdGestion(Integer.parseInt(this.gestion.getFolio()));
+
+					}
+					else
+					{
+						rBD = prep.getGeneratedKeys();
+
+						if (rBD.next())
+						{
+							this.gestion.setIdGestion(rBD.getInt(1));
+						}
+
+						rBD.close();
+
 					}
 
 					prep.close();
-					rBD.close();
 				}
 				else
 				{
@@ -378,7 +442,7 @@ public class NuevaGestionBean
 				nuevaTarea.setCompleted(false);
 				nuevaTarea.setStarred(false);
 
-				if (nuevaGestion)
+				if (nuevaGestion && this.gestion.getFolio().trim().isEmpty())
 				{
 					//Devuelve la tarea creada en el atributo Tarea del objeto
 					wUsuario.postTareaWunderlist(nuevaTarea);
@@ -469,6 +533,11 @@ public class NuevaGestionBean
 					taskComment.setText("Datos Editados");
 
 					wUsuario.postComentarioTareaWunderlist(taskComment);
+
+					//Se actualiza el título de la tarea
+					wUsuario.getTareaWunderlist(this.gestion.getIdTareaWunderlist());
+					wUsuario.getTarea().setTitle(folio);
+					wUsuario.patchTareaWunderlist(wUsuario.getTarea());
 
 					FacesContext.getCurrentInstance().addMessage(null,
 							new FacesMessage(FacesMessage.SEVERITY_INFO, "Solicitud Editada, Folio: " + folio,

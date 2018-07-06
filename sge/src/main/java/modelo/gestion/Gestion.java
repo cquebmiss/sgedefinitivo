@@ -102,8 +102,8 @@ public class Gestion
 				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 
 				prep = conexion.prepareStatement(
-						"SELECT  ges.SolicitadoA, ges.DetallesGenerales,ges.FechaFinalizacion, ges.ResumenFinal, ges.idListaWunderlist, ges.idTareaWunderlist, ges.idTipoGestion, tg.descripcion as descTipoGestion, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
-								+ "FROM sge.gestion ges, usuario us, statusactividad st, tipogestion tg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idTipoGestion = tg.idTipoGestion AND ges.idGestion=?");
+						"SELECT  ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion,ges.SolicitadoA, ges.DetallesGenerales,ges.FechaFinalizacion, ges.ResumenFinal, ges.idListaWunderlist, ges.idTareaWunderlist, ges.idTipoGestion, tg.descripcion as descTipoGestion, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad \n"
+								+ "FROM sge.gestion ges, usuario us, statusactividad st, tipogestion tg, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idTipoGestion = tg.idTipoGestion AND ges.idGestion=?  AND ges.idCategoriaGestion = cg.idCategoriaGestion");
 
 				prep.setInt(1, this.idGestion);
 
@@ -122,6 +122,8 @@ public class Gestion
 					setIdListaWunderlist(rBD.getString("idListaWunderlist"));
 
 					setStatus(new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
+					setCategoria(new CategoriaGestion(rBD.getInt("idCategoriaGestion"),
+							rBD.getString("descCategoriaGestion")));
 
 					Usuario usuario = new Usuario();
 					usuario.setIdUsuario(rBD.getInt("idUsuario"));
