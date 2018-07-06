@@ -5,17 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import modelo.Usuario;
 import modelo.actividades.StatusActividad;
+import modelo.gestion.CategoriaGestion;
 import modelo.gestion.Gestion;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.TipoGestion;
-import modelo.gestion.CategoriaGestion;
 import resources.DataBase;
 import util.FacesUtils;
 
@@ -29,10 +31,15 @@ public class UtilidadesGestion
 	public static String	urlTasks			= "https://a.wunderlist.com/api/v1/tasks";
 	public static String	urlNotes			= "https://a.wunderlist.com/api/v1/notes";
 	public static String	urlTaskComments		= "https://a.wunderlist.com/api/v1/task_comments";
+	public static String	seriesColors		= "58BA27,F52F2F, FFCC33,2db5ff,A30303,bcd2dd,ceeeff,105a82,707d84,8e6e68,"
+			+ "b4eab4,515b51,091e09,00ff00,00ffe9,002afc,b200ff,ff00dc,fc0093,f2002c,"
+			+ "efb8c2,baf298,a1ef97,8ce2af,8aeacf,7fd7e2,76a7db,9068cc,af63c6,e26897,"
+			+ "6b382f,6d512e,68632c,546028,415b25,276338,2a7064,26576d,253170,46216d ";
 
 	//Para consultar listas, tareas y notas en específico, se debe adicionar después de la url el id correspondiente, ejemplo: notes/7263526
-
-	public static List<Gestion> getGestionesActivas(int idUsuario)
+	//statusGestion -1 activas, 1 finalizadas, 0 todas
+	private static List<Gestion> getGestiones(int idUsuario, int statusGestion, java.util.Date fechaInicial,
+			java.util.Date fechaFinal)
 	{
 		//Se obtiene la gestión, solamente con los atributos de Folio, Fecha Recepción, Solicitud, Status y Usuario
 		PreparedStatement prep = null;
@@ -40,13 +47,61 @@ public class UtilidadesGestion
 
 		List<Gestion> gestiones = new ArrayList<>();
 
+		String complemento = "";
+
+		switch (statusGestion)
+		{
+			case -1:
+				complemento += " AND ges.idStatusActividad < 1 ";
+			break;
+
+			case 1:
+				complemento += " AND ges.idStatusActividad = 1 ";
+			break;
+
+		}
+
+		if (idUsuario > -1)
+		{
+			complemento += " AND ges.idUsuario=? ";
+		}
+
+		if (fechaInicial != null)
+		{
+			complemento += " AND FechaRecepcion >= ? ";
+		}
+
+		if (fechaFinal != null)
+		{
+			complemento += " AND FechaFinalizacion <= ?";
+		}
+
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
 					" SELECT ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion \n"
-							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion AND ges.idUsuario=? AND ges.idStatusActividad < 1 ORDER BY ges.idGestion DESC");
+							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion "
+							+ complemento + " ORDER BY ges.idGestion DESC");
 
-			prep.setInt(1, idUsuario);
+			int indice = 1;
+
+			if (idUsuario > -1)
+			{
+				prep.setInt(indice, idUsuario);
+				indice++;
+			}
+
+			if (fechaInicial != null)
+			{
+				prep.setDate(indice, new java.sql.Date(fechaInicial.getTime()));
+				indice++;
+			}
+
+			if (fechaFinal != null)
+			{
+				prep.setDate(indice, new java.sql.Date(fechaFinal.getTime()));
+				indice++;
+			}
 
 			rBD = prep.executeQuery();
 
@@ -106,77 +161,42 @@ public class UtilidadesGestion
 
 	}
 
+	public static List<Gestion> getAllGestiones(int idUsuario)
+	{
+		return UtilidadesGestion.getGestiones(idUsuario, 0, null, null);
+
+	}
+
+	public static List<Gestion> getGestionesActivas(int idUsuario)
+	{
+		return UtilidadesGestion.getGestiones(idUsuario, -1, null, null);
+
+	}
+
 	public static List<Gestion> getGestionesFinalizadas(int idUsuario)
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		return UtilidadesGestion.getGestiones(idUsuario, 1, null, null);
 
-		List<Gestion> gestiones = new ArrayList<>();
+	}
 
-		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
-		{
-			prep = conexion.prepareStatement(
-					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion  \n"
-							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion  AND ges.idUsuario=? AND ges.idStatusActividad = 1 ORDER BY ges.idGestion DESC");
+	public static List<Gestion> getAllGestionesPorPeriodo(int idUsuario, java.util.Date fechaInicio,
+			java.util.Date fechaFin)
+	{
+		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin);
 
-			prep.setInt(1, idUsuario);
+	}
 
-			rBD = prep.executeQuery();
+	public static List<Gestion> getGestionesActivasPorPeriodo(int idUsuario, java.util.Date fechaInicio,
+			java.util.Date fechaFin)
+	{
+		return UtilidadesGestion.getGestiones(idUsuario, -1, fechaInicio, fechaFin);
 
-			if (rBD.next())
-			{
-				do
-				{
-					Gestion gestion = new Gestion();
-					gestion.setFechaFinalizacion(rBD.getDate("FechaFinalizacion"));
-					gestion.setResumenFinal(rBD.getString("resumenFinal"));
-					gestion.setIdGestion(rBD.getInt("idGestion"));
-					gestion.setDescripcion(rBD.getString("Descripcion"));
-					gestion.setFechaRecepcion(rBD.getDate("FechaRecepcion"));
-					gestion.setSolicitud(rBD.getString("Solicitud"));
-					gestion.setSolicitadoA(rBD.getString("SolicitadoA"));
-					gestion.setStatus(
-							new StatusActividad(rBD.getInt("idStatusActividad"), rBD.getString("descStatus")));
+	}
 
-					gestion.setCategoria(new CategoriaGestion(rBD.getInt("idCategoriaGestion"),
-							rBD.getString("descCategoriaGestion")));
-
-					Usuario usuario = new Usuario();
-					usuario.setIdUsuario(rBD.getInt("idUsuario"));
-					usuario.setNombre(rBD.getString("nombreUsuario"));
-					gestion.setUsuario(usuario);
-
-					gestiones.add(gestion);
-
-				} while (rBD.next());
-
-			}
-		}
-		catch (Exception e)
-		{
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Excepción",
-					"Ha ocurrido una excepción al obtener las gestiones finalizadas, favor de contactar con el desarrollador del sistema."));
-
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (prep != null)
-			{
-				try
-				{
-					prep.close();
-				}
-				catch (SQLException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return gestiones;
+	public static List<Gestion> getGestionesFinalizadasPorPeriodo(int idUsuario, java.util.Date fechaInicio,
+			java.util.Date fechaFin)
+	{
+		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin);
 
 	}
 
@@ -390,4 +410,59 @@ public class UtilidadesGestion
 		return catSeguridadSocial;
 
 	}
+
+	//MÉTODOS PARA REPORTES
+	public static Map<String, Integer> getTotalesSolicitantes()
+	{
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		Map<String, Integer> solicitantes = new HashMap<>();
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			prep = conexion.prepareStatement(
+					" SELECT SolicitadoA, COUNT(*) AS conteo FROM gestion GROUP BY SolicitadoA ORDER BY conteo DESC");
+
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+				do
+				{
+					solicitantes.put(rBD.getString("SolicitadoA"), rBD.getInt("conteo"));
+
+				} while (rBD.next());
+
+			}
+
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener la estadística de solicitantes de gestión, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return solicitantes;
+
+	}
+
 }

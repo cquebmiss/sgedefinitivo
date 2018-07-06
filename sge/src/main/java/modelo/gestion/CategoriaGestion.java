@@ -5,9 +5,13 @@ public class CategoriaGestion
 	private int		idCategoriaGestion;
 	private String	descripcion;
 
+	//auxiliar en la presentación de resultados, para colocar el total de gestiones de categoría
+	private int		total;
+
 	public CategoriaGestion()
 	{
 		super();
+		this.total = 1;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -16,6 +20,11 @@ public class CategoriaGestion
 		super();
 		this.idCategoriaGestion = idCategoriaGestion;
 		this.descripcion = descripcion;
+	}
+
+	public void incrementa()
+	{
+		this.total++;
 	}
 
 	public int getIdCategoriaGestion()
@@ -36,6 +45,16 @@ public class CategoriaGestion
 	public void setDescripcion(String descripcion)
 	{
 		this.descripcion = descripcion;
+	}
+
+	public int getTotal()
+	{
+		return total;
+	}
+
+	public void setTotal(int total)
+	{
+		this.total = total;
 	}
 
 }

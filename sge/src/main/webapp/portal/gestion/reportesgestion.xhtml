@@ -14,257 +14,170 @@
 
 	<ui:define name="content">
 		<div class="ui-g">
-			<div class="ui-g-12 card" style="height: 350px;">
-
-				<p:outputPanel id="panelGroupGeneral">
-
-					<p:autoUpdate></p:autoUpdate>
-
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq -1}"
-						style="text-align: center;">
+			<div class="ui-g-12 card">
 
 
-						<p:messages closable="true"></p:messages>
+				<h:form>
 
-						<h:form>
+					<h:panelGroup>
+						<h1>Filtros</h1>
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+							layout="grid"
+							styleClass="ui-panelgrid-blank form-group form-elements"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel value="Fecha Inicial"></p:outputLabel>
+							<p:calendar value="#{reportesGestionBean.fechaInicial}"></p:calendar>
 
 
+							<p:outputLabel value="Fecha Final"></p:outputLabel>
+							<p:calendar value="#{reportesGestionBean.fechaFinal}"></p:calendar>
 
-							<h1>Bienvenido(a) a la Encuesta de Clima Laboral 2018</h1>
+							<p:column></p:column>
+
+							<p:commandButton value="Generar"
+								actionListener="#{reportesGestionBean.updateEstadisticas}"
+								update="@(.outputResultados)"></p:commandButton>
 
 
-							<h:outputText
-								value="Por favor, ayúdanos a contestar esta encuesta."></h:outputText>
-
-							<br></br>
-
-							<h:outputText
-								value="Queremos saber tu opinión para conocer el ambiente
-									laboral del Hospital."></h:outputText>
-							<br></br>
-
-							<h:outputText
-								value="Contesta con la honestidad que te caracteriza y de ésta
-									manera danos la oportunidad de mejorar juntos."></h:outputText>
-
-							<br></br>
-
-							<h:outputText
-								value="Los datos obtenidos son confidenciales y anónimos."></h:outputText>
-							<p:separator></p:separator>
-
-							<p:commandButton value="Iniciar Encuestas"
-								actionListener="#{encuestasBean.actionPasoPrevioInicioEncuesta}"></p:commandButton>
-							<br></br>
+						</p:panelGrid>
 
 
 
-						</h:form>
 					</h:panelGroup>
 
+					<p:outputPanel styleClass="outputResultados">
+
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank form-group form-elements"
+							style="border:0px none; background-color:transparent;">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank form-group form-elements"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel value="Total de Gestiones del Periodo"></p:outputLabel>
+								<h:outputText value="#{reportesGestionBean.totalGestiones}"></h:outputText>
+
+								<p:outputLabel value="Gestiones Activas"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.totalGestionesActivas}"></h:outputText>
+
+
+								<p:outputLabel value="Gestiones Finalizadas"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.totalGestionesFinalizadas}"></h:outputText>
+
+								<p:outputLabel value="Tiempo Promedio de Gestión"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.tiempoPromedioFinalizacion} día(s)"></h:outputText>
+
+
+
+							</p:panelGrid>
+
+							<p:chart
+								rendered="#{reportesGestionBean.modeloGraficaGeneral != null}"
+								type="pie" model="#{reportesGestionBean.modeloGraficaGeneral}"
+								style="width:400px;height:300px" />
+
+						</p:panelGrid>
+
+						<br></br>
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank form-group form-elements"
+							style="border:0px none; background-color:transparent;">
+
+							<p:dataList value="#{reportesGestionBean.solicitantes}" var="car"
+								type="unordered" itemType="none" paginator="true" rows="10"
+								styleClass="paginated" emptyMessage="...">
+								<f:facet name="header">
+            Solicitante
+        </f:facet>
+								<h:outputText value="#{car.descripcion}" escape="false"
+									style="display:inline-block" />
+								<h:outputText value=", #{car.total}" escape="false"
+									style="display:inline-block; font-weight: bolder;" />
+							</p:dataList>
+
+
+
+
+							<p:dataList value="#{reportesGestionBean.lugaresResidencia}"
+								var="lug" type="unordered" itemType="none" paginator="true"
+								rows="10" styleClass="paginated" emptyMessage="...">
+								<f:facet name="header">
+            Lugar de Residencia
+        </f:facet>
+								<h:outputText value="#{lug.descripcion}" escape="false"
+									style="display:inline-block" />
+								<h:outputText value=", #{lug.total}" escape="false"
+									style="display:inline-block; font-weight: bolder;" />
+							</p:dataList>
+
+							<p:dataList value="#{reportesGestionBean.categorias}"
+								var="catGestion" type="unordered" itemType="none"
+								paginator="true" rows="10" styleClass="paginated"
+								emptyMessage="...">
+								<f:facet name="header">
+            Categoría de Gestión
+        </f:facet>
+								<h:outputText value="#{catGestion.descripcion}" escape="false"
+									style="display:inline-block" />
+								<h:outputText value=", #{catGestion.total}" escape="false"
+									style="display:inline-block; font-weight: bolder;" />
+							</p:dataList>
+
+							<p:dataList value="#{reportesGestionBean.seguridadSocial}"
+								var="segSocial" type="unordered" itemType="none"
+								paginator="true" rows="10" styleClass="paginated"
+								emptyMessage="...">
+								<f:facet name="header">
+            Seguridad Social
+        </f:facet>
+								<h:outputText value="#{segSocial.descripcion}" escape="false"
+									style="display:inline-block" />
+								<h:outputText value=", #{segSocial.total}" escape="false"
+									style="display:inline-block; font-weight: bolder;" />
+							</p:dataList>
+
+							<p:dataList value="#{reportesGestionBean.sexos}" var="sexo"
+								type="unordered" itemType="none" paginator="true" rows="10"
+								styleClass="paginated" emptyMessage="...">
+								<f:facet name="header">
+            Género
+        </f:facet>
+								<h:outputText value="#{sexo.descripcion}" escape="false"
+									style="display:inline-block" />
+								<h:outputText value=", #{sexo.total}" escape="false"
+									style="display:inline-block; font-weight: bolder;" />
+							</p:dataList>
 
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 0}">
+							<p:dataList value="#{reportesGestionBean.edades}" var="edad"
+								type="unordered" itemType="none" paginator="true" rows="10"
+								styleClass="paginated" emptyMessage="...">
+								<f:facet name="header">
+            Edad
+        </f:facet>
+								<h:outputText value="#{edad.descripcion}" escape="false"
+									style="display:inline-block" />
+								<h:outputText value=", #{edad.total}" escape="false"
+									style="display:inline-block; font-weight: bolder;" />
+							</p:dataList>
 
 
-						<h:form>
 
-							<p:focus for="inputFolio"></p:focus>
-							<p:messages closable="true"></p:messages>
+						</p:panelGrid>
 
+					</p:outputPanel>
 
-							<p:outputLabel value="Folio"></p:outputLabel>
-							<p:separator></p:separator>
 
-							<p:inputText id="inputFolio"
-								value="#{persistEncuestaBean.folioString}"></p:inputText>
-							<br></br>
-							<br></br>
+				</h:form>
 
-
-							<p:commandButton style="text-align: center;" value="Continuar"
-								actionListener="#{persistEncuestaBean.actionValidarFolio}"></p:commandButton>
-
-						</h:form>
-					</h:panelGroup>
-
-
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 1}">
-						<h:form>
-
-							<p:messages closable="true"></p:messages>
-
-
-
-							<p:outputLabel for="oneMenuArea" value="Area Laboral:"></p:outputLabel>
-							<br></br>
-							<p:selectOneMenu id="oneMenuArea"
-								value="#{persistEncuestaBean.areaSelec}"
-								converter="areaConverter" effect="fade" var="pa" filter="true"
-								filterMatchMode="startsWith" required="true"
-								requiredMessage="Seleccione un área por favor.">
-
-								<f:selectItem itemLabel="Seleccione su área"
-									noSelectionOption="true"></f:selectItem>
-
-								<f:selectItems value="#{persistEncuestaBean.catAreas}" var="p"
-									itemLabel="#{p.descripcion}" itemValue="#{p}" />
-
-								<p:column>
-									<h:outputText value="#{pa.descripcion}" />
-								</p:column>
-
-
-							</p:selectOneMenu>
-
-							<br></br>
-							<br></br>
-
-							<p:outputLabel for="oneMenuProfesion" value="Profesión:"></p:outputLabel>
-							<br></br>
-
-							<p:selectOneMenu id="oneMenuProfesion"
-								value="#{persistEncuestaBean.profesionSelec}"
-								converter="profesionConverter" effect="fade" var="pa"
-								filter="true" filterMatchMode="startsWith" required="true"
-								requiredMessage="Seleccione una profesión por favor.">
-
-								<f:selectItem itemLabel="Seleccione su profesión"
-									noSelectionOption="true"></f:selectItem>
-
-								<f:selectItems value="#{persistEncuestaBean.catProfesiones}"
-									var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
-
-								<p:column>
-									<h:outputText value="#{pa.descripcion}" />
-								</p:column>
-
-
-							</p:selectOneMenu>
-
-							<br></br>
-							<br></br>
-
-							<p:outputLabel for="oneMenuJornada" value="Jornada:"></p:outputLabel>
-							<br></br>
-
-							<p:selectOneMenu id="oneMenuJornada"
-								value="#{persistEncuestaBean.jornadaSelec}"
-								converter="jornadaConverter" effect="fade" var="pa"
-								filter="true" filterMatchMode="startsWith" required="true"
-								requiredMessage="Seleccione una jornada por favor.">
-
-
-								<f:selectItem itemLabel="Seleccione una jornada"
-									noSelectionOption="true"></f:selectItem>
-
-								<f:selectItems value="#{persistEncuestaBean.catJornadas}"
-									var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" />
-
-								<p:column>
-									<h:outputText value="#{pa.descripcion}" />
-								</p:column>
-
-
-							</p:selectOneMenu>
-
-
-							<br></br>
-							<br></br>
-
-							<p:commandButton style="text-align: center;" value="Continuar"
-								actionListener="#{encuestasBean.actionIniciarEncuesta}"></p:commandButton>
-
-
-
-
-
-
-
-						</h:form>
-					</h:panelGroup>
-
-
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 2}">
-						<h:form>
-
-							<div style="width: 100%;">
-
-
-								<p:outputLabel
-									value=" Pregunta: #{encuestasBean.indicadorPregunta+1} de #{encuestasBean.preguntasAlAzar.size()}"
-									style="text-align: center; width: 100%; font-weight: normal;"></p:outputLabel>
-								<p:spacer height="15"></p:spacer>
-
-								<p:outputLabel style="text-align: center; width: 100%; "
-									value="#{encuestasBean.preguntaEnPantalla.descripcion}"></p:outputLabel>
-
-
-
-								<br></br> <br></br>
-
-
-
-							</div>
-							<p:messages closable="true"></p:messages>
-							<div class="ui-fluid" style="width: 100%; heigth: 50px;">
-
-								<h:panelGroup
-									rendered="#{encuestasBean.preguntaEnPantalla.tipoPregunta.idTipoPregunta eq 3}">
-
-									<p:selectOneButton required="true"
-										requiredMessage="Seleccione una opción por favor."
-										value="#{encuestasBean.preguntaEnPantalla.respuesta.opcion.idOpcion}"
-										id="oneBtn" style="text-align: center;">
-
-										<f:selectItems
-											value="#{encuestasBean.preguntaEnPantalla.opciones}"
-											var="opcion" itemLabel="#{opcion.descripcion}"
-											itemValue="#{opcion.idOpcion}" />
-
-									</p:selectOneButton>
-
-								</h:panelGroup>
-
-								<h:panelGroup
-									rendered="#{encuestasBean.preguntaEnPantalla.tipoPregunta.idTipoPregunta lt 3}">
-									<h:outputText value="Respuesta Abierta"></h:outputText>
-
-									<p:focus for="campoRespAbierta"></p:focus>
-
-									<p:inputTextarea id="campoRespAbierta" required="true"
-										requiredMessage="Escriba su respuesta por favor."
-										value="#{encuestasBean.preguntaEnPantalla.respuesta.respuestaAbierta}"></p:inputTextarea>
-
-								</h:panelGroup>
-
-							</div>
-
-							<p:spacer height="20"></p:spacer>
-
-							<div style="text-align: right;">
-
-								<p:commandButton icon=" fa fa-step-forward "
-									value="Siguiente Pregunta"
-									actionListener="#{encuestasBean.actionSiguientePregunta}"></p:commandButton>
-
-							</div>
-
-						</h:form>
-					</h:panelGroup>
-
-					<h:panelGroup rendered="#{encuestasBean.estadoModulo eq 3}">
-						<h:form>
-
-
-							<h1>Gracias por responder la encuesta.</h1>
-
-							<p:commandButton value="Reiniciar Encuesta"
-								actionListener="#{encuestasBean.actionReiniciarEncuesta}"></p:commandButton>
-
-
-						</h:form>
-					</h:panelGroup>
-				</p:outputPanel>
 
 
 
