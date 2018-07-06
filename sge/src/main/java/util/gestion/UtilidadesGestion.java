@@ -79,7 +79,7 @@ public class UtilidadesGestion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion \n"
+					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion \n"
 							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion "
 							+ complemento + " ORDER BY ges.idGestion DESC");
 
@@ -111,6 +111,13 @@ public class UtilidadesGestion
 				{
 					Gestion gestion = new Gestion();
 					gestion.setIdGestion(rBD.getInt("idGestion"));
+
+					if (statusGestion == 1)
+					{
+						gestion.setFechaFinalizacion(rBD.getDate("FechaFinalizacion"));
+						gestion.setResumenFinal(rBD.getString("resumenFinal"));
+					}
+
 					gestion.setDescripcion(rBD.getString("Descripcion"));
 					gestion.setFechaRecepcion(rBD.getDate("FechaRecepcion"));
 					gestion.setSolicitud(rBD.getString("Solicitud"));
