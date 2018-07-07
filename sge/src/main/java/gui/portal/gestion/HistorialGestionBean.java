@@ -164,6 +164,7 @@ public class HistorialGestionBean
 			System.out.println("Id tarea: " + tarea.getId());
 			if (("" + tarea.getId()).equalsIgnoreCase(this.gestionActivaSelec.getIdTareaWunderlist()))
 			{
+				System.out.println("Tarea encontrada");
 
 				//Se obtiene la nota de la tarea para añadirle la conclusión del caso
 				wUsuario.getNotaTareaWunderlist(tarea);

@@ -498,7 +498,7 @@ public class NuevaGestionBean
 
 				}
 
-				if (nuevaGestion)
+				if (nuevaGestion && this.gestion.getFolio().trim().isEmpty())
 				{
 					Note nota = new Note();
 					nota.setTask_id(wUsuario.getTarea().getId());
