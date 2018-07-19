@@ -516,7 +516,6 @@ public class NuevaGestionBean
 				}
 				else
 				{
-					
 					//Se añade un comentario a la tarea indicando que la tarea o gestión fue editada
 					wUsuario.getTareaWunderlist(this.gestion.getIdTareaWunderlist());
 
