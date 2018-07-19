@@ -46,8 +46,13 @@ public class ReportesGestionBean
 
 	private List<Gestion>			allGestiones;
 
+	//fechas de recepción
 	private Date					fechaInicial;
 	private Date					fechaFinal;
+
+	//fechas de finalización
+	private Date					fechaFinalizacionInicial;
+	private Date					fechaFinalizacionFinal;
 
 	//Gráficas
 	private PieChartModel			modeloGraficaGeneral;
@@ -93,9 +98,10 @@ public class ReportesGestionBean
 		Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 
 		this.gestionesActivas = UtilidadesGestion.getGestionesActivasPorPeriodo(Integer.parseInt(sesion.getIdUsuario()),
-				this.fechaInicial, this.fechaFinal);
+				this.fechaInicial, this.fechaFinal, this.fechaFinalizacionInicial, this.fechaFinalizacionFinal);
 		this.gestionesFinalizadas = UtilidadesGestion.getGestionesFinalizadasPorPeriodo(
-				Integer.parseInt(sesion.getIdUsuario()), this.fechaInicial, this.fechaFinal);
+				Integer.parseInt(sesion.getIdUsuario()), this.fechaInicial, this.fechaFinal,
+				this.fechaFinalizacionInicial, this.fechaFinalizacionFinal);
 
 		this.allGestiones = new ArrayList<>();
 		this.allGestiones.addAll(this.gestionesActivas);
@@ -653,6 +659,26 @@ public class ReportesGestionBean
 	public void setModeloGraficaGeneral(PieChartModel modeloGraficaGeneral)
 	{
 		this.modeloGraficaGeneral = modeloGraficaGeneral;
+	}
+
+	public Date getFechaFinalizacionInicial()
+	{
+		return fechaFinalizacionInicial;
+	}
+
+	public void setFechaFinalizacionInicial(Date fechaFinalizacionInicial)
+	{
+		this.fechaFinalizacionInicial = fechaFinalizacionInicial;
+	}
+
+	public Date getFechaFinalizacionFinal()
+	{
+		return fechaFinalizacionFinal;
+	}
+
+	public void setFechaFinalizacionFinal(Date fechaFinalizacionFinal)
+	{
+		this.fechaFinalizacionFinal = fechaFinalizacionFinal;
 	}
 
 }

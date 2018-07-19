@@ -22,31 +22,63 @@
 					<h:panelGroup>
 						<h1>Filtros</h1>
 
-						<p:panelGrid columns="2"
-							columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
-							layout="grid"
-							styleClass="ui-panelgrid-blank form-group form-elements"
+						<p:panelGrid columns="2" layout="grid"
 							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel value="Fecha Inicial"></p:outputLabel>
-							<p:calendar value="#{reportesGestionBean.fechaInicial}"></p:calendar>
+							<p:panelGrid columns="2">
+
+								<f:facet name="header">Fecha de Recepción</f:facet>
+
+								<p:outputLabel value="Fecha Inicial"></p:outputLabel>
+								<p:calendar value="#{reportesGestionBean.fechaInicial}"></p:calendar>
 
 
-							<p:outputLabel value="Fecha Final"></p:outputLabel>
-							<p:calendar value="#{reportesGestionBean.fechaFinal}"></p:calendar>
+								<p:outputLabel value="Fecha Final"></p:outputLabel>
+								<p:calendar value="#{reportesGestionBean.fechaFinal}"></p:calendar>
 
-							<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+
+
+							</p:panelGrid>
+
+							<p:panelGrid columns="2">
+
+								<f:facet name="header">Fecha de Finalización</f:facet>
+
+								<p:outputLabel value="Fecha Inicial"></p:outputLabel>
+								<p:calendar
+									value="#{reportesGestionBean.fechaFinalizacionInicial}"></p:calendar>
+
+
+								<p:outputLabel value="Fecha Final"></p:outputLabel>
+								<p:calendar
+									value="#{reportesGestionBean.fechaFinalizacionFinal}"></p:calendar>
+
+								<p:column></p:column>
+								<p:column></p:column>
+
+
+							</p:panelGrid>
+
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="2" layout="grid"
+							style="border:0px none; background-color:transparent;">
+
 
 							<p:commandButton value="Generar"
 								actionListener="#{reportesGestionBean.updateEstadisticas}"
 								update="@(.outputResultados)"></p:commandButton>
 
-
 						</p:panelGrid>
 
 
-
 					</h:panelGroup>
+
+					<br></br>
+					<br></br>
 
 					<p:outputPanel styleClass="outputResultados">
 

@@ -39,7 +39,7 @@ public class UtilidadesGestion
 	//Para consultar listas, tareas y notas en específico, se debe adicionar después de la url el id correspondiente, ejemplo: notes/7263526
 	//statusGestion -1 activas, 1 finalizadas, 0 todas
 	private static List<Gestion> getGestiones(int idUsuario, int statusGestion, java.util.Date fechaInicial,
-			java.util.Date fechaFinal)
+			java.util.Date fechaFinal, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
 		//Se obtiene la gestión, solamente con los atributos de Folio, Fecha Recepción, Solicitud, Status y Usuario
 		PreparedStatement prep = null;
@@ -73,6 +73,16 @@ public class UtilidadesGestion
 
 		if (fechaFinal != null)
 		{
+			complemento += " AND FechaRecepcion <= ?";
+		}
+		
+		if( fechaFinalizacionInicial != null )
+		{
+			complemento += " AND FechaFinalizacion >= ?";
+		}
+		
+		if( fechaFinalizacionFinal != null )
+		{
 			complemento += " AND FechaFinalizacion <= ?";
 		}
 
@@ -100,6 +110,18 @@ public class UtilidadesGestion
 			if (fechaFinal != null)
 			{
 				prep.setDate(indice, new java.sql.Date(fechaFinal.getTime()));
+				indice++;
+			}
+			
+			if( fechaFinalizacionInicial != null )
+			{
+				prep.setDate(indice, new java.sql.Date(fechaFinalizacionInicial.getTime()));
+				indice++;
+			}
+			
+			if( fechaFinalizacionFinal != null)
+			{
+				prep.setDate(indice, new java.sql.Date(fechaFinalizacionFinal.getTime()));
 				indice++;
 			}
 
@@ -170,40 +192,40 @@ public class UtilidadesGestion
 
 	public static List<Gestion> getAllGestiones(int idUsuario)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, 0, null, null);
+		return UtilidadesGestion.getGestiones(idUsuario, 0, null, null, null, null);
 
 	}
 
 	public static List<Gestion> getGestionesActivas(int idUsuario)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, -1, null, null);
+		return UtilidadesGestion.getGestiones(idUsuario, -1, null, null, null, null);
 
 	}
 
 	public static List<Gestion> getGestionesFinalizadas(int idUsuario)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, 1, null, null);
+		return UtilidadesGestion.getGestiones(idUsuario, 1, null, null, null, null);
 
 	}
 
 	public static List<Gestion> getAllGestionesPorPeriodo(int idUsuario, java.util.Date fechaInicio,
-			java.util.Date fechaFin)
+			java.util.Date fechaFin, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin);
+		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial, fechaFinalizacionFinal);
 
 	}
 
 	public static List<Gestion> getGestionesActivasPorPeriodo(int idUsuario, java.util.Date fechaInicio,
-			java.util.Date fechaFin)
+			java.util.Date fechaFin, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, -1, fechaInicio, fechaFin);
+		return UtilidadesGestion.getGestiones(idUsuario, -1, fechaInicio, fechaFin, fechaFinalizacionInicial, fechaFinalizacionFinal);
 
 	}
 
 	public static List<Gestion> getGestionesFinalizadasPorPeriodo(int idUsuario, java.util.Date fechaInicio,
-			java.util.Date fechaFin)
+			java.util.Date fechaFin, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin);
+		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial, fechaFinalizacionFinal);
 
 	}
 
