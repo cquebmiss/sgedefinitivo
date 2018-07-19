@@ -55,7 +55,6 @@ public class ReportesGestionBean
 	private Date					fechaFinalizacionFinal;
 
 	//Gráficas
-	
 	private PieChartModel			modeloGraficaGeneral;
 	private List<Solicitante>		solicitantes;
 	private BarChartModel			modeloGraficaSolicitantes;
