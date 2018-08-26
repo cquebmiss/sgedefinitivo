@@ -75,7 +75,15 @@
 										</f:facet>
 
 										<p:column style="width:50px; ">
-											<p:commandButton icon="fa fa-search"></p:commandButton>
+
+											<p:commandButton icon="fa fa-search"
+												onclick="PF('dlgDetallesGestion').show(); PF('dlgDetallesGestion').toggleMaximize();"
+												action="#{historialGestionBean.gestionActivaSelec.updateAllDataBD}"
+												update="@(.classDlgDetallesGestion)">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
 										</p:column>
 										<p:column style="width:50px; ">
 											<p:commandButton icon="fa fa-edit"
@@ -169,11 +177,23 @@
 
 										</f:facet>
 
-					<!--  					<p:column style="width:50px; ">
+										<p:column style="width:50px; ">
+
+											<p:commandButton icon="fa fa-search"
+												onclick="PF('dlgDetallesGestion').show(); PF('dlgDetallesGestion').toggleMaximize();"
+												action="#{historialGestionBean.gestionActivaSelec.updateAllDataBD}"
+												update="@(.classDlgDetallesGestion)">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+										<p:column style="width:50px; ">
 											<p:commandButton icon="fa fa-edit"
 												actionListener="#{historialGestionBean.actionEdicionGestion(gestion)}">
 											</p:commandButton>
-										</p:column>  -->
+										</p:column>
+
 										<p:column headerText="Folio / Descripción"
 											sortBy="#{gestion.descripcion}"
 											filterBy="#{gestion.descripcion}" filterMatchMode="contains">
@@ -249,7 +269,8 @@
 						</p:messages>
 
 						<p:calendar
-							value="#{historialGestionBean.gestionActivaSelec.fechaFinalizacion}">
+							value="#{historialGestionBean.gestionActivaSelec.fechaFinalizacion}"
+							mindate="#{historialGestionBean.gestionActivaSelec.fechaRecepcion}">
 							<p:ajax event="blur"></p:ajax>
 						</p:calendar>
 
@@ -283,6 +304,112 @@
 						widgetVar="wbotonCancelarDlgFinalizarGestion" value="Cancelar"
 						type="button" styleClass="secondary-button" icon="fa fa-close"
 						onclick="PF('dlgFinalizarGestion').hide()" />
+
+
+				</f:facet>
+
+			</p:dialog>
+
+		</h:form>
+
+
+		<h:form id="formDlgDetallesGestion">
+
+			<p:dialog header="Información de la Gestión"
+				widgetVar="dlgDetallesGestion" modal="true" responsive="true"
+				draggable="false" width="300" height="400" minimizable="false"
+				maximizable="false" closeOnEscape="true" closable="true"
+				onHide="PF('dlgDetallesGestion').toggleMaximize();">
+
+				<p:outputPanel styleClass="classDlgDetallesGestion">
+
+					<div class="card card-w-title">
+
+
+						<p:panelGrid columns="4"
+							columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+							layout="grid"
+							styleClass="ui-panelgrid-blank form-group form-elements"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel value="Folio:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.folio}"></h:outputText>
+
+							<p:outputLabel value="Fecha de Recepción:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.fechaRecepcion}"></h:outputText>
+
+							<p:outputLabel value="Solicitante:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.solicitadoA}"></h:outputText>
+
+							<p:outputLabel value="Categoría de la Gestión:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.categoria.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Paciente:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.nombre}"></h:outputText>
+
+							<p:outputLabel value="Edad:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.edad}"></h:outputText>
+
+							<p:outputLabel value="Sexo:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.sexo eq 'm' ? 'Masculino' : 'Femenino'}"></h:outputText>
+
+							<p:outputLabel value="Lugar de Origen:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.lugarResidencia.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Seguridad Social:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.seguridadSocial.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Folio Seguridad Social:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.afiliacion}"></h:outputText>
+
+
+							<p:outputLabel value="Diagnóstico:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.diagnostico}"></h:outputText>
+
+							<p:outputLabel value="Observaciones:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.detallesGenerales}"></h:outputText>
+
+							<p:outputLabel value="Solicitud:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.solicitud}"></h:outputText>
+
+							<p:outputLabel value="Contactos:"></p:outputLabel>
+
+							<ui:repeat var="contacto"
+								value="#{historialGestionBean.gestionActivaSelec.contactos}">
+
+								<h:outputText
+									value="#{contacto.nombres} #{contacto.telefonos} #{contacto.observaciones} #{contacto.email}"></h:outputText>
+								<br></br>
+
+							</ui:repeat>
+
+
+						</p:panelGrid>
+
+
+
+					</div>
+
+				</p:outputPanel>
+
+				<f:facet name="header">
+
+					<p:commandButton id="botonCerrarDlgDetallesGestion"
+						widgetVar="wbotonCerrarDlgDetallesGestion" value="Cerar"
+						type="button" styleClass="secondary-button" icon="fa fa-close"
+						onclick="PF('dlgDetallesGestion').hide()" />
 
 
 				</f:facet>

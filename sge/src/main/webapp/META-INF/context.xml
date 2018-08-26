@@ -37,7 +37,8 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="spoolerpdf"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://indesalud-mysql:3306/spoolerpdf" username="indesalud" />
+		url="jdbc:mysql://indesalud-mysql:3306/spoolerpdf"
+		username="indesalud" />
 
 
 	<Resource auth="Container"
@@ -56,6 +57,7 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="climalaboral"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://indesalud-mysql:3306/climalaboral" username="indesalud" />
+		url="jdbc:mysql://indesalud-mysql:3306/climalaboral"
+		username="indesalud" />
 
 </Context>
