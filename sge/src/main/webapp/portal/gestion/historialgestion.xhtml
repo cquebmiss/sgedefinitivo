@@ -32,7 +32,19 @@
 										)
 									</h1>
 
+									<!--  		<p:sidebar widgetVar="sideBarComentarios" position="right"
+										baseZIndex="10000">
+										<h1 style="font-weight: normal">Comentarios en Wunderlist
+											de la Gestión</h1>
+										<p:commandButton value="Cancel"
+											oncomplete="PF('sideBarComentarios').hide()" />
+									</p:sidebar>
+									
+									
 
+									<p:commandButton icon="fa fa-arrow-left"
+										oncomplete="PF('sideBarComentarios').show()" />
+-->
 
 									<p:dataTable id="tablaGestionesActivas"
 										widgetVar="wTablaGestionesActivas"
@@ -157,6 +169,11 @@
 
 										</f:facet>
 
+					<!--  					<p:column style="width:50px; ">
+											<p:commandButton icon="fa fa-edit"
+												actionListener="#{historialGestionBean.actionEdicionGestion(gestion)}">
+											</p:commandButton>
+										</p:column>  -->
 										<p:column headerText="Folio / Descripción"
 											sortBy="#{gestion.descripcion}"
 											filterBy="#{gestion.descripcion}" filterMatchMode="contains">
@@ -199,6 +216,9 @@
 
 
 								</p:outputPanel>
+
+
+
 
 
 							</h:form>

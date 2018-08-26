@@ -22,7 +22,7 @@
 <h:body>
 	<div class="layout-wrapper #{guestPreferences.menuMode}">
 		<ui:include src="./topbar.xhtml" />
-	<!-- 	<ui:include src="./right_panel.xhtml" />  -->
+		<!-- 	<ui:include src="./right_panel.xhtml" />  -->
 		<ui:include src="./sidebar.xhtml" />
 
 		<div class="layout-main">
@@ -31,8 +31,9 @@
 					<i class="fa fa-home"></i> <span>/ </span>
 					<ui:insert name="viewname" />
 				</div>
-			<!-- 	<ui:include src="./routebar-menu.xhtml" />  -->
+				<!-- 	<ui:include src="./routebar-menu.xhtml" />  -->
 			</div>
+
 
 			<div class="layout-content">
 				<ui:insert name="content"></ui:insert>

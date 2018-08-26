@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -130,7 +132,10 @@ public class Login implements Serializable
 
 			if (getUsuario().length() < 1 || getContrasena().length() < 1)
 			{
-				setMensajeError("Nombre de usuario y/o contraseña incorrecta.");
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Datos Incorrectos", "Nombre de usuario y/o contraseña incorrecta."));
+
+				//				setMensajeError("Nombre de usuario y/o contraseña incorrecta.");
 				return;
 			}
 
@@ -226,24 +231,29 @@ public class Login implements Serializable
 				{
 					case "0":
 						tipoSesion = "Admin";
-						break;
+					break;
 					case "1":
 						tipoSesion = "SuperAdmin";
-						break;
+					break;
 					case "2":
 						tipoSesion = "Usuario";
-						break;
+					break;
 
 				}
 
-				setMensajeError("Bienvenido, redireccionando...");
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Datos Correctos", "Bienvenido, redireccionando..."));
+				//setMensajeError("Bienvenido, redireccionando...");
 				setDatosUsuarioSesion(controlSesion, tipoSesion, rBD.getString("idUsuario"), rBD.getString("Nombre"),
 						rBD.getString("NombreReal"), rBD.getString("CuentaCorreo"));
 			}
 
-			setMensajeError("Nombre de usuario y/o contraseña incorrectos.");
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Datos Incorrectos", "Nombre de usuario y/o contraseña incorrecta."));
+			//	setMensajeError("Nombre de usuario y/o contraseña incorrectos.");
 
-		} catch (Exception ex)
+		}
+		catch (Exception ex)
 		{
 			ex.printStackTrace();
 		}

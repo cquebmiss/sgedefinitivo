@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -18,8 +19,8 @@ import javax.faces.context.FacesContext;
 
 import modelo.Sesion;
 import modelo.actividades.StatusActividad;
-import modelo.gestion.Contacto;
 import modelo.gestion.CategoriaGestion;
+import modelo.gestion.Contacto;
 import modelo.gestion.Gestion;
 import modelo.gestion.ListElement;
 import modelo.gestion.Note;
@@ -152,6 +153,19 @@ public class NuevaGestionBean
 			e.printStackTrace();
 		}
 	}
+
+	//MÉTODOS PARA AUTOCOMPLETES
+	public List<String> autoCompleteSolicitadoA(String query)
+	{
+		return UtilidadesGestion.getCoincidenciasSolicitantes(query);
+	}
+	
+	public List<String> autoCompleteLugarOrigen(String query)
+	{
+		return UtilidadesGestion.getCoincidenciasLugarOrigen(query);
+	}
+
+	//FIN DE MÉTODOS PARA AUTOCOMPLETES
 
 	//MÉTODOS PARA CONTACTOS
 	public void actionEliminarContact(Contacto contacto)
@@ -439,7 +453,7 @@ public class NuevaGestionBean
 						+ this.gestion.getPaciente().getNombre();
 
 				nuevaTarea.setTitle(folio);
-				nuevaTarea.setCompleted(false);
+				nuevaTarea.setCompleted(this.gestion.getStatus().getIdStatusActividad() == 1 ? true : false);
 				nuevaTarea.setStarred(false);
 
 				if (nuevaGestion && this.gestion.getFolio().trim().isEmpty())

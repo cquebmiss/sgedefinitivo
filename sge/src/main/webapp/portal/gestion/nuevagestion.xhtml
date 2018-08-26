@@ -19,8 +19,6 @@
 						<div class="card card-w-title">
 
 
-
-
 							<h1>
 								Solicitud de Gestión
 								<h:outputText style="font-weight: bolder;"
@@ -72,10 +70,15 @@
 										<p:column></p:column>
 
 										<p:outputLabel for="campoSolicitadoA" value="Solicitante"></p:outputLabel>
-										<p:inputText id="campoSolicitadoA"
+
+										<p:autoComplete id="campoSolicitadoA" minQueryLength="3"
+											effect="fade"
+											completeMethod="#{nuevaGestionBean.autoCompleteSolicitadoA}"
 											value="#{nuevaGestionBean.gestion.solicitadoA}">
 											<p:ajax event="blur" process="@this"></p:ajax>
-										</p:inputText>
+										</p:autoComplete>
+
+
 
 										<p:column></p:column>
 										<p:column></p:column>
@@ -129,10 +132,14 @@
 
 										<p:outputLabel for="campoLugarOrigen" value="Lugar de Origen"></p:outputLabel>
 
-										<p:inputText id="campoLugarOrigen"
-											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.descripcion}">
+										<p:autoComplete id="campoLugarOrigen" minQueryLength="3"
+											effect="fade"
+											completeMethod="#{nuevaGestionBean.autoCompleteLugarOrigen}"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.descripcion}"
+											scrollHeight="300">
 											<p:ajax event="blur" process="@this"></p:ajax>
-										</p:inputText>
+										</p:autoComplete>
+
 
 										<p:outputLabel for="campoSeguridadSocial"
 											value="Seguridad Social" />
@@ -210,7 +217,7 @@
 										<p:column headerText="" style="width: 50px;">
 
 											<p:commandButton icon="fa fa-edit" process="@this"
-												onclick="PF('dlgContacto').show()"
+												oncomplete="PF('dlgContacto').show()"
 												update="@(.classDlgContacto)">
 												<f:setPropertyActionListener value="#{con}"
 													target="#{dialogoContactoBean.contacto}" />
@@ -227,10 +234,10 @@
 									</p:dataTable>
 
 									<p:commandButton icon="fa fa-plus"
-										action="#{dialogoContactoBean.addNuevoContacto}"
+										actionListener="#{dialogoContactoBean.addNuevoContacto}"
 										process="@this"
 										update="@(.classDlgContacto) @(.dataTableClass)"
-										onclick="PF('dlgContacto').show()"></p:commandButton>
+										oncomplete="PF('dlgContacto').show()"></p:commandButton>
 
 
 									<br></br>
@@ -277,10 +284,10 @@
 
 			<p:dialog header="Contacto" widgetVar="dlgContacto" modal="true"
 				responsive="true" draggable="false" width="300" minimizable="false"
-				maximizable="true" closeOnEscape="true" closable="true"
-				focus="inputNombreContacto">
+				maximizable="true" closeOnEscape="true" closable="true">
 
 				<p:outputPanel styleClass="classDlgContacto">
+
 
 					<div class="card card-w-title">
 
@@ -289,6 +296,8 @@
 						<p:messages styleClass="msjDlgContacto" closable="true"
 							showDetail="true">
 						</p:messages>
+
+						<p:focus for="inputNombreContacto"></p:focus>
 
 						<p:panelGrid id="panelGridNDlgContacto" columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group">

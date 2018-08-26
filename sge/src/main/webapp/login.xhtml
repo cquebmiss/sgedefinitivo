@@ -18,7 +18,7 @@
 
 <h:body styleClass="login-body">
 	<div class="logo">
-	<!-- 	<p:graphicImage name="images/indesalud-logo.png"
+		<!-- 	<p:graphicImage name="images/indesalud-logo.png"
 			library="harmony-layout" /> -->
 		<span class="app-name">INDESALUD</span>
 	</div>
@@ -26,6 +26,9 @@
 	<div class="login-panel">
 
 		<h:form>
+
+			
+				
 			<p:focus for="inputUsuario"></p:focus>
 
 			<!-- Imagen de login para móvil, considerar al editar las nuevas imágenes para el portal -->
@@ -45,10 +48,13 @@
 					<!--	<p:outputLabel value="Remember me" />	-->
 				</div>
 
+
 				<p:commandButton value="Acceder" style="margin-bottom:10px"
 					styleClass="raised-btn" update="@all"
 					actionListener="#{login.actionBotonAcceder}"
 					action="#{login.isInSession}"></p:commandButton>
+
+
 			</div>
 
 			<div class="right-part">
@@ -56,7 +62,15 @@
 					library="harmony-layout" />
 			</div>
 
+
+
+
+
+
+
+
 		</h:form>
+
 
 
 	</div>

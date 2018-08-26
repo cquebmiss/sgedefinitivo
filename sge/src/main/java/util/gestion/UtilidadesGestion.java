@@ -75,13 +75,13 @@ public class UtilidadesGestion
 		{
 			complemento += " AND FechaRecepcion <= ?";
 		}
-		
-		if( fechaFinalizacionInicial != null )
+
+		if (fechaFinalizacionInicial != null)
 		{
 			complemento += " AND FechaFinalizacion >= ?";
 		}
-		
-		if( fechaFinalizacionFinal != null )
+
+		if (fechaFinalizacionFinal != null)
 		{
 			complemento += " AND FechaFinalizacion <= ?";
 		}
@@ -112,14 +112,14 @@ public class UtilidadesGestion
 				prep.setDate(indice, new java.sql.Date(fechaFinal.getTime()));
 				indice++;
 			}
-			
-			if( fechaFinalizacionInicial != null )
+
+			if (fechaFinalizacionInicial != null)
 			{
 				prep.setDate(indice, new java.sql.Date(fechaFinalizacionInicial.getTime()));
 				indice++;
 			}
-			
-			if( fechaFinalizacionFinal != null)
+
+			if (fechaFinalizacionFinal != null)
 			{
 				prep.setDate(indice, new java.sql.Date(fechaFinalizacionFinal.getTime()));
 				indice++;
@@ -211,21 +211,24 @@ public class UtilidadesGestion
 	public static List<Gestion> getAllGestionesPorPeriodo(int idUsuario, java.util.Date fechaInicio,
 			java.util.Date fechaFin, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial, fechaFinalizacionFinal);
+		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial,
+				fechaFinalizacionFinal);
 
 	}
 
 	public static List<Gestion> getGestionesActivasPorPeriodo(int idUsuario, java.util.Date fechaInicio,
 			java.util.Date fechaFin, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, -1, fechaInicio, fechaFin, fechaFinalizacionInicial, fechaFinalizacionFinal);
+		return UtilidadesGestion.getGestiones(idUsuario, -1, fechaInicio, fechaFin, fechaFinalizacionInicial,
+				fechaFinalizacionFinal);
 
 	}
 
 	public static List<Gestion> getGestionesFinalizadasPorPeriodo(int idUsuario, java.util.Date fechaInicio,
 			java.util.Date fechaFin, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial, fechaFinalizacionFinal);
+		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial,
+				fechaFinalizacionFinal);
 
 	}
 
@@ -437,6 +440,111 @@ public class UtilidadesGestion
 		}
 
 		return catSeguridadSocial;
+
+	}
+
+	public static List<String> getCoincidenciasSolicitantes(String query)
+	{
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		List<String> catSolicitantes = new ArrayList<>();
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			prep = conexion.prepareStatement(" SELECT DISTINCT(SolicitadoA) FROM gestion WHERE SolicitadoA LIKE ? ");
+			prep.setString(1, "%" + query + "%");
+
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+				do
+				{
+					catSolicitantes.add(rBD.getString("SolicitadoA"));
+
+				} while (rBD.next());
+			}
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener el catálogo de solicitantes de gestión, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return catSolicitantes;
+
+	}
+
+	public static List<String> getCoincidenciasLugarOrigen(String query)
+	{
+
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
+
+		List<String> coincidenciasLugarOrigen = new ArrayList<>();
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			prep = conexion
+					.prepareStatement(" SELECT DISTINCT(Descripcion) FROM lugarresidencia WHERE Descripcion LIKE ? ");
+			prep.setString(1, "%" + query + "%");
+
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+				do
+				{
+					coincidenciasLugarOrigen.add(rBD.getString("Descripcion"));
+
+				} while (rBD.next());
+			}
+		}
+		catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener el catálogo de lugar de origen, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				}
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return coincidenciasLugarOrigen;
 
 	}
 
