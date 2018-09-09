@@ -251,20 +251,36 @@ public class WUsuario
 	public void getComentariosTareaWunderlist(Task task)
 	{
 
-		Invocation invocationTask = this.client.target(UtilidadesGestion.urlNotes).queryParam("task_id", task.getId())
+		Invocation invocationTask = this.client.target(UtilidadesGestion.urlTaskComments).queryParam("task_id", task.getId())
 				.queryParam("client_id", this.access_token.getClient_id())
 				.queryParam("access_token", this.access_token.getAccess_token()).request(MediaType.APPLICATION_JSON)
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8")).buildGet();
 
 		Response response = invocationTask.invoke();
 
-		this.notas = response.readEntity(new GenericType<List<Note>>()
+		this.taskComments = response.readEntity(new GenericType<List<TaskComment>>()
 		{
 		});
 
 	}
 
-	public void postComentarioTareaWunderlist(TaskComment comentario)
+	public void getComentariosEnTarea(Task task)
+	{
+
+		Invocation invocationTask = this.client.target(UtilidadesGestion.urlTaskComments).queryParam("task_id", task.getId())
+				.queryParam("client_id", this.access_token.getClient_id())
+				.queryParam("access_token", this.access_token.getAccess_token()).request(MediaType.APPLICATION_JSON)
+				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8")).buildGet();
+
+		Response response = invocationTask.invoke();
+
+		task.setComentarios(response.readEntity(new GenericType<List<TaskComment>>()
+		{
+		}));
+
+	}
+
+	public TaskComment postComentarioTareaWunderlist(TaskComment comentario)
 	{
 		Invocation invocation = this.client.target(UtilidadesGestion.urlTaskComments)
 				.queryParam("client_id", this.access_token.getClient_id())
@@ -274,12 +290,14 @@ public class WUsuario
 		Response response = invocation.invoke();
 
 		this.taskComment = response.readEntity(TaskComment.class);
+		
+		return this.taskComment;
 
 	}
 
 	public void patchComentarioTareaWunderlist(Note nota)
 	{
-		Invocation invocation = this.client.target(UtilidadesGestion.urlNotes + "/" + nota.getId())
+		Invocation invocation = this.client.target(UtilidadesGestion.urlTaskComments + "/" + nota.getId())
 				.queryParam("revision", nota.getRevision()).queryParam("client_id", this.access_token.getClient_id())
 				.queryParam("access_token", this.access_token.getAccess_token()).request()
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8"))
@@ -288,7 +306,7 @@ public class WUsuario
 
 		Response response = invocation.invoke();
 
-		this.nota = response.readEntity(new GenericType<Note>()
+		this.taskComment = response.readEntity(new GenericType<TaskComment>()
 		{
 		});
 

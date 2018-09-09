@@ -20,6 +20,8 @@
 
 							<h:form>
 
+								<p:poll widgetVar="myPoll" interval="5" autoStart="false"
+									listener="#{historialGestionBean.gestionActivaSelec.updateTaskCommentsWunderlist}" />
 
 								<p:outputPanel styleClass="panelPrincipal">
 
@@ -32,19 +34,59 @@
 										)
 									</h1>
 
-									<!--  		<p:sidebar widgetVar="sideBarComentarios" position="right"
-										baseZIndex="10000">
-										<h1 style="font-weight: normal">Comentarios en Wunderlist
-											de la Gestión</h1>
-										<p:commandButton value="Cancel"
-											oncomplete="PF('sideBarComentarios').hide()" />
-									</p:sidebar>
-									
-									
 
-									<p:commandButton icon="fa fa-arrow-left"
-										oncomplete="PF('sideBarComentarios').show()" />
--->
+
+									<p:sidebar id="idSideBarComentarios"
+										widgetVar="sideBarComentarios" position="left"
+										blockScroll="true" baseZIndex="10000"
+										onHide="PF('myPoll').stop();"
+										styleClass="classSideBarComentarios">
+
+
+										<h:outputText style="font-weight: bolder;"
+											value="#{historialGestionBean.gestionActivaSelec.descripcion}"></h:outputText>
+
+										<p:inputTextarea id="inputComentarios" style="resize: none"
+											maxlength="999"
+											value="#{historialGestionBean.taskComment.text}"
+											placeholder="Añadir comentario..." autoResize="false">
+											<p:ajax event="keydown" update="@(.outputComentarios), @this"
+												process="@this"
+												listener="#{historialGestionBean.actionAñadirComentario}"
+												onstart="if (event.keyCode != 13) { return false; }	" />
+										</p:inputTextarea>
+
+
+										<p:scrollPanel style="height: 75%;" mode="native">
+
+											<p:outputPanel styleClass="outputComentarios">
+
+												<ui:repeat
+													value="#{historialGestionBean.gestionActivaSelec.tareaW.comentarios}"
+													var="comentario">
+													<h:outputText style="font-weight: bolder;"
+														value="#{comentario.author.name}  "></h:outputText>
+													<h:outputText value="(#{comentario.createdAt})">
+													</h:outputText>
+
+													<br></br>
+													<h:outputText value="#{comentario.text}"></h:outputText>
+
+													<br></br>
+													<br></br>
+												</ui:repeat>
+
+
+
+											</p:outputPanel>
+										</p:scrollPanel>
+										<p:commandButton value="Actualizar"
+											action="#{historialGestionBean.gestionActivaSelec.updateTaskCommentsWunderlist}"
+											update="@(.outputComentarios)"></p:commandButton>
+										<br></br>
+
+									</p:sidebar>
+
 
 									<p:dataTable id="tablaGestionesActivas"
 										widgetVar="wTablaGestionesActivas"
@@ -76,6 +118,18 @@
 
 										<p:column style="width:50px; ">
 
+											<p:commandButton icon="fa fa-bars"
+												action="#{historialGestionBean.actionPreparaPanelComentarios}"
+												update="@(.classSideBarComentarios)"
+												oncomplete="PF('sideBarComentarios').show(); PF('myPoll').start();">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+
+										<p:column style="width:50px; ">
+
 											<p:commandButton icon="fa fa-search"
 												onclick="PF('dlgDetallesGestion').show(); PF('dlgDetallesGestion').toggleMaximize();"
 												action="#{historialGestionBean.gestionActivaSelec.updateAllDataBD}"
@@ -85,6 +139,9 @@
 											</p:commandButton>
 
 										</p:column>
+
+
+
 										<p:column style="width:50px; ">
 											<p:commandButton icon="fa fa-edit"
 												actionListener="#{historialGestionBean.actionEdicionGestion(gestion)}">
@@ -176,6 +233,18 @@
 											</p:commandButton>
 
 										</f:facet>
+
+										<p:column style="width:50px; ">
+
+											<p:commandButton icon="fa fa-bars"
+												action="#{historialGestionBean.actionPreparaPanelComentarios}"
+												update="@(.classSideBarComentarios)"
+												oncomplete="PF('sideBarComentarios').show(); PF('myPoll').start();">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
 
 										<p:column style="width:50px; ">
 
@@ -407,7 +476,7 @@
 				<f:facet name="header">
 
 					<p:commandButton id="botonCerrarDlgDetallesGestion"
-						widgetVar="wbotonCerrarDlgDetallesGestion" value="Cerar"
+						widgetVar="wbotonCerrarDlgDetallesGestion" value="Cerrar"
 						type="button" styleClass="secondary-button" icon="fa fa-close"
 						onclick="PF('dlgDetallesGestion').hide()" />
 

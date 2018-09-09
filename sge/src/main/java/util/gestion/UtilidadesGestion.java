@@ -24,8 +24,9 @@ import util.FacesUtils;
 public class UtilidadesGestion
 {
 	public static int		idListaGestiones	= 338456892;
-	//public static int		idListaGestiones	= 354697479;										//pruebas
+	//public static int		idListaGestiones	= 354697479;																//pruebas
 	public static int		idListaPruebas		= 354697479;
+	public static String	wunderlistWSBean	= "wunderlistWSBean";
 	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
 	public static String	urlLists			= "https://a.wunderlist.com/api/v1/lists";
 	public static String	urlTasks			= "https://a.wunderlist.com/api/v1/tasks";
@@ -37,6 +38,7 @@ public class UtilidadesGestion
 			+ "6b382f,6d512e,68632c,546028,415b25,276338,2a7064,26576d,253170,46216d ";
 
 	//Para consultar listas, tareas y notas en específico, se debe adicionar después de la url el id correspondiente, ejemplo: notes/7263526
+
 	//statusGestion -1 activas, 1 finalizadas, 0 todas
 	private static List<Gestion> getGestiones(int idUsuario, int statusGestion, java.util.Date fechaInicial,
 			java.util.Date fechaFinal, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
@@ -89,7 +91,7 @@ public class UtilidadesGestion
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
 			prep = conexion.prepareStatement(
-					" SELECT ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion \n"
+					" SELECT ges.idTareaWunderlist, ges.idListaWunderlist, ges.fechaFinalizacion, ges.resumenFinal, ges.idGestion,ges.Descripcion,ges.FechaRecepcion,ges.Solicitud,ges.SolicitadoA,ges.idUsuario,us.nombre as nombreUsuario, st.descripcion AS descStatus, ges.idStatusActividad, ges.idCategoriaGestion, cg.descripcion as descCategoriaGestion \n"
 							+ "FROM sge.gestion ges, usuario us, statusactividad st, categoriagestion cg WHERE ges.idUsuario =  us.idUsuario AND ges.idStatusActividad = st.idStatusActividad AND ges.idCategoriaGestion = cg.idCategoriaGestion "
 							+ complemento + " ORDER BY ges.idGestion DESC");
 
@@ -133,6 +135,9 @@ public class UtilidadesGestion
 				{
 					Gestion gestion = new Gestion();
 					gestion.setIdGestion(rBD.getInt("idGestion"));
+
+					gestion.setIdTareaWunderlist(rBD.getString("idTareaWunderlist"));
+					gestion.setIdListaWunderlist(rBD.getString("idListaWunderlist"));;
 
 					if (statusGestion == 1)
 					{

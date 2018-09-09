@@ -16,6 +16,7 @@ import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
 
+import gui.persistence.wunderlist.WunderlistWSBean;
 import modelo.Sesion;
 import modelo.gestion.Gestion;
 import modelo.gestion.Task;
@@ -39,6 +40,9 @@ public class HistorialGestionBean
 	private int				totalGestionesActivas;
 	private int				totalGestionesFinalizadas;
 
+	//panel comentarios
+	private TaskComment		taskComment;
+
 	public HistorialGestionBean()
 	{
 		super();
@@ -48,6 +52,7 @@ public class HistorialGestionBean
 	@PostConstruct
 	public void postConstruct()
 	{
+		this.taskComment = new TaskComment();
 		getHistorialGestiones();
 	}
 
@@ -100,6 +105,30 @@ public class HistorialGestionBean
 	public void actionPrepararDialogoFinalizacion()
 	{
 		this.gestionActivaSelec.setFechaFinalizacion(new java.util.Date());
+	}
+
+	public void actionPreparaPanelComentarios()
+	{
+		this.taskComment = new TaskComment();
+		this.taskComment.setTask_id(Long.parseLong(this.gestionActivaSelec.getIdTareaWunderlist()));
+
+		this.gestionActivaSelec.updateTaskCommentsWunderlist();
+	}
+
+	public void actionAñadirComentario()
+	{
+		if (this.taskComment.getText() == null || this.taskComment.getText().trim().isEmpty())
+		{
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Comentarios", "Comentario Vacío"));
+
+			return;
+		}
+
+		WunderlistWSBean wsBean = (WunderlistWSBean) FacesUtils.getManagedBean("wunderlistWSBean");
+		wsBean.getwUsuario().postComentarioTareaWunderlist(this.taskComment);
+
+		actionPreparaPanelComentarios();
 	}
 
 	//La gestión seleccionada
@@ -294,6 +323,16 @@ public class HistorialGestionBean
 	public void setTotalGestionesFinalizadas(int totalGestionesFinalizadas)
 	{
 		this.totalGestionesFinalizadas = totalGestionesFinalizadas;
+	}
+
+	public TaskComment getTaskComment()
+	{
+		return taskComment;
+	}
+
+	public void setTaskComment(TaskComment taskComment)
+	{
+		this.taskComment = taskComment;
 	}
 
 }

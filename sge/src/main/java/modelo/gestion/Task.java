@@ -4,28 +4,29 @@ import java.util.List;
 
 public class Task
 {
-	private int			list_id;
-	private String		title;
-	private int			assignee_id;
-	private boolean		completed;
-	private String		recurrence_type;
-	private int			recurrence_count;
-	private String		due_date;
-	private boolean		starred;
+	private int					list_id;
+	private String				title;
+	private int					assignee_id;
+	private boolean				completed;
+	private String				recurrence_type;
+	private int					recurrence_count;
+	private String				due_date;
+	private boolean				starred;
 
 	//Respuesta de WebService
-	private long		id;
-	private String		created_at;
-	private int			created_by_id;
-	private int			revision;
-	private String		error;
-	private String		created_by_request_id;
-	private String		type;
+	private long				id;
+	private String				created_at;
+	private int					created_by_id;
+	private int					revision;
+	private String				error;
+	private String				created_by_request_id;
+	private String				type;
 
-	private String		completed_at;
-	private int			completed_by_id;
+	private String				completed_at;
+	private int					completed_by_id;
 
-	private List<Note>	notas;
+	private List<Note>			notas;
+	private List<TaskComment>	comentarios;
 
 	public Task()
 	{
@@ -236,6 +237,16 @@ public class Task
 	public void setNotas(List<Note> notas)
 	{
 		this.notas = notas;
+	}
+
+	public List<TaskComment> getComentarios()
+	{
+		return comentarios;
+	}
+
+	public void setComentarios(List<TaskComment> comentarios)
+	{
+		this.comentarios = comentarios;
 	}
 
 }

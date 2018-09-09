@@ -5,17 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import gui.persistence.wunderlist.WunderlistWSBean;
 import modelo.Sesion;
 import modelo.Usuario;
 import modelo.actividades.StatusActividad;
 import resources.DataBase;
 import util.FacesUtils;
+import util.gestion.UtilidadesGestion;
 
 public class Gestion
 {
@@ -37,6 +40,9 @@ public class Gestion
 	private String				idListaWunderlist;
 
 	private CategoriaGestion	categoria;
+
+	//Tarea en Wunderlist
+	private Task				tareaW;
 
 	public Gestion()
 	{
@@ -303,6 +309,30 @@ public class Gestion
 
 	}
 
+	public void updateTaskWunderlist()
+	{
+		WunderlistWSBean wBean = (WunderlistWSBean) FacesUtils.getManagedBean(UtilidadesGestion.wunderlistWSBean);
+		WUsuario wUsuario = wBean.getwUsuario();
+		wUsuario.getTareaWunderlist(this.getIdTareaWunderlist());
+		setTareaW(wUsuario.getTarea());
+	}
+
+	public void updateTaskCommentsWunderlist()
+	{
+		if (this.tareaW == null)
+		{
+			updateTaskWunderlist();
+		}
+
+		WunderlistWSBean wBean = (WunderlistWSBean) FacesUtils.getManagedBean(UtilidadesGestion.wunderlistWSBean);
+		WUsuario wUsuario = wBean.getwUsuario();
+
+		wUsuario.getComentariosEnTarea(this.tareaW);
+
+		Collections.reverse(this.tareaW.getComentarios());
+
+	}
+
 	public int getIdGestion()
 	{
 		return idGestion;
@@ -471,6 +501,16 @@ public class Gestion
 	public void setCategoria(CategoriaGestion categoria)
 	{
 		this.categoria = categoria;
+	}
+
+	public Task getTareaW()
+	{
+		return tareaW;
+	}
+
+	public void setTareaW(Task tareaW)
+	{
+		this.tareaW = tareaW;
 	}
 
 }
