@@ -20,8 +20,6 @@
 
 							<h:form>
 
-								<p:poll widgetVar="myPoll" interval="5" autoStart="false"
-									listener="#{historialGestionBean.gestionActivaSelec.updateTaskCommentsWunderlist}" />
 
 								<p:outputPanel styleClass="panelPrincipal">
 
@@ -39,7 +37,6 @@
 									<p:sidebar id="idSideBarComentarios"
 										widgetVar="sideBarComentarios" position="left"
 										blockScroll="true" baseZIndex="10000"
-										onHide="PF('myPoll').stop();"
 										styleClass="classSideBarComentarios">
 
 
@@ -121,7 +118,7 @@
 											<p:commandButton icon="fa fa-bars"
 												action="#{historialGestionBean.actionPreparaPanelComentarios}"
 												update="@(.classSideBarComentarios)"
-												oncomplete="PF('sideBarComentarios').show(); PF('myPoll').start();">
+												oncomplete="PF('sideBarComentarios').show();">
 												<f:setPropertyActionListener value="#{gestion}"
 													target="#{historialGestionBean.gestionActivaSelec}" />
 											</p:commandButton>
@@ -239,7 +236,7 @@
 											<p:commandButton icon="fa fa-bars"
 												action="#{historialGestionBean.actionPreparaPanelComentarios}"
 												update="@(.classSideBarComentarios)"
-												oncomplete="PF('sideBarComentarios').show(); PF('myPoll').start();">
+												oncomplete="PF('sideBarComentarios').show();">
 												<f:setPropertyActionListener value="#{gestion}"
 													target="#{historialGestionBean.gestionActivaSelec}" />
 											</p:commandButton>
