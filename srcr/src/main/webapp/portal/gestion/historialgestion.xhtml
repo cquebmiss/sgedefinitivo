@@ -1,0 +1,512 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Sistema de Gestión Empresarial - Historial de Gestiones</ui:define>
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li>Historial de Gestiones</li>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+
+							<h:form>
+
+
+								<p:outputPanel styleClass="panelPrincipal">
+
+									<p:messages globalOnly="true" showDetail="true" closable="true"></p:messages>
+
+									<h1>
+										Gestiones Activas (
+										<h:outputText
+											value="#{historialGestionBean.totalGestionesActivas}"></h:outputText>
+										)
+									</h1>
+
+
+
+									<p:sidebar id="idSideBarComentarios"
+										widgetVar="sideBarComentarios" position="left"
+										blockScroll="true" baseZIndex="10000"
+										styleClass="classSideBarComentarios">
+
+
+										<h:outputText style="font-weight: bolder;"
+											value="#{historialGestionBean.gestionActivaSelec.descripcion}"></h:outputText>
+
+										<p:inputTextarea id="inputComentarios" style="resize: none"
+											maxlength="999"
+											value="#{historialGestionBean.taskComment.text}"
+											placeholder="Añadir comentario..." autoResize="false">
+											<p:ajax event="keydown" update="@(.outputComentarios), @this"
+												process="@this"
+												listener="#{historialGestionBean.actionAñadirComentario}"
+												onstart="if (event.keyCode != 13) { return false; }	" />
+										</p:inputTextarea>
+
+
+										<p:scrollPanel style="height: 75%;" mode="native">
+
+											<p:outputPanel styleClass="outputComentarios">
+
+												<ui:repeat
+													value="#{historialGestionBean.gestionActivaSelec.tareaW.comentarios}"
+													var="comentario">
+													<h:outputText style="font-weight: bolder;"
+														value="#{comentario.author.name}  "></h:outputText>
+													<h:outputText value="(#{comentario.createdAt})">
+													</h:outputText>
+
+													<br></br>
+													<h:outputText value="#{comentario.text}"></h:outputText>
+
+													<br></br>
+													<br></br>
+												</ui:repeat>
+
+
+
+											</p:outputPanel>
+										</p:scrollPanel>
+										<p:commandButton value="Actualizar"
+											action="#{historialGestionBean.gestionActivaSelec.updateTaskCommentsWunderlist}"
+											update="@(.outputComentarios)"></p:commandButton>
+										<br></br>
+
+									</p:sidebar>
+
+
+									<p:dataTable id="tablaGestionesActivas"
+										widgetVar="wTablaGestionesActivas"
+										styleClass="classTablaGestionesActivas" reflow="true"
+										emptyMessage="..."
+										value="#{historialGestionBean.gestionesActivas}" var="gestion"
+										filteredValue="#{historialGestionBean.gestionesActivasFilter}"
+										paginator="true" paginatorPosition="top" rows="10"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+										paginatorAlwaysVisible="true">
+
+										<f:facet name="header">
+											<p:outputPanel>
+												<p:inputText id="globalFilter"
+													onkeyup="PF('wTablaGestionesActivas').filter()"
+													style="width:150px" placeholder="Buscar..." />
+											</p:outputPanel>
+										</f:facet>
+
+										<f:facet name="{Exporters}">
+
+											<p:commandButton style="font-weight: bolder;"
+												value="Exportar a Excel" ajax="false">
+												<p:dataExporter type="xls" target="tablaGestionesActivas"
+													fileName="SGE-Gestiones_Activas" />
+											</p:commandButton>
+
+										</f:facet>
+
+										<p:column style="width:50px; ">
+
+											<p:commandButton icon="fa fa-bars"
+												action="#{historialGestionBean.actionPreparaPanelComentarios}"
+												update="@(.classSideBarComentarios)"
+												oncomplete="PF('sideBarComentarios').show();">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+
+										<p:column style="width:50px; ">
+
+											<p:commandButton icon="fa fa-search"
+												onclick="PF('dlgDetallesGestion').show(); PF('dlgDetallesGestion').toggleMaximize();"
+												action="#{historialGestionBean.gestionActivaSelec.updateAllDataBD}"
+												update="@(.classDlgDetallesGestion)">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+
+
+
+										<p:column style="width:50px; ">
+											<p:commandButton icon="fa fa-edit"
+												actionListener="#{historialGestionBean.actionEdicionGestion(gestion)}">
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Folio / Descripción"
+											filterBy="#{gestion.descripcion}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.descripcion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Fecha Recepción"
+											filterBy="#{gestion.fechaRecepcion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.fechaRecepcion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Solicitud"
+											filterBy="#{gestion.solicitud}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.solicitud}"></h:outputText>
+										</p:column>
+										<p:column headerText="Solicitado por"
+											sortBy="#{gestion.solicitadoA}"
+											filterBy="#{gestion.solicitadoA}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.solicitadoA}"></h:outputText>
+										</p:column>
+										<p:column headerText="Categoría"
+											sortBy="#{gestion.categoria.descripcion}"
+											filterBy="#{gestion.categoria.descripcion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.categoria.descripcion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Status" filterBy="#{gestion.solicitud}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.status.descripcion}"></h:outputText>
+										</p:column>
+
+
+
+
+										<p:column style="width:50px; ">
+
+											<p:commandButton icon="fa fa-check "
+												onclick="PF('dlgFinalizarGestion').show();"
+												action="#{historialGestionBean.actionPrepararDialogoFinalizacion}"
+												update="@(.classDlgFinalizarGestion)">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+
+									</p:dataTable>
+								</p:outputPanel>
+
+								<h1>
+									Gestiones Finalizadas (
+									<h:outputText
+										value="#{historialGestionBean.totalGestionesFinalizadas}"></h:outputText>
+									)
+								</h1>
+
+								<p:outputPanel styleClass="panelPrincipalGFinalizadas">
+
+									<p:dataTable id="tablaGestionesFinalizadas"
+										widgetVar="wTablaGestionesFinalizadas"
+										styleClass="classTablaGestionesFinalizadas" reflow="true"
+										emptyMessage="..."
+										value="#{historialGestionBean.gestionesFinalizadas}"
+										var="gestion"
+										filteredValue="#{historialGestionBean.gestionesFinalizadasFilter}"
+										paginator="true" paginatorPosition="top" rows="10"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+										paginatorAlwaysVisible="true">
+
+										<f:facet name="header">
+											<p:outputPanel>
+												<p:inputText id="globalFilter"
+													onkeyup="PF('wTablaGestionesFinalizadas').filter()"
+													style="width:150px" placeholder="Buscar..." />
+											</p:outputPanel>
+										</f:facet>
+
+										<f:facet name="{Exporters}">
+
+											<p:commandButton style="font-weight: bolder;"
+												value="Exportar a Excel" ajax="false">
+												<p:dataExporter type="xls"
+													target="tablaGestionesFinalizadas"
+													fileName="SGE-Gestiones_Finalizadas" />
+											</p:commandButton>
+
+										</f:facet>
+
+										<p:column style="width:50px; ">
+
+
+			<p:menuButton value="" icon="fa fa-gear">
+			
+			</p:menuButton>
+											<p:commandButton icon="fa fa-bars"
+												action="#{historialGestionBean.actionPreparaPanelComentarios}"
+												update="@(.classSideBarComentarios)"
+												oncomplete="PF('sideBarComentarios').show();">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+
+										<p:column style="width:50px; ">
+
+											<p:commandButton icon="fa fa-search"
+												onclick="PF('dlgDetallesGestion').show(); PF('dlgDetallesGestion').toggleMaximize();"
+												action="#{historialGestionBean.gestionActivaSelec.updateAllDataBD}"
+												update="@(.classDlgDetallesGestion)">
+												<f:setPropertyActionListener value="#{gestion}"
+													target="#{historialGestionBean.gestionActivaSelec}" />
+											</p:commandButton>
+
+										</p:column>
+										<p:column style="width:50px; ">
+											<p:commandButton icon="fa fa-edit"
+												actionListener="#{historialGestionBean.actionEdicionGestion(gestion)}">
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Folio / Descripción"
+											sortBy="#{gestion.descripcion}"
+											filterBy="#{gestion.descripcion}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.descripcion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Fecha Recepción"
+											sortBy="#{gestion.fechaRecepcion}"
+											filterBy="#{gestion.fechaRecepcion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.fechaRecepcion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Fecha Finalización"
+											sortBy="#{gestion.fechaFinalizacion}"
+											filterBy="#{gestion.fechaFinalizacion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.fechaFinalizacion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Solicitud" sortBy="#{gestion.solicitud}"
+											filterBy="#{gestion.solicitud}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.solicitud}"></h:outputText>
+										</p:column>
+										<p:column headerText="Solicitado por"
+											sortBy="#{gestion.solicitadoA}"
+											filterBy="#{gestion.solicitadoA}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.solicitadoA}"></h:outputText>
+										</p:column>
+										<p:column headerText="Categoría"
+											sortBy="#{gestion.categoria.descripcion}"
+											filterBy="#{gestion.categoria.descripcion}"
+											filterMatchMode="contains">
+											<h:outputText value="#{gestion.categoria.descripcion}"></h:outputText>
+										</p:column>
+										<p:column headerText="Conclusión"
+											sortBy="#{gestion.resumenFinal}"
+											filterBy="#{gestion.resumenFinal}" filterMatchMode="contains">
+											<h:outputText value="#{gestion.resumenFinal}"></h:outputText>
+										</p:column>
+
+									</p:dataTable>
+
+
+								</p:outputPanel>
+
+
+
+
+
+							</h:form>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+
+
+		<h:form id="formDlgFinalizarGestion">
+
+			<p:dialog header="Finalizar Gestión" widgetVar="dlgFinalizarGestion"
+				modal="true" responsive="true" draggable="false" width="300"
+				height="400" minimizable="false" maximizable="true"
+				closeOnEscape="true" closable="true" focus="inputFinalizarGestion">
+
+				<p:outputPanel styleClass="classDlgFinalizarGestion">
+
+					<div class="card card-w-title">
+
+						<h1>Ingrese la conclusión final del caso</h1>
+
+						<p:messages styleClass="msjDlgFinalizarGestion" closable="true"
+							showDetail="true">
+						</p:messages>
+
+						<p:calendar
+							value="#{historialGestionBean.gestionActivaSelec.fechaFinalizacion}"
+							mindate="#{historialGestionBean.gestionActivaSelec.fechaRecepcion}">
+							<p:ajax event="blur"></p:ajax>
+						</p:calendar>
+
+
+						<p:inputTextarea id="inputFinalizarGestion" style="width: 95%;"
+							value="#{historialGestionBean.gestionActivaSelec.resumenFinal}"
+							scrollHeight="300" rows="10">
+							<p:ajax event="blur"></p:ajax>
+						</p:inputTextarea>
+
+						<br></br>
+
+
+
+
+					</div>
+
+				</p:outputPanel>
+
+				<f:facet name="header">
+
+					<p:commandButton value="Finalizar"
+						actionListener="#{historialGestionBean.actionFinalizarGestion}"
+						oncomplete="handleFinalizarGestion(xhr, status, args)"
+						process="@form"
+						update="@(.panelPrincipal) @(.panelPrincipalGFinalizadas)"></p:commandButton>
+
+
+
+					<p:commandButton id="botonCancelarDlgFinalizarGestion"
+						widgetVar="wbotonCancelarDlgFinalizarGestion" value="Cancelar"
+						type="button" styleClass="secondary-button" icon="fa fa-close"
+						onclick="PF('dlgFinalizarGestion').hide()" />
+
+
+				</f:facet>
+
+			</p:dialog>
+
+		</h:form>
+
+
+		<h:form id="formDlgDetallesGestion">
+
+			<p:dialog header="Información de la Gestión"
+				widgetVar="dlgDetallesGestion" modal="true" responsive="true"
+				draggable="false" width="300" height="400" minimizable="false"
+				maximizable="false" closeOnEscape="true" closable="true"
+				onHide="PF('dlgDetallesGestion').toggleMaximize();">
+
+				<p:outputPanel styleClass="classDlgDetallesGestion">
+
+					<div class="card card-w-title">
+
+
+						<p:panelGrid columns="4"
+							columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+							layout="grid"
+							styleClass="ui-panelgrid-blank form-group form-elements"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel value="Folio:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.folio}"></h:outputText>
+
+							<p:outputLabel value="Fecha de Recepción:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.fechaRecepcion}"></h:outputText>
+
+							<p:outputLabel value="Solicitante:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.solicitadoA}"></h:outputText>
+
+							<p:outputLabel value="Categoría de la Gestión:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.categoria.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Paciente:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.nombre}"></h:outputText>
+
+							<p:outputLabel value="Edad:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.edad}"></h:outputText>
+
+							<p:outputLabel value="Sexo:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.sexo eq 'm' ? 'Masculino' : 'Femenino'}"></h:outputText>
+
+							<p:outputLabel value="Lugar de Origen:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.lugarResidencia.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Seguridad Social:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.seguridadSocial.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Folio Seguridad Social:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.afiliacion}"></h:outputText>
+
+
+							<p:outputLabel value="Diagnóstico:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.paciente.diagnostico}"></h:outputText>
+
+							<p:outputLabel value="Observaciones:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.detallesGenerales}"></h:outputText>
+
+							<p:outputLabel value="Solicitud:"></p:outputLabel>
+							<h:outputText
+								value="#{historialGestionBean.gestionActivaSelec.solicitud}"></h:outputText>
+
+							<p:outputLabel value="Contactos:"></p:outputLabel>
+
+							<ui:repeat var="contacto"
+								value="#{historialGestionBean.gestionActivaSelec.contactos}">
+
+								<h:outputText
+									value="#{contacto.nombres} #{contacto.telefonos} #{contacto.observaciones} #{contacto.email}"></h:outputText>
+								<br></br>
+
+							</ui:repeat>
+
+
+						</p:panelGrid>
+
+
+
+					</div>
+
+				</p:outputPanel>
+
+				<f:facet name="header">
+
+					<p:commandButton id="botonCerrarDlgDetallesGestion"
+						widgetVar="wbotonCerrarDlgDetallesGestion" value="Cerrar"
+						type="button" styleClass="secondary-button" icon="fa fa-close"
+						onclick="PF('dlgDetallesGestion').hide()" />
+
+
+				</f:facet>
+
+			</p:dialog>
+
+		</h:form>
+
+		<script type="text/javascript">
+			function handleFinalizarGestion(xhr, status, args) {
+
+				if (args.validationFailed || !args.concluido) {
+
+					PF('dlgFinalizarGestion').hide()
+
+				} else {
+					PF('dlgFinalizarGestion').hide();
+				}
+			}
+		</script>
+
+
+
+
+	</ui:define>
+
+
+
+
+</ui:composition>

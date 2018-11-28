@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf152640633268251" configfile="/sge/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="login.xhtml" x="122" y="178" id="pf15323672435010" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf15323672435021 pf15323672435022 pf15323672435023" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/dashboard.xhtml" x="338" y="178" id="pf15323672435024" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" inlinks="pf15323672435021 pf15323672435022 pf15323672435023 pf15323672435025" path="/portal/dashboard.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="562" id="pf15323672435026" referenceLink="//@navigationRule.1/@fromViewId|" outlinks="pf15323672435027" path="*"/>
+  <nodes xsi:type="pageflow:PFPage" name="index.xhtml" x="338" y="562" id="pf15323672435028" referenceLink="//@navigationRule.1/@navigationCase.0/@toViewId|" inlinks="pf15323672435027" path="/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/*" x="122" y="4402" id="pf15323672435029" referenceLink="//@navigationRule.4/@fromViewId|" outlinks="pf15323672435025 pf153236724350210 pf153236724350211 pf153236724350212 pf153236724350213 pf153236724350214 pf153236724350215 pf153236724350216 pf153236724350217 pf153236724350218 pf153236724350219 pf153236724350220 pf153236724350221 pf153236724350222 pf153236724350223 pf153236724350224 pf153236724350225 pf153236724350226 pf153236724350227 pf153236724350228 pf153236724350229" path="/portal/*"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/gestionproductos.xhtml" x="338" y="946" id="pf153236724350230" referenceLink="//@navigationRule.2/@navigationCase.1/@toViewId|" inlinks="pf153236724350210" path="/portal/nominas/gestionproductos.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/gestionarchivosbanco.xhtml" x="338" y="1330" id="pf153236724350231" referenceLink="//@navigationRule.2/@navigationCase.2/@toViewId|" inlinks="pf153236724350211" path="/portal/nominas/gestionarchivosbanco.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/gestionpuestos.xhtml" x="338" y="1714" id="pf153236724350232" referenceLink="//@navigationRule.2/@navigationCase.3/@toViewId|" inlinks="pf153236724350212" path="/portal/nominas/gestionpuestos.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/gestiontimbrado.xhtml" x="338" y="2098" id="pf153236724350233" referenceLink="//@navigationRule.2/@navigationCase.4/@toViewId|" inlinks="pf153236724350213" path="/portal/nominas/gestiontimbrado.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/consultatrabajador.xhtml" x="338" y="2482" id="pf153236724350234" referenceLink="//@navigationRule.2/@navigationCase.5/@toViewId|" inlinks="pf153236724350214" path="/portal/nominas/consultatrabajador.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/consultaproducto.xhtml" x="338" y="2866" id="pf153236724350235" referenceLink="//@navigationRule.2/@navigationCase.6/@toViewId|" inlinks="pf153236724350215" path="/portal/nominas/consultaproducto.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/generacionperded.xhtml" x="338" y="3250" id="pf153236724350236" referenceLink="//@navigationRule.2/@navigationCase.7/@toViewId|" inlinks="pf153236724350216" path="/portal/nominas/generacionperded.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/infosindicato.xhtml" x="338" y="3634" id="pf153236724350237" referenceLink="//@navigationRule.2/@navigationCase.8/@toViewId|" inlinks="pf153236724350217" path="/portal/nominas/infosindicato.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/catalogos.xhtml" x="338" y="4018" id="pf153236724350238" referenceLink="//@navigationRule.2/@navigationCase.9/@toViewId|" inlinks="pf153236724350218" path="/portal/nominas/catalogos.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/trimestrales.xhtml" x="338" y="4402" id="pf153236724350239" referenceLink="//@navigationRule.2/@navigationCase.10/@toViewId|" inlinks="pf153236724350219" path="/portal/nominas/trimestrales.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/flujoefectivo.xhtml" x="338" y="4786" id="pf153236724350240" referenceLink="//@navigationRule.2/@navigationCase.11/@toViewId|" inlinks="pf153236724350220" path="/portal/nominas/flujoefectivo.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/consultaconpers.xhtml" x="338" y="5170" id="pf153236724350241" referenceLink="//@navigationRule.2/@navigationCase.12/@toViewId|" inlinks="pf153236724350221" path="/portal/nominas/consultaconpers.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/unificacion.xhtml" x="338" y="5554" id="pf153236724350242" referenceLink="//@navigationRule.2/@navigationCase.13/@toViewId|" inlinks="pf153236724350222" path="/portal/nominas/unificacion.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/mantempleados.xhtml" x="338" y="5938" id="pf153236724350243" referenceLink="//@navigationRule.2/@navigationCase.14/@toViewId|" inlinks="pf153236724350223" path="/portal/nominas/mantempleados.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/plantillas.xhtml" x="338" y="6322" id="pf153236724350344" referenceLink="//@navigationRule.2/@navigationCase.15/@toViewId|" inlinks="pf153236724350224" path="/portal/nominas/plantillas.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/nominas/validacionrfc.xhtml" x="338" y="6706" id="pf153236724350345" referenceLink="//@navigationRule.2/@navigationCase.16/@toViewId|" inlinks="pf153236724350225" path="/portal/nominas/validacionrfc.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/archivodigital/index.xhtml" x="338" y="7090" id="pf153236724350346" referenceLink="//@navigationRule.2/@navigationCase.17/@toViewId|" inlinks="pf153236724350226" path="/portal/archivodigital/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/siri/index.xhtml" x="338" y="7474" id="pf153236724350347" referenceLink="//@navigationRule.2/@navigationCase.18/@toViewId|" inlinks="pf153236724350227" path="/portal/siri/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/administracion/usuarios.xhtml" x="338" y="7858" id="pf153236724350348" referenceLink="//@navigationRule.3/@navigationCase.0/@toViewId|" inlinks="pf153236724350228" path="/portal/administracion/usuarios.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="portal/spooler/index.xhtml" x="338" y="8242" id="pf153236724350349" referenceLink="//@navigationRule.4/@navigationCase.0/@toViewId|" inlinks="pf153236724350229" path="/portal/spooler/index.xhtml"/>
+  <links id="pf15323672435021" target="pf15323672435024" source="pf15323672435010" outcome="Admin" redirect="true"/>
+  <links id="pf15323672435022" target="pf15323672435024" source="pf15323672435010" outcome="Usuario" redirect="true"/>
+  <links id="pf15323672435023" target="pf15323672435024" source="pf15323672435010" outcome="SuperAdmin" redirect="true"/>
+  <links id="pf15323672435027" target="pf15323672435028" source="pf15323672435026" outcome="cerrarSesion" redirect="true"/>
+  <links id="pf15323672435025" target="pf15323672435024" source="pf15323672435029" outcome="dashboard" redirect="true"/>
+  <links id="pf153236724350210" target="pf153236724350230" source="pf15323672435029" outcome="gestionproductos" redirect="true"/>
+  <links id="pf153236724350211" target="pf153236724350231" source="pf15323672435029" outcome="gestionarchivosbanco" redirect="true"/>
+  <links id="pf153236724350212" target="pf153236724350232" source="pf15323672435029" outcome="gestionpuestos" redirect="true"/>
+  <links id="pf153236724350213" target="pf153236724350233" source="pf15323672435029" outcome="gestiontimbrado" redirect="true"/>
+  <links id="pf153236724350214" target="pf153236724350234" source="pf15323672435029" outcome="consultatrabajador" redirect="true"/>
+  <links id="pf153236724350215" target="pf153236724350235" source="pf15323672435029" outcome="consultaproducto" redirect="true"/>
+  <links id="pf153236724350216" target="pf153236724350236" source="pf15323672435029" outcome="perded" redirect="true"/>
+  <links id="pf153236724350217" target="pf153236724350237" source="pf15323672435029" outcome="sindicato" redirect="true"/>
+  <links id="pf153236724350218" target="pf153236724350238" source="pf15323672435029" outcome="catalogosnomina" redirect="true"/>
+  <links id="pf153236724350219" target="pf153236724350239" source="pf15323672435029" outcome="trimestrales" redirect="true"/>
+  <links id="pf153236724350220" target="pf153236724350240" source="pf15323672435029" outcome="flujoefectivo" redirect="true"/>
+  <links id="pf153236724350221" target="pf153236724350241" source="pf15323672435029" outcome="consultaconpers" redirect="true"/>
+  <links id="pf153236724350222" target="pf153236724350242" source="pf15323672435029" outcome="unificacion" redirect="true"/>
+  <links id="pf153236724350223" target="pf153236724350243" source="pf15323672435029" outcome="mantempleados" redirect="true"/>
+  <links id="pf153236724350224" target="pf153236724350344" source="pf15323672435029" outcome="plantillas" redirect="true"/>
+  <links id="pf153236724350225" target="pf153236724350345" source="pf15323672435029" outcome="validacionrfc" redirect="true"/>
+  <links id="pf153236724350226" target="pf153236724350346" source="pf15323672435029" outcome="archivodigital" redirect="true"/>
+  <links id="pf153236724350227" target="pf153236724350347" source="pf15323672435029" outcome="siri" redirect="true"/>
+  <links id="pf153236724350228" target="pf153236724350348" source="pf15323672435029" outcome="ConfigurarUsuarios" redirect="true"/>
+  <links id="pf153236724350229" target="pf153236724350349" source="pf15323672435029" outcome="spoolerPDF" redirect="true"/>
+</pageflow:Pageflow>
