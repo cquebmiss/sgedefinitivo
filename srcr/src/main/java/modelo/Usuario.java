@@ -6,9 +6,12 @@
 package modelo;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import util.utilidades;
 
 /**
@@ -29,6 +32,70 @@ public class Usuario implements Serializable
 	private Date					VigenciaInicial;
 	private Date					VigenciaFinal;
 	private List<PermisoSistema>	permisoSistemas;
+	
+	
+	public static void main(String []args)
+	{
+		
+		try
+		{
+			ByteBuffer buf = ByteBuffer.allocate(16);
+			Usuario.yo(buf);
+			short shor = 12;
+			String stri = "Culo";
+			
+			buf.putChar('A');
+			buf.putChar('E');
+			buf.putShort(shor);
+			buf.put(stri.getBytes());
+			buf.putShort(shor);
+			
+			Usuario.yo(buf);
+			
+			buf.flip();
+			
+			Usuario.yo(buf);
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			System.out.println(buf.get());
+//			
+//			System.out.println("");
+//			System.out.println("Rewind");
+//			System.out.println("");
+//			buf.rewind();
+			
+			System.out.println(buf.getChar());
+			System.out.println(buf.getChar());
+			System.out.println(buf.getShort());
+//			System.out.println(buf.get());
+//			
+			Usuario.yo(buf);
+			
+			//byte[] bytes = buf.getBytes( Charset.forName("UTF-8" ));
+			byte[] resto = new byte[buf.remaining()];
+			buf.get(resto);
+			System.out.println("Posición: "+buf.position()+", y le quedan bytes: "+buf.remaining());
+			String v = new String( resto, Charset.forName("UTF-8") );
+			System.out.println("Cadena de buf: "+v);
+			
+			Usuario.yo(buf);
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	static void yo(ByteBuffer b)
+	{
+		System.out.println("Position: "+b.position()+", limit: "+b.limit());
+	}
 
 	public Usuario()
 	{

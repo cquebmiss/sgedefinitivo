@@ -11,7 +11,7 @@ public class SeguridadSocial {
 
 	@Id
 	@Column(name = "idSeguridadSocial")
-	public int idSeguridadSocial;
+	private int idSeguridadSocial;
 
 	@Column(name = "descripcion")
 	private String descripcion;

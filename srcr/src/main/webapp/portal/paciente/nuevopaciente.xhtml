@@ -1,0 +1,286 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Sistema de Referencias Contrareferencias - Nueva Solicitud de Gestión</ui:define>
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li>Nuevo Paciente</li>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+
+							<h:form id="formGeneral">
+
+								<p:focus for="campoNombre"></p:focus>
+
+								<p:outputPanel id="outputPanelPrincipal"
+									styleClass="panelPrincipal">
+
+									<h2>Datos del Paciente</h2>
+
+									<p:panelGrid columns="4"
+										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+										layout="grid"
+										styleClass="ui-panelgrid-blank form-group form-elements"
+										style="border:0px none; background-color:transparent;">
+
+										<p:outputLabel value="Nombre *" for="campoNombre"></p:outputLabel>
+										<p:inputText id="campoNombre"
+											value="#{nuevaGestionBean.gestion.paciente.nombre}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+
+										<p:outputLabel for="campoEdad" value="Edad *"></p:outputLabel>
+										<p:inputMask mask="99" id="campoEdad"
+											value="#{nuevaGestionBean.gestion.paciente.edad}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputMask>
+
+										<p:outputLabel value="CURP *" for="campoCURP"></p:outputLabel>
+										<p:inputMask id="campoCURP" mask="aaaa99999999999999">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputMask>
+
+										<p:outputLabel for="campoRFC" value="RFC"></p:outputLabel>
+										<p:inputMask mask="9999999999" id="campoRFC">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputMask>
+
+
+										<p:outputLabel for="campoSexo" value="Sexo"></p:outputLabel>
+
+										<p:selectOneMenu id="campoSexo"
+											value="#{nuevaGestionBean.gestion.paciente.sexo}">
+											<p:ajax event="change"></p:ajax>
+											<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
+											<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
+										</p:selectOneMenu>
+
+										<p:outputLabel for="campoLugarOrigen" value="Lugar de Origen"></p:outputLabel>
+
+										<p:autoComplete id="campoLugarOrigen" minQueryLength="3"
+											effect="fade"
+											completeMethod="#{nuevaGestionBean.autoCompleteLugarOrigen}"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.descripcion}"
+											scrollHeight="300">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:autoComplete>
+
+
+										<p:outputLabel for="campoSeguridadSocial"
+											value="Seguridad Social" />
+										<p:selectOneMenu
+											value="#{nuevaGestionBean.gestion.paciente.seguridadSocial}"
+											id="campoSeguridadSocial"
+											converter="seguridadSocialConverter">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+
+											<f:selectItem itemLabel="Seguro Popular" itemValue="m"></f:selectItem>
+											<f:selectItem itemLabel="IMSS/Prospera" itemValue="f"></f:selectItem>
+											<f:selectItem itemLabel="ISSSTE" itemValue="f"></f:selectItem>
+											<f:selectItem itemLabel="IMSS" itemValue="f"></f:selectItem>
+
+										</p:selectOneMenu>
+
+										<p:outputLabel for="campoAfiliacion"
+											value="Código de Afiliación" />
+										<p:inputText id="campoAfiliacion"
+											value="#{nuevaGestionBean.gestion.paciente.afiliacion}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+
+
+									</p:panelGrid>
+
+									<p:outputLabel for="campoAntecedentes" value="Antecedentes Familiares" />
+									<p:inputTextarea id="campoAntecedentes">
+										<p:ajax event="blur" process="@this"></p:ajax>
+									</p:inputTextarea>
+
+									<p:outputLabel for="campoDiagnosticoInicial"
+										value="Diagnóstico Inicial" />
+									<p:inputTextarea id="campoDiagnosticoInicial">
+										<p:ajax event="blur" process="@this"></p:ajax>
+									</p:inputTextarea>
+
+
+								</p:outputPanel>
+
+								<p:outputPanel id="outputContactos">
+
+									<p:autoUpdate></p:autoUpdate>
+									<br></br>
+									<h2>Contactos</h2>
+
+									<p:dataTable styleClass="dataTableClass"
+										value="#{nuevaGestionBean.gestion.contactos}" var="con"
+										reflow="true" emptyMessage="...">
+
+										<p:column headerText="Nombre">
+											<h:outputText value="#{con.nombres}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="Teléfono(s)">
+											<h:outputText value="#{con.telefonos}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="Email">
+											<h:outputText value="#{con.email}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="Observación">
+											<h:outputText value="#{con.observaciones}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="" style="width: 50px;">
+
+											<p:commandButton icon="fa fa-edit" process="@this"
+												oncomplete="PF('dlgContacto').show()"
+												update="@(.classDlgContacto)">
+												<f:setPropertyActionListener value="#{con}"
+													target="#{dialogoContactoBean.contacto}" />
+											</p:commandButton>
+
+
+										</p:column>
+										<p:column headerText="" style="width: 50px;">
+											<p:commandButton icon="fa fa-close" process="@this"
+												actionListener="#{nuevaGestionBean.actionEliminarContact(con)}"
+												update="@(.dataTableClass)"></p:commandButton>
+										</p:column>
+
+									</p:dataTable>
+
+									<p:commandButton icon="fa fa-plus"
+										actionListener="#{dialogoContactoBean.addNuevoContacto}"
+										process="@this"
+										update="@(.classDlgContacto) @(.dataTableClass)"
+										oncomplete="PF('dlgContacto').show()"></p:commandButton>
+
+
+									<br></br>
+									<br></br>
+
+									<p:messages id="msjGlobal" globalOnly="true" showDetail="true"
+										closable="true"></p:messages>
+
+
+
+								</p:outputPanel>
+
+
+
+								<p:commandButton id="saveBtn" value="Guardar"
+									onclick="customfunction();" update="@(.panelPrincipal)"
+									actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
+
+								<script type="text/javascript">
+									function customfunction() {
+										if (!navigator.onLine) {
+											alert("No hay conexión a Internet, verifique la conexión de su navegador.");
+										}
+									}
+								</script>
+
+
+							</h:form>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+
+
+
+
+
+		<!-- DIALOGO PARA AÑADIR CONTACTO DE FAMILIAR O PARA LA GESTION -->
+
+		<h:form id="formDlgContacto">
+
+			<p:dialog header="Contacto" widgetVar="dlgContacto" modal="true"
+				responsive="true" draggable="false" width="300" minimizable="false"
+				maximizable="true" closeOnEscape="true" closable="true">
+
+				<p:outputPanel styleClass="classDlgContacto">
+
+
+					<div class="card card-w-title">
+
+						<h1>Datos del Contacto</h1>
+
+						<p:messages styleClass="msjDlgContacto" closable="true"
+							showDetail="true">
+						</p:messages>
+
+						<p:focus for="inputNombreContacto"></p:focus>
+
+						<p:panelGrid id="panelGridNDlgContacto" columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group">
+
+							<p:inputText value="#{dialogoContactoBean.contacto.nombres}"
+								id="inputNombreContacto" style="width: 95%;"
+								placeholder="Nombre">
+								<p:ajax event="blur" process="@this"></p:ajax>
+							</p:inputText>
+
+							<p:inputText value="#{dialogoContactoBean.contacto.telefonos}"
+								id="inputTelefonos" style="width: 95%;"
+								placeholder="Teléfono(s)">
+								<p:ajax event="blur" process="@this"></p:ajax>
+							</p:inputText>
+
+							<p:inputText value="#{dialogoContactoBean.contacto.email}"
+								id="inputEmail" style="width: 95%;" placeholder="Email">
+								<p:ajax event="blur" process="@this" update="@(.msjDlgContacto)"></p:ajax>
+							</p:inputText>
+
+
+							<p:inputText
+								value="#{dialogoContactoBean.contacto.observaciones}"
+								id="campoObservacion" style="width: 95%;"
+								placeholder="Observación">
+								<p:ajax event="blur" process="@this"></p:ajax>
+							</p:inputText>
+
+						</p:panelGrid>
+					</div>
+
+				</p:outputPanel>
+
+				<f:facet name="header">
+
+
+					<p:commandButton id="botonAceptarDlgContacto"
+						widgetVar="wbotonAceptarDlgContacto" value="Aceptar"
+						icon="fa fa-check" onclick="PF('dlgContacto').hide()" />
+
+
+				</f:facet>
+
+
+
+			</p:dialog>
+
+		</h:form>
+
+
+	</ui:define>
+
+
+
+
+</ui:composition>

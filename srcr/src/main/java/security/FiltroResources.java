@@ -59,18 +59,18 @@ public class FiltroResources implements Filter
 
 		String loginURL = httpRequest.getContextPath() + "/";
 
-		boolean loggedIn = false;
+		boolean loggedIn = true;
 
-		if (session != null)
-		{
-			Sesion sesionBean = (Sesion) session.getAttribute("Sesion");
-
-			if (sesionBean != null && sesionBean.getSesionActiva() != null && !sesionBean.getSesionActiva().isEmpty())
-			{
-				loggedIn = true;
-			}
-
-		}
+//		if (session != null)
+//		{
+//			Sesion sesionBean = (Sesion) session.getAttribute("Sesion");
+//
+//			if (sesionBean != null && sesionBean.getSesionActiva() != null && !sesionBean.getSesionActiva().isEmpty())
+//			{
+//				loggedIn = true;
+//			}
+//
+//		}
 		boolean loginRequest = httpRequest.getRequestURI().equals(loginURL);
 		boolean resourceRequest = httpRequest.getRequestURI()
 				.startsWith(httpRequest.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="/sge">
 
-	<Resource auth="Container"
+	<!--  <Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="webrh"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
@@ -58,6 +58,6 @@
 		maxWait="10000" removeAbandoned="true" name="climalaboral"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
 		url="jdbc:mysql://localhost:3307/climalaboral"
-		username="root" />
+		username="root" />-->
 
 </Context>
