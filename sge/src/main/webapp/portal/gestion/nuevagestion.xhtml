@@ -163,6 +163,37 @@
 										</p:inputText>
 
 
+										<p:outputLabel for="campoAtendidoEn" value="Atendido en" />
+										<p:selectOneMenu
+											value="#{nuevaGestionBean.gestion.paciente.atendidoEn}"
+											id="campoAtendidoEn" converter="unidadSaludConverter"
+											filterMatchMode="contains" filter="true">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+
+											<f:selectItems value="#{nuevaGestionBean.catUnidadSalud}"
+												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+
+										</p:selectOneMenu>
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+										<p:outputLabel for="campoReferenciadoA" value="Referenciado a" />
+										<p:selectOneMenu
+											value="#{nuevaGestionBean.gestion.paciente.referenciadoA}"
+											id="campoReferenciadoA" converter="unidadSaludConverter"
+											filter="true" filterMatchMode="contains">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+
+											<f:selectItems value="#{nuevaGestionBean.catUnidadSalud}"
+												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+
+										</p:selectOneMenu>
+
+
+
 									</p:panelGrid>
 
 									<p:outputLabel for="campoDiagnostico" value="Diagnóstico" />

@@ -19,8 +19,11 @@ import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.PieChartModel;
 
+import lombok.Getter;
+import lombok.Setter;
 import modelo.Sesion;
 import modelo.gestion.CategoriaGestion;
 import modelo.gestion.Edad;
@@ -29,43 +32,49 @@ import modelo.gestion.LugarResidencia;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Sexo;
 import modelo.gestion.Solicitante;
+import service.GraficasService;
 import util.FacesUtils;
 import util.UtilidadesCalendario;
 import util.gestion.UtilidadesGestion;
 
 @ManagedBean
 @ViewScoped
+@Getter
+@Setter
 public class ReportesGestionBean
 {
-	private List<Gestion>			gestionesActivas;
-	private List<Gestion>			gestionesFinalizadas;
-	private int						totalGestiones;
-	private int						totalGestionesActivas;
-	private int						totalGestionesFinalizadas;
-	private String					tiempoPromedioFinalizacion;
+	private List<Gestion> gestionesActivas;
+	private List<Gestion> gestionesFinalizadas;
+	private int totalGestiones;
+	private int totalGestionesActivas;
+	private int totalGestionesFinalizadas;
+	private String tiempoPromedioFinalizacion;
 
-	private List<Gestion>			allGestiones;
+	private List<Gestion> allGestiones;
 
-	//fechas de recepción
-	private Date					fechaInicial;
-	private Date					fechaFinal;
+	// fechas de recepción
+	private Date fechaInicial;
+	private Date fechaFinal;
 
-	//fechas de finalización
-	private Date					fechaFinalizacionInicial;
-	private Date					fechaFinalizacionFinal;
+	// fechas de finalización
+	private Date fechaFinalizacionInicial;
+	private Date fechaFinalizacionFinal;
 
-	//Gráficas
-	private PieChartModel			modeloGraficaGeneral;
-	private List<Solicitante>		solicitantes;
-	private BarChartModel			modeloGraficaSolicitantes;
+	// Gráficas
+	private PieChartModel modeloGraficaGeneral;
+	private List<Solicitante> solicitantes;
+	private BarChartModel modeloGraficaSolicitantes;
 
-	private List<LugarResidencia>	lugaresResidencia;
-	private BarChartModel			modeloGraficaLugarResidencia;
+	private List<LugarResidencia> lugaresResidencia;
+	private BarChartModel modeloGraficaLugarResidencia;
 
-	private List<CategoriaGestion>	categorias;
-	private List<SeguridadSocial>	seguridadSocial;
-	private List<Sexo>				sexos;
-	private List<Edad>				edades;
+	private List<CategoriaGestion> categorias;
+	private List<SeguridadSocial> seguridadSocial;
+	private List<Sexo> sexos;
+	private List<Edad> edades;
+
+	// Gráfica lineal de total de gestiones mensuales
+	private LineChartModel lineModel;
 
 	public ReportesGestionBean()
 	{
@@ -73,10 +82,21 @@ public class ReportesGestionBean
 
 	}
 
+	public LineChartModel getLineModel()
+	{
+		return lineModel;
+	}
+
+	public void setLineModel(LineChartModel lineModel)
+	{
+		this.lineModel = lineModel;
+	}
+
 	@PostConstruct
 	public void postConstruct()
 	{
-
+		GraficasService graficasService = new GraficasService();
+		this.lineModel = graficasService.getChartMensualTotalGestionesAño(LocalDate.now().getYear());
 	}
 
 	public void actionInicializaReportes()
@@ -85,8 +105,7 @@ public class ReportesGestionBean
 		{
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			ec.redirect(ec.getRequestContextPath() + "/portal/gestion/reportesgestion.jsf");
-		}
-		catch (IOException e)
+		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,7 +137,7 @@ public class ReportesGestionBean
 
 		this.modeloGraficaGeneral.setSeriesColors(UtilidadesGestion.seriesColors);
 		this.modeloGraficaGeneral.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
-		//		modeloGrafica.setAnimate(true);
+		// modeloGrafica.setAnimate(true);
 
 		this.modeloGraficaGeneral.setLegendPosition("e");
 
@@ -128,7 +147,7 @@ public class ReportesGestionBean
 	{
 		getHistorialGestiones();
 
-		//se actualiza la información de las gestiones
+		// se actualiza la información de las gestiones
 		for (Gestion ges : this.allGestiones)
 		{
 			ges.updateAllDataBD();
@@ -208,11 +227,11 @@ public class ReportesGestionBean
 
 		System.out.println("Solicitantes: " + this.solicitantes);
 
-		//Crea la gráfica correspondiente
+		// Crea la gráfica correspondiente
 		this.modeloGraficaSolicitantes = new BarChartModel();
 		this.modeloGraficaSolicitantes.setSeriesColors(UtilidadesGestion.seriesColors);
 		this.modeloGraficaSolicitantes.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
-		//		modeloGrafica.setAnimate(true);
+		// modeloGrafica.setAnimate(true);
 
 		this.modeloGraficaSolicitantes.setLegendPosition("e");
 
@@ -268,11 +287,11 @@ public class ReportesGestionBean
 
 		this.lugaresResidencia.sort(Comparator.comparing(LugarResidencia::getTotal).reversed());
 
-		//Crea la gráfica correspondiente
+		// Crea la gráfica correspondiente
 		this.modeloGraficaLugarResidencia = new BarChartModel();
 		this.modeloGraficaLugarResidencia.setSeriesColors(UtilidadesGestion.seriesColors);
 		this.modeloGraficaLugarResidencia.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
-		//		modeloGrafica.setAnimate(true);
+		// modeloGrafica.setAnimate(true);
 
 		this.modeloGraficaLugarResidencia.setLegendPosition("e");
 
@@ -433,24 +452,19 @@ public class ReportesGestionBean
 			if (edad < 6)
 			{
 				objEdad.setDescripcion("0-5 años");
-			}
-			else if (edad < 12)
+			} else if (edad < 12)
 			{
 				objEdad.setDescripcion("6-11 años");
-			}
-			else if (edad < 19)
+			} else if (edad < 19)
 			{
 				objEdad.setDescripcion("12-18 años");
-			}
-			else if (edad < 27)
+			} else if (edad < 27)
 			{
 				objEdad.setDescripcion("19-26 años");
-			}
-			else if (edad < 60)
+			} else if (edad < 60)
 			{
 				objEdad.setDescripcion("27-59 años");
-			}
-			else
+			} else
 			{
 				objEdad.setDescripcion("60 años y más");
 			}
@@ -479,206 +493,6 @@ public class ReportesGestionBean
 
 		this.edades.sort(Comparator.comparing(Edad::getTotal).reversed());
 
-	}
-
-	public List<Gestion> getGestionesActivas()
-	{
-		return gestionesActivas;
-	}
-
-	public void setGestionesActivas(List<Gestion> gestionesActivas)
-	{
-		this.gestionesActivas = gestionesActivas;
-	}
-
-	public List<Gestion> getGestionesFinalizadas()
-	{
-		return gestionesFinalizadas;
-	}
-
-	public void setGestionesFinalizadas(List<Gestion> gestionesFinalizadas)
-	{
-		this.gestionesFinalizadas = gestionesFinalizadas;
-	}
-
-	public int getTotalGestionesActivas()
-	{
-		return totalGestionesActivas;
-	}
-
-	public void setTotalGestionesActivas(int totalGestionesActivas)
-	{
-		this.totalGestionesActivas = totalGestionesActivas;
-	}
-
-	public int getTotalGestionesFinalizadas()
-	{
-		return totalGestionesFinalizadas;
-	}
-
-	public void setTotalGestionesFinalizadas(int totalGestionesFinalizadas)
-	{
-		this.totalGestionesFinalizadas = totalGestionesFinalizadas;
-	}
-
-	public List<Gestion> getAllGestiones()
-	{
-		return allGestiones;
-	}
-
-	public void setAllGestiones(List<Gestion> allGestiones)
-	{
-		this.allGestiones = allGestiones;
-	}
-
-	public Date getFechaInicial()
-	{
-		return fechaInicial;
-	}
-
-	public void setFechaInicial(Date fechaInicial)
-	{
-		this.fechaInicial = fechaInicial;
-	}
-
-	public Date getFechaFinal()
-	{
-		return fechaFinal;
-	}
-
-	public void setFechaFinal(Date fechaFinal)
-	{
-		this.fechaFinal = fechaFinal;
-	}
-
-	public String getTiempoPromedioFinalizacion()
-	{
-		return tiempoPromedioFinalizacion;
-	}
-
-	public void setTiempoPromedioFinalizacion(String tiempoPromedioFinalizacion)
-	{
-		this.tiempoPromedioFinalizacion = tiempoPromedioFinalizacion;
-	}
-
-	public List<CategoriaGestion> getCategorias()
-	{
-		return categorias;
-	}
-
-	public void setCategorias(List<CategoriaGestion> categorias)
-	{
-		this.categorias = categorias;
-	}
-
-	public List<Solicitante> getSolicitantes()
-	{
-		return solicitantes;
-	}
-
-	public void setSolicitantes(List<Solicitante> solicitantes)
-	{
-		this.solicitantes = solicitantes;
-	}
-
-	public BarChartModel getModeloGraficaSolicitantes()
-	{
-		return modeloGraficaSolicitantes;
-	}
-
-	public void setModeloGraficaSolicitantes(BarChartModel modeloGraficaSolicitantes)
-	{
-		this.modeloGraficaSolicitantes = modeloGraficaSolicitantes;
-	}
-
-	public List<LugarResidencia> getLugaresResidencia()
-	{
-		return lugaresResidencia;
-	}
-
-	public void setLugaresResidencia(List<LugarResidencia> lugaresResidencia)
-	{
-		this.lugaresResidencia = lugaresResidencia;
-	}
-
-	public BarChartModel getModeloGraficaLugarResidencia()
-	{
-		return modeloGraficaLugarResidencia;
-	}
-
-	public void setModeloGraficaLugarResidencia(BarChartModel modeloGraficaLugarResidencia)
-	{
-		this.modeloGraficaLugarResidencia = modeloGraficaLugarResidencia;
-	}
-
-	public List<SeguridadSocial> getSeguridadSocial()
-	{
-		return seguridadSocial;
-	}
-
-	public void setSeguridadSocial(List<SeguridadSocial> seguridadSocial)
-	{
-		this.seguridadSocial = seguridadSocial;
-	}
-
-	public List<Sexo> getSexos()
-	{
-		return sexos;
-	}
-
-	public void setSexos(List<Sexo> sexos)
-	{
-		this.sexos = sexos;
-	}
-
-	public List<Edad> getEdades()
-	{
-		return edades;
-	}
-
-	public void setEdades(List<Edad> edades)
-	{
-		this.edades = edades;
-	}
-
-	public int getTotalGestiones()
-	{
-		return totalGestiones;
-	}
-
-	public void setTotalGestiones(int totalGestiones)
-	{
-		this.totalGestiones = totalGestiones;
-	}
-
-	public PieChartModel getModeloGraficaGeneral()
-	{
-		return modeloGraficaGeneral;
-	}
-
-	public void setModeloGraficaGeneral(PieChartModel modeloGraficaGeneral)
-	{
-		this.modeloGraficaGeneral = modeloGraficaGeneral;
-	}
-
-	public Date getFechaFinalizacionInicial()
-	{
-		return fechaFinalizacionInicial;
-	}
-
-	public void setFechaFinalizacionInicial(Date fechaFinalizacionInicial)
-	{
-		this.fechaFinalizacionInicial = fechaFinalizacionInicial;
-	}
-
-	public Date getFechaFinalizacionFinal()
-	{
-		return fechaFinalizacionFinal;
-	}
-
-	public void setFechaFinalizacionFinal(Date fechaFinalizacionFinal)
-	{
-		this.fechaFinalizacionFinal = fechaFinalizacionFinal;
 	}
 
 }

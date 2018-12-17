@@ -41,7 +41,7 @@ public class Gestion
 
 	private CategoriaGestion	categoria;
 
-	//Tarea en Wunderlist
+	// Tarea en Wunderlist
 	private Task				tareaW;
 
 	public Gestion()
@@ -58,9 +58,11 @@ public class Gestion
 		this.paciente = new Paciente(this);
 		this.contactos = new ArrayList<>();
 
-		//Se inicializa el objeto con el status en -1 que significa que la actividad está agendada, pasará a 0 iniciada al momento de que sea revisada por el departamento de gestión y enlace
+		// Se inicializa el objeto con el status en -1 que significa que la actividad
+		// está agendada, pasará a 0 iniciada al momento de que sea revisada por el
+		// departamento de gestión y enlace
 		this.status = new StatusActividad(-1, "Agendada");
-		//El tipo de gestión siempre será Atención y Servicios para éste módulo
+		// El tipo de gestión siempre será Atención y Servicios para éste módulo
 		this.tipoGestion = new TipoGestion(1, "Atención y Mejoras");
 
 		// TODO Auto-generated constructor stub
@@ -94,11 +96,11 @@ public class Gestion
 		}
 	}
 
-	//Actualizar todos los datos de la gestión desde la base de datos
+	// Actualizar todos los datos de la gestión desde la base de datos
 	public void updateAllDataBD()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement	prep	= null;
+		ResultSet			rBD		= null;
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -136,14 +138,19 @@ public class Gestion
 					usuario.setNombre(rBD.getString("nombreUsuario"));
 					setUsuario(usuario);
 
-					//Se añade ahora el paciente a la gestión
+					// Se añade ahora el paciente a la gestión
 
 					prep.close();
 
-					prep = conexion.prepareStatement(
-							"SELECT p.*, lr.descripcion AS descLugarResidencia, ss.descripcion AS descSeguridadSocial\n"
-									+ "FROM paciente p, lugarresidencia lr, seguridadsocial ss\n"
-									+ "WHERE p.idGestion=? AND p.idLugarResidencia = lr.idLugarResidencia AND p.idSeguridadSocial = ss.idSeguridadSocial");
+					prep = conexion.prepareStatement("SELECT p.*,\n"
+							+ "	lr.descripcion AS descLugarResidencia,\n"
+							+ "	ss.descripcion AS descSeguridadSocial,\n" + "	us1.descripcion AS descAtendidoEn,\n"
+							+ "	us2.descripcion AS descReferenciadoA\n" + "FROM\n" + "	paciente p\n"
+							+ "INNER JOIN lugarresidencia lr ON p.idLugarResidencia = lr.idLugarResidencia\n"
+							+ "INNER JOIN seguridadsocial ss ON p.idSeguridadSocial = ss.idSeguridadSocial\n"
+							+ "LEFT JOIN unidadsalud us1 ON p.AtendidoEn = us1.idUnidadSalud\n"
+							+ "LEFT JOIN unidadsalud us2 ON p.ReferenciadoA = us2.idUnidadSalud\n"
+							+ "WHERE idGestion=?" + "");
 
 					prep.setInt(1, getIdGestion());
 
@@ -167,6 +174,20 @@ public class Gestion
 						objPaciente.setSeguridadSocial(new SeguridadSocial(rBD.getInt("idSeguridadSocial"),
 								rBD.getString("descSeguridadSocial")));
 						objPaciente.setAfiliacion(rBD.getString("Afiliacion"));
+						
+						String descAtendidoEn = rBD.getString("AtendidoEn");
+						String descReferenciadoA = rBD.getString("ReferenciadoA");
+						
+						if( descAtendidoEn != null )
+						{
+							objPaciente.setAtendidoEn(new UnidadSalud(rBD.getInt("AtendidoEn"), rBD.getString("descAtendidoEn")));
+							
+						}
+						
+						if( descReferenciadoA != null )
+						{
+							objPaciente.setReferenciadoA(new UnidadSalud(rBD.getInt("ReferenciadoA"), rBD.getString("descReferenciadoA")));
+						}
 
 						setPaciente(objPaciente);
 
@@ -174,7 +195,7 @@ public class Gestion
 
 					ajustarFolioSegunDescripcion();
 
-					//Finalmente los contactos de la gestión
+					// Finalmente los contactos de la gestión
 					prep = conexion.prepareStatement("SELECT * FROM contactogestion WHERE idGestion=?");
 
 					prep.setInt(1, getIdGestion());
@@ -201,31 +222,27 @@ public class Gestion
 				prep.close();
 				rBD.close();
 
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace();
 				conexion.rollback();
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al actualizar los datos de la gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -237,8 +254,8 @@ public class Gestion
 
 	public void crearGestionBD()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement	prep	= null;
+		ResultSet			rBD		= null;
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -275,31 +292,27 @@ public class Gestion
 
 				conexion.commit();
 
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace();
 				conexion.rollback();
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al crear la gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -311,8 +324,9 @@ public class Gestion
 
 	public void updateTaskWunderlist()
 	{
-		WunderlistWSBean wBean = (WunderlistWSBean) FacesUtils.getManagedBean(UtilidadesGestion.wunderlistWSBean);
-		WUsuario wUsuario = wBean.getwUsuario();
+		WunderlistWSBean	wBean		= (WunderlistWSBean) FacesUtils
+				.getManagedBean(UtilidadesGestion.wunderlistWSBean);
+		WUsuario			wUsuario	= wBean.getwUsuario();
 		wUsuario.getTareaWunderlist(this.getIdTareaWunderlist());
 		setTareaW(wUsuario.getTarea());
 	}
@@ -324,8 +338,9 @@ public class Gestion
 			updateTaskWunderlist();
 		}
 
-		WunderlistWSBean wBean = (WunderlistWSBean) FacesUtils.getManagedBean(UtilidadesGestion.wunderlistWSBean);
-		WUsuario wUsuario = wBean.getwUsuario();
+		WunderlistWSBean	wBean		= (WunderlistWSBean) FacesUtils
+				.getManagedBean(UtilidadesGestion.wunderlistWSBean);
+		WUsuario			wUsuario	= wBean.getwUsuario();
 
 		wUsuario.getComentariosEnTarea(this.tareaW);
 

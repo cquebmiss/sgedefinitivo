@@ -18,13 +18,14 @@ import modelo.gestion.CategoriaGestion;
 import modelo.gestion.Gestion;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.TipoGestion;
+import modelo.gestion.UnidadSalud;
 import resources.DataBase;
 import util.FacesUtils;
 
 public class UtilidadesGestion
 {
 	public static int		idListaGestiones	= 338456892;
-	//public static int		idListaGestiones	= 354697479;																//pruebas
+//	 public static int idListaGestiones = 354697479; //pruebas
 	public static int		idListaPruebas		= 354697479;
 	public static String	wunderlistWSBean	= "wunderlistWSBean";
 	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
@@ -37,29 +38,31 @@ public class UtilidadesGestion
 			+ "efb8c2,baf298,a1ef97,8ce2af,8aeacf,7fd7e2,76a7db,9068cc,af63c6,e26897,"
 			+ "6b382f,6d512e,68632c,546028,415b25,276338,2a7064,26576d,253170,46216d ";
 
-	//Para consultar listas, tareas y notas en específico, se debe adicionar después de la url el id correspondiente, ejemplo: notes/7263526
+	// Para consultar listas, tareas y notas en específico, se debe adicionar
+	// después de la url el id correspondiente, ejemplo: notes/7263526
 
-	//statusGestion -1 activas, 1 finalizadas, 0 todas
+	// statusGestion -1 activas, 1 finalizadas, 0 todas
 	private static List<Gestion> getGestiones(int idUsuario, int statusGestion, java.util.Date fechaInicial,
 			java.util.Date fechaFinal, java.util.Date fechaFinalizacionInicial, java.util.Date fechaFinalizacionFinal)
 	{
-		//Se obtiene la gestión, solamente con los atributos de Folio, Fecha Recepción, Solicitud, Status y Usuario
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		// Se obtiene la gestión, solamente con los atributos de Folio, Fecha Recepción,
+		// Solicitud, Status y Usuario
+		PreparedStatement	prep		= null;
+		ResultSet			rBD			= null;
 
-		List<Gestion> gestiones = new ArrayList<>();
+		List<Gestion>		gestiones	= new ArrayList<>();
 
-		String complemento = "";
+		String				complemento	= "";
 
 		switch (statusGestion)
 		{
 			case -1:
 				complemento += " AND ges.idStatusActividad < 1 ";
-			break;
+				break;
 
 			case 1:
 				complemento += " AND ges.idStatusActividad = 1 ";
-			break;
+				break;
 
 		}
 
@@ -137,7 +140,7 @@ public class UtilidadesGestion
 					gestion.setIdGestion(rBD.getInt("idGestion"));
 
 					gestion.setIdTareaWunderlist(rBD.getString("idTareaWunderlist"));
-					gestion.setIdListaWunderlist(rBD.getString("idListaWunderlist"));;
+					gestion.setIdListaWunderlist(rBD.getString("idListaWunderlist"));
 
 					if (statusGestion == 1)
 					{
@@ -166,24 +169,21 @@ public class UtilidadesGestion
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener las gestiones activas, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -239,10 +239,10 @@ public class UtilidadesGestion
 
 	public static List<StatusActividad> getCatStatusActividad()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement		prep				= null;
+		ResultSet				rBD					= null;
 
-		List<StatusActividad> catStatusActividad = new ArrayList<>();
+		List<StatusActividad>	catStatusActividad	= new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -261,24 +261,21 @@ public class UtilidadesGestion
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de status, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -292,10 +289,10 @@ public class UtilidadesGestion
 
 	public static List<TipoGestion> getCatTipoGestion()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement	prep				= null;
+		ResultSet			rBD					= null;
 
-		List<TipoGestion> catTipoGestiones = new ArrayList<>();
+		List<TipoGestion>	catTipoGestiones	= new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -313,24 +310,21 @@ public class UtilidadesGestion
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de tipos de gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -344,10 +338,10 @@ public class UtilidadesGestion
 
 	public static List<SeguridadSocial> getCatSeguridadSocial()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement		prep				= null;
+		ResultSet				rBD					= null;
 
-		List<SeguridadSocial> catSeguridadSocial = new ArrayList<>();
+		List<SeguridadSocial>	catSeguridadSocial	= new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -366,24 +360,21 @@ public class UtilidadesGestion
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de seguridad social, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -397,10 +388,10 @@ public class UtilidadesGestion
 
 	public static List<CategoriaGestion> getCatCategoriaGestion()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement		prep				= null;
+		ResultSet				rBD					= null;
 
-		List<CategoriaGestion> catSeguridadSocial = new ArrayList<>();
+		List<CategoriaGestion>	catSeguridadSocial	= new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -419,24 +410,21 @@ public class UtilidadesGestion
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de categorías de gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -448,13 +436,62 @@ public class UtilidadesGestion
 
 	}
 
+	public static List<UnidadSalud> getCatUnidadSalud()
+	{
+		PreparedStatement	prep			= null;
+		ResultSet			rBD				= null;
+
+		List<UnidadSalud>	catUnidadSalud	= new ArrayList<>();
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			prep = conexion.prepareStatement(" SELECT * FROM unidadsalud order by idUnidadSalud ASC");
+
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+				do
+				{
+					catUnidadSalud.add(new UnidadSalud(rBD.getInt("idUnidadSalud"), rBD.getString("Descripcion")));
+
+				} while (rBD.next());
+
+			}
+
+		} catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener el catálogo de unidades de salud, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		} finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				} catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return catUnidadSalud;
+
+	}
+
 	public static List<String> getCoincidenciasSolicitantes(String query)
 	{
 
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement	prep			= null;
+		ResultSet			rBD				= null;
 
-		List<String> catSolicitantes = new ArrayList<>();
+		List<String>		catSolicitantes	= new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -471,24 +508,21 @@ public class UtilidadesGestion
 
 				} while (rBD.next());
 			}
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de solicitantes de gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -503,10 +537,10 @@ public class UtilidadesGestion
 	public static List<String> getCoincidenciasLugarOrigen(String query)
 	{
 
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement	prep						= null;
+		ResultSet			rBD							= null;
 
-		List<String> coincidenciasLugarOrigen = new ArrayList<>();
+		List<String>		coincidenciasLugarOrigen	= new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -524,24 +558,21 @@ public class UtilidadesGestion
 
 				} while (rBD.next());
 			}
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener el catálogo de lugar de origen, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -553,13 +584,13 @@ public class UtilidadesGestion
 
 	}
 
-	//MÉTODOS PARA REPORTES
+	// MÉTODOS PARA REPORTES
 	public static Map<String, Integer> getTotalesSolicitantes()
 	{
-		PreparedStatement prep = null;
-		ResultSet rBD = null;
+		PreparedStatement		prep			= null;
+		ResultSet				rBD				= null;
 
-		Map<String, Integer> solicitantes = new HashMap<>();
+		Map<String, Integer>	solicitantes	= new HashMap<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -578,24 +609,21 @@ public class UtilidadesGestion
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Excepción",
 					"Ha ocurrido una excepción al obtener la estadística de solicitantes de gestión, favor de contactar con el desarrollador del sistema."));
 
 			e.printStackTrace();
-		}
-		finally
+		} finally
 		{
 			if (prep != null)
 			{
 				try
 				{
 					prep.close();
-				}
-				catch (SQLException e)
+				} catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();

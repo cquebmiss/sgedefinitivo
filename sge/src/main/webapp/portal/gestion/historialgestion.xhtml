@@ -437,6 +437,14 @@
 							<h:outputText
 								value="#{historialGestionBean.gestionActivaSelec.paciente.afiliacion}"></h:outputText>
 
+							<p:outputLabel value="Atendido en:"></p:outputLabel>
+							<h:outputText
+								value="#{ empty historialGestionBean.gestionActivaSelec.paciente.atendidoEn.descripcion ? 'Sin información' : historialGestionBean.gestionActivaSelec.paciente.atendidoEn.descripcion}"></h:outputText>
+
+							<p:outputLabel value="Referenciado a:"></p:outputLabel>
+							<h:outputText
+								value="#{empty historialGestionBean.gestionActivaSelec.paciente.referenciadoA.descripcion ? 'Sin información' : historialGestionBean.gestionActivaSelec.paciente.referenciadoA.descripcion}"></h:outputText>
+
 
 							<p:outputLabel value="Diagnóstico:"></p:outputLabel>
 							<h:outputText
