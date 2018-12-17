@@ -126,12 +126,14 @@ public class NuevaGestionBean
 
 		for (UnidadSalud us : this.catUnidadSalud)
 		{
-			if (this.gestion.getPaciente().getAtendidoEn().getIdUnidadSalud() == us.getIdUnidadSalud())
+			if (this.gestion.getPaciente().getAtendidoEn() != null
+					&& this.gestion.getPaciente().getAtendidoEn().getIdUnidadSalud() == us.getIdUnidadSalud())
 			{
 				this.gestion.getPaciente().setAtendidoEn(us);
 			}
 
-			if (this.gestion.getPaciente().getReferenciadoA().getIdUnidadSalud() == us.getIdUnidadSalud())
+			if (this.gestion.getPaciente().getReferenciadoA() != null
+					&& this.gestion.getPaciente().getReferenciadoA().getIdUnidadSalud() == us.getIdUnidadSalud())
 			{
 				this.gestion.getPaciente().setReferenciadoA(us);
 			}
