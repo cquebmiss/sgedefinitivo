@@ -35,6 +35,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.smattme/mysql-backup4j -->
+		<dependency>
+			<groupId>com.smattme</groupId>
+			<artifactId>mysql-backup4j</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
