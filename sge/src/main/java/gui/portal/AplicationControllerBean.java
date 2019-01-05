@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
@@ -55,7 +56,7 @@ public class AplicationControllerBean
 		ZoneId			currentZone		= ZoneId.of("America/Los_Angeles");
 		ZonedDateTime	zonedNow		= ZonedDateTime.of(localNow, currentZone);
 		ZonedDateTime	zonedNext5;
-		zonedNext5 = zonedNow.withHour(14).withMinute(30).withSecond(0);
+		zonedNext5 = zonedNow.withHour(14).withMinute(45).withSecond(0);
 
 		if (zonedNow.compareTo(zonedNext5) > 0)
 			zonedNext5 = zonedNext5.plusDays(1);
@@ -63,7 +64,7 @@ public class AplicationControllerBean
 		Duration	duration	= Duration.between(zonedNow, zonedNext5);
 		long		initalDelay	= duration.getSeconds();
 
-		scheduler.scheduleAtFixedRate(tareaRespaldo, initalDelay, 10, HOURS);
+		scheduler.scheduleAtFixedRate(tareaRespaldo, initalDelay, ( 24 * (60 * 60) ), TimeUnit.SECONDS);
 
 	}
 
