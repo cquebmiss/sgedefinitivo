@@ -27,8 +27,8 @@
 
 		<h:form>
 
-			
-				
+
+
 			<p:focus for="inputUsuario"></p:focus>
 
 			<!-- Imagen de login para móvil, considerar al editar las nuevas imágenes para el portal -->
@@ -53,7 +53,7 @@
 					styleClass="raised-btn" update="@all"
 					actionListener="#{login.actionBotonAcceder}"
 					action="#{login.isInSession}"></p:commandButton>
-
+				<h:outputText value="#{appControllerBean.iniciado}"></h:outputText>
 
 			</div>
 
