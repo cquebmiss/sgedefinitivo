@@ -1,7 +1,5 @@
 package gui.portal;
 
-import static java.util.concurrent.TimeUnit.HOURS;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -15,10 +13,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ApplicationScoped;
 
+import org.omnifaces.cdi.Eager;
+
 import modelo.RespaldoBD;
 
 @ManagedBean
 @ApplicationScoped
+@Eager
 public class AplicationControllerBean
 {
 	private final ScheduledExecutorService	scheduler	= Executors.newScheduledThreadPool(1);
@@ -64,7 +65,7 @@ public class AplicationControllerBean
 		Duration	duration	= Duration.between(zonedNow, zonedNext5);
 		long		initalDelay	= duration.getSeconds();
 
-		scheduler.scheduleAtFixedRate(tareaRespaldo, initalDelay, ( 24 * (60 * 60) ), TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(tareaRespaldo, initalDelay, (24 * (60 * 60)), TimeUnit.SECONDS);
 
 	}
 
