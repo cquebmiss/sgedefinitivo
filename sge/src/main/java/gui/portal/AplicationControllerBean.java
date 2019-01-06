@@ -57,7 +57,7 @@ public class AplicationControllerBean
 		ZoneId			currentZone		= ZoneId.of("America/Los_Angeles");
 		ZonedDateTime	zonedNow		= ZonedDateTime.of(localNow, currentZone);
 		ZonedDateTime	zonedNext5;
-		zonedNext5 = zonedNow.withHour(14).withMinute(45).withSecond(0);
+		zonedNext5 = zonedNow.withHour(13).withMinute(02).withSecond(0);
 
 		if (zonedNow.compareTo(zonedNext5) > 0)
 			zonedNext5 = zonedNext5.plusDays(1);
