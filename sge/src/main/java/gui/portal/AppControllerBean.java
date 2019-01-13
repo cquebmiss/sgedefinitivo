@@ -87,10 +87,12 @@ public class AppControllerBean
 
 	public void startSchedulerRespaldos()
 	{
+		System.out.println("Iniciando el Scheduler de respaldos...");
+		
 		if (!iniciado)
 		{
 			//required properties for exporting of db
-
+			System.out.println("Configurando las propiedades...");
 	    	Properties properties = new Properties();
 	    
 	    	properties.setProperty(MysqlExportService.JDBC_DRIVER_NAME, "com.mysql.jdbc.Driver");
@@ -119,27 +121,24 @@ public class AppControllerBean
 
 	    	//set the outputs temp dir
 
+	    	System.out.println("Propiedades definidas...");
 	    	properties.setProperty(MysqlExportService.TEMP_DIR, new File("external").getPath());
+	    	System.out.println("Archivo de respaldo creado...");
 
 	    	MysqlExportService mysqlExportService = new MysqlExportService(properties);
+	    	System.out.println("MySqlExportService definido...");
 
 	    	try
 			{
 				mysqlExportService.export();
+				System.out.println("MySqlExportService exitoso...");
 				
-			} catch (ClassNotFoundException e)
+			} catch (Exception e)
 			{
 				// TODO Auto-generated catch block
+				System.out.println("MySqlExportService Exception...");
 				e.printStackTrace();
-			} catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} 
 	    	
 			this.iniciado = true;
 			System.out.println("Scheduler de respaldos iniciado");
