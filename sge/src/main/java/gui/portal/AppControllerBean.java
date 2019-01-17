@@ -97,7 +97,7 @@ public class AppControllerBean
 	    
 	    	properties.setProperty(MysqlExportService.JDBC_DRIVER_NAME, "com.mysql.jdbc.Driver");
 
-	    	properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, "jdbc:mysql://indesalud-mysql:3306/sge");
+	    	properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, "jdbc:mysql://sge-mysql:3306/sge");
 
 	    	//properties.setProperty(MysqlExportService.DB_NAME, "sge");
 
