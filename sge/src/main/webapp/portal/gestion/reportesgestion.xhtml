@@ -18,7 +18,7 @@
 			src="https://www.gstatic.com/charts/loader.js"></script>
 
 		<script type="text/javascript">
-		 google.charts.load('current', {'packages':['corechart']});
+		 google.charts.load('current', {'packages':[['corechart'],['bar']]});
 
 			
 			//Dibujamos todas las gráficas
@@ -64,7 +64,7 @@
 					data.addRows([#{reportesGestionBean.jsonSolicitantes}]);
 
 			        var options = {
-			          title: 'Gráfica',
+			          title: 'Solicitantes',
 			          width: 900,
 			          legend: { position: 'none' },
 			          chart: { title: 'Solicitantes de Gestión'},
@@ -188,7 +188,7 @@
 					]);
 
 				var options = {
-					title : ' ',
+					title : 'Edad',
 					pieHole : 0,
 				};
 
@@ -259,7 +259,7 @@
 
 							<p:commandButton value="Generar"
 								actionListener="#{reportesGestionBean.updateEstadisticas}"
-								update="@(.graficasService)" onsuccess="drawAllCharts()"></p:commandButton>
+								update="@form, @(.graficasService)" onsuccess="drawAllCharts()"></p:commandButton>
 
 						</p:panelGrid>
 
@@ -271,11 +271,11 @@
 
 					<h:panelGroup>
 
-						<p:panelGrid columns="2" layout="grid"
+						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group form-elements graficasService"
 							style="border:0px none; background-color:transparent;">
 
-							<p:panelGrid columns="2" layout="grid"
+							<p:panelGrid columns="8" layout="grid"
 								styleClass="ui-panelgrid-blank form-group form-elements"
 								style="border:0px none; background-color:transparent;">
 
@@ -299,9 +299,9 @@
 
 							</p:panelGrid>
 
-							<div id="totalGestionesChart" style="width: 90%; height: 250px;"></div>
 
 						</p:panelGrid>
+						<div id="totalGestionesChart" style="width: 90%; height: 490px;"></div>
 
 						<br></br>
 
@@ -329,7 +329,7 @@
 									</p:dataList>
 
 
-									<div id="solicitantesChart" style="width: 90%; height: 400px;"></div>
+
 
 								</p:panelGrid>
 
@@ -353,8 +353,7 @@
 											style="display:inline-block; font-weight: bolder;" />
 									</p:dataList>
 
-									<div id="lugarResidenciaChart"
-										style="width: 90%; height: 400px;"></div>
+
 
 								</p:panelGrid>
 
@@ -379,9 +378,6 @@
 											style="display:inline-block; font-weight: bolder;" />
 									</p:dataList>
 
-									<div id="categoriasChart" style="width: 90%; height: 400px;"></div>
-
-
 								</p:panelGrid>
 							</p:tab>
 
@@ -404,9 +400,6 @@
 											style="display:inline-block; font-weight: bolder;" />
 									</p:dataList>
 
-									<div id="seguridadSocialChart"
-										style="width: 90%; height: 400px;"></div>
-
 								</p:panelGrid>
 							</p:tab>
 
@@ -428,8 +421,6 @@
 											style="display:inline-block; font-weight: bolder;" />
 									</p:dataList>
 
-									<div id="generoChart" style="width: 90%; height: 400px;"></div>
-
 								</p:panelGrid>
 							</p:tab>
 
@@ -450,16 +441,49 @@
 										<h:outputText value=", #{edad.total}" escape="false"
 											style="display:inline-block; font-weight: bolder;" />
 									</p:dataList>
-	
+
 
 								</p:panelGrid>
-								<div id="edadChart" style="width: 90%; height: 400px;"></div>
+
 							</p:tab>
 
 						</p:tabView>
 
-					</h:panelGroup>
+						<p:panel header="Gráficas" style="width: 100%;">
 
+							<p:panelGrid columns="1">
+
+								<p:column colspan="30" rowspan="30">
+									<div id="solicitantesChart" style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="lugarResidenciaChart"
+										style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="categoriasChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="seguridadSocialChart"
+										style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="generoChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="edadChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+							</p:panelGrid>
+
+						</p:panel>
+
+					</h:panelGroup>
 				</h:form>
 
 			</div>
