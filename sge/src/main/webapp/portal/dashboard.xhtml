@@ -6,7 +6,11 @@
 
 	<ui:define name="title">Sistema de Gestión de Empresarial - Tablero de Control</ui:define>
 
-	<ui:define name="head"></ui:define>
+	<ui:define name="head">
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"></script>
+
+	</ui:define>
 	<ui:define name="viewname">
 		<li>Portal</li>
 		<li>/</li>
@@ -21,9 +25,29 @@
 }
 </style>
 
-		<p:chart type="line" model="#{reportesGestionBean.lineModel}"
-			style="height:300px; width: 98%;" />
+		<script type="text/javascript">
+			google.charts.load('current', {
+				'packages' : [ 'corechart' ]
+			});
+			google.charts.setOnLoadCallback(drawChart);
 
+			function drawChart() {
+				
+				 var data = google.visualization.arrayToDataTable(#{dashBoardBean.jsonTendenciaGestiones});
+
+				 var options = {
+				          title: 'Tendencia de Gestión',
+				          hAxis: {title: 'Mes',  titleTextStyle: {color: '#333'}},
+				          vAxis: {minValue: 0}
+				        };
+
+		        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+		        chart.draw(data, options);
+
+			}
+		</script>
+
+		<div id="chart_div" style="width: 100%; height: 500px;"></div>
 
 	</ui:define>
 
