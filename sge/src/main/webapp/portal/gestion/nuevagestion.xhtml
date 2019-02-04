@@ -215,6 +215,81 @@
 										value="#{nuevaGestionBean.gestion.solicitud}">
 										<p:ajax event="blur" process="@this"></p:ajax>
 									</p:inputTextarea>
+									
+									<br></br>
+									<br></br>
+									<br></br>
+									<h2>Costos Asociados</h2>
+									
+									
+									
+									<p:panelGrid columns="3"
+										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-3,ui-g-12 ui-md-3 ui-grc-3,ui-g-12 ui-md-3"
+										layout="grid"
+										styleClass="ui-panelgrid-blank form-group form-elements"
+										style="border:0px none; background-color:transparent;">
+										
+										<p:column></p:column>
+										<p:column>
+										<h:outputText value="Costo para el paciente"></h:outputText>
+										</p:column>
+										<p:column>
+										<h:outputText value="Descuento logrado"></h:outputText>
+										</p:column>
+
+										<p:outputLabel value="Cirugías:" for="campoCostoCirugias"></p:outputLabel>
+										<p:inputNumber id="campoCostoCirugias"
+											value="#{nuevaGestionBean.gestion.costo.costoCirugias}" decimalPlaces="2">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+
+										<p:inputNumber id="campoDescuentoCirugias"
+											value="#{nuevaGestionBean.gestion.costo.descuentoCirugias}" decimalPlaces="2">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+
+										<p:outputLabel value="Materiales:" for="campoCostoMateriales"></p:outputLabel>
+										<p:inputNumber id="campoCostoMateriales"
+											value="#{nuevaGestionBean.gestion.costo.costoMateriales}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+
+										<p:inputNumber id="campoDescuentoMateriales"
+											value="#{nuevaGestionBean.gestion.costo.descuentoMateriales}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+									
+										<p:outputLabel value="Estudios:" for="campoCostoEstudios"></p:outputLabel>
+										<p:inputNumber id="campoCostoEstudios"
+											value="#{nuevaGestionBean.gestion.costo.costoEstudios}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+
+										<p:inputNumber id="campoDescuentoEstudios"
+											value="#{nuevaGestionBean.gestion.costo.descuentoEstudios}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+									
+										<p:outputLabel value="Medicamentos:" for="campoCostoMedicamentos"></p:outputLabel>
+										<p:inputNumber id="campoCostoMedicamentos"
+											value="#{nuevaGestionBean.gestion.costo.costoMedicamentos}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+
+										<p:inputNumber id="campoDescuentoMedicamentos"
+											value="#{nuevaGestionBean.gestion.costo.descuentoMedicamentos}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputNumber>
+									
+									
+									</p:panelGrid>
 
 
 								</p:outputPanel>

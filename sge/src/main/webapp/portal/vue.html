@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>Insert title here</title>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<div id="app">
+  {{ message }}
+</div>
+<div id="app-4">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
+
+<div id="app-6">
+  <p>{{ message }}</p>
+  <input v-model="message"/>
+</div>
+
+<div id="components-demo">
+  <button-counter></button-counter>
+</div>
+
+
+<script type="text/javascript">
+
+var app6 = new Vue({
+	  el: '#app-6',
+	  data: {
+	    message: 'Hello Vue!'
+	  }
+	})
+	
+var app4 = new Vue({
+	  el: '#app-4',
+	  data: {
+	    todos: [
+	      { text: 'Learn JavaScript' },
+	      { text: 'Learn Vue' },
+	      { text: 'Build something awesome' }
+	    ]
+	  }
+	})
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  }
+})
+
+//Define a new component called button-counter
+Vue.component('button-counter', {
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+
+new Vue({ el: '#components-demo' })
+</script>
+</body>
+</html>

@@ -241,6 +241,11 @@ public class NuevaGestionBean
 				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 				conexion.setAutoCommit(false);
 				conexion.rollback();
+				
+				if( this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim().isEmpty() )
+				{
+					this.gestion.getPaciente().getLugarResidencia().setDescripcion("Sin información");
+				}
 
 				if (this.gestion.getIdGestion() < 0)
 				{
@@ -315,6 +320,25 @@ public class NuevaGestionBean
 					}
 
 					prep.close();
+
+					// Se insertan los costos de la gestión
+					prep = conexion.prepareStatement(
+							"INSERT INTO sge.costo(idGestion,CostoCirugias,CostoMateriales,CostoEstudios,CostoMedicamentos,"
+									+ "DescuentoCirugias,DescuentoMateriales,DescuentoEstudios,DescuentoMedicamentos)"
+									+ "VALUES(?,?,?,?,?,?,?,?,?)");
+
+					prep.setInt(1, this.gestion.getIdGestion());
+					prep.setBigDecimal(2, this.gestion.getCosto().getCostoCirugias());
+					prep.setBigDecimal(3, this.gestion.getCosto().getCostoMateriales());
+					prep.setBigDecimal(4, this.gestion.getCosto().getCostoEstudios());
+					prep.setBigDecimal(5, this.gestion.getCosto().getCostoMedicamentos());
+					prep.setBigDecimal(6, this.gestion.getCosto().getDescuentoCirugias());
+					prep.setBigDecimal(7, this.gestion.getCosto().getDescuentoMateriales());
+					prep.setBigDecimal(8, this.gestion.getCosto().getDescuentoEstudios());
+					prep.setBigDecimal(9, this.gestion.getCosto().getDescuentoMedicamentos());
+
+					prep.executeUpdate();
+
 				} else
 				{
 
@@ -334,6 +358,23 @@ public class NuevaGestionBean
 
 					prep.close();
 
+					// Se actualizan los costos de la gestión
+					prep = conexion.prepareStatement(
+							"UPDATE sge.costo SET CostoCirugias=?,CostoMateriales=?,CostoEstudios=?,CostoMedicamentos=?,"
+									+ "DescuentoCirugias=?,DescuentoMateriales=?,DescuentoEstudios=?,DescuentoMedicamentos=? WHERE idGestion=? ");
+
+					prep.setInt(9, this.gestion.getIdGestion());
+					prep.setBigDecimal(1, this.gestion.getCosto().getCostoCirugias());
+					prep.setBigDecimal(2, this.gestion.getCosto().getCostoMateriales());
+					prep.setBigDecimal(3, this.gestion.getCosto().getCostoEstudios());
+					prep.setBigDecimal(4, this.gestion.getCosto().getCostoMedicamentos());
+					prep.setBigDecimal(5, this.gestion.getCosto().getDescuentoCirugias());
+					prep.setBigDecimal(6, this.gestion.getCosto().getDescuentoMateriales());
+					prep.setBigDecimal(7, this.gestion.getCosto().getDescuentoEstudios());
+					prep.setBigDecimal(8, this.gestion.getCosto().getDescuentoMedicamentos());
+
+					prep.executeUpdate();
+
 				}
 
 				// Se busca el lugar de origen en el catálogo, si existe, se utiliza el id, en
@@ -341,7 +382,7 @@ public class NuevaGestionBean
 
 				prep = conexion.prepareStatement("SELECT * FROM lugarresidencia WHERE descripcion = ? ");
 
-				prep.setString(1, this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim());
+				prep.setString(1, this.gestion.getPaciente().getLugarResidencia().getDescripcion());
 
 				rBD = prep.executeQuery();
 
@@ -553,10 +594,10 @@ public class NuevaGestionBean
 						+ "\n";
 				contenidoNota += "Número o Folio de Afiliación: " + this.gestion.getPaciente().getAfiliacion() + "\n\n";
 				contenidoNota += "Atendido en: " + this.gestion.getPaciente().getAtendidoEn() != null
-						? this.gestion.getPaciente().getAtendidoEn()
+						? this.gestion.getPaciente().getAtendidoEn().getDescripcion()
 						: "Sin información" + "\n\n";
 				contenidoNota += "Referenciado a: " + this.gestion.getPaciente().getReferenciadoA() != null
-						? this.gestion.getPaciente().getReferenciadoA()
+						? this.gestion.getPaciente().getReferenciadoA().getDescripcion()
 						: "Sin información" + "\n\n";
 				contenidoNota += "<DIAGNÓSTICO>: " + this.gestion.getPaciente().getDiagnostico() + "\n\n";
 				contenidoNota += "<OBSERVACIONES DEL CASO>: " + this.gestion.getDetallesGenerales() + "\n\n";

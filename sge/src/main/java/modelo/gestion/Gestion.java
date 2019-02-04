@@ -13,6 +13,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import gui.persistence.wunderlist.WunderlistWSBean;
+import lombok.Getter;
+import lombok.Setter;
 import modelo.Sesion;
 import modelo.Usuario;
 import modelo.actividades.StatusActividad;
@@ -20,6 +22,8 @@ import resources.DataBase;
 import util.FacesUtils;
 import util.gestion.UtilidadesGestion;
 
+@Getter
+@Setter
 public class Gestion
 {
 	private int					idGestion;
@@ -33,6 +37,7 @@ public class Gestion
 	private String				resumenFinal;
 	private Usuario				usuario;
 	private StatusActividad		status;
+	private Costo				costo;
 	private List<Contacto>		contactos;
 	private Paciente			paciente;
 	private TipoGestion			tipoGestion;
@@ -65,7 +70,7 @@ public class Gestion
 		// El tipo de gestión siempre será Atención y Servicios para éste módulo
 		this.tipoGestion = new TipoGestion(1, "Atención y Mejoras");
 
-		// TODO Auto-generated constructor stub
+		this.costo = new Costo();
 	}
 
 	public Gestion(int idGestion, String descripcion, Date fechaRecepcion, String solicitadoA, String solicitud,
@@ -194,12 +199,37 @@ public class Gestion
 					}
 
 					ajustarFolioSegunDescripcion();
+					
+					//Se obtienen los costos de la gestión
+					prep = conexion.prepareStatement("SELECT * FROM costo WHERE idGestion=?");
+					prep.setInt(1, getIdGestion());
+					
+					rBD = prep.executeQuery();
+					
+					Costo costo = new Costo();
+
+					if( rBD.next())
+					{
+						costo.setCostoCirugias(rBD.getBigDecimal("CostoCirugias"));
+						costo.setCostoMateriales(rBD.getBigDecimal("CostoMateriales"));
+						costo.setCostoEstudios(rBD.getBigDecimal("CostoEstudios"));
+						costo.setCostoMedicamentos(rBD.getBigDecimal("CostoMedicamentos"));
+						
+						costo.setDescuentoCirugias(rBD.getBigDecimal("DescuentoCirugias"));
+						costo.setDescuentoMateriales(rBD.getBigDecimal("DescuentoMateriales"));
+						costo.setDescuentoEstudios(rBD.getBigDecimal("DescuentoEstudios"));
+						costo.setDescuentoMedicamentos(rBD.getBigDecimal("DescuentoMedicamentos"));
+						
+					}
+					
+					setCosto(costo);
+					
 
 					// Finalmente los contactos de la gestión
 					prep = conexion.prepareStatement("SELECT * FROM contactogestion WHERE idGestion=?");
 
 					prep.setInt(1, getIdGestion());
-
+					
 					rBD = prep.executeQuery();
 
 					List<Contacto> contactos = new ArrayList<>();
@@ -348,184 +378,5 @@ public class Gestion
 
 	}
 
-	public int getIdGestion()
-	{
-		return idGestion;
-	}
-
-	public void setIdGestion(int idGestion)
-	{
-		this.idGestion = idGestion;
-	}
-
-	public String getDescripcion()
-	{
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion)
-	{
-		this.descripcion = descripcion;
-	}
-
-	public Date getFechaRecepcion()
-	{
-		return fechaRecepcion;
-	}
-
-	public void setFechaRecepcion(Date fechaRecepcion)
-	{
-		this.fechaRecepcion = fechaRecepcion;
-	}
-
-	public String getSolicitadoA()
-	{
-		return solicitadoA;
-	}
-
-	public void setSolicitadoA(String solicitadoA)
-	{
-		this.solicitadoA = solicitadoA;
-	}
-
-	public String getSolicitud()
-	{
-		return solicitud;
-	}
-
-	public void setSolicitud(String solicitud)
-	{
-		this.solicitud = solicitud;
-	}
-
-	public String getDetallesGenerales()
-	{
-		return detallesGenerales;
-	}
-
-	public void setDetallesGenerales(String detallesGenerales)
-	{
-		this.detallesGenerales = detallesGenerales;
-	}
-
-	public Date getFechaFinalizacion()
-	{
-		return fechaFinalizacion;
-	}
-
-	public void setFechaFinalizacion(Date fechaFinalizacion)
-	{
-		this.fechaFinalizacion = fechaFinalizacion;
-	}
-
-	public String getResumenFinal()
-	{
-		return resumenFinal;
-	}
-
-	public void setResumenFinal(String resumenFinal)
-	{
-		this.resumenFinal = resumenFinal;
-	}
-
-	public Usuario getUsuario()
-	{
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario)
-	{
-		this.usuario = usuario;
-	}
-
-	public StatusActividad getStatus()
-	{
-		return status;
-	}
-
-	public void setStatus(StatusActividad status)
-	{
-		this.status = status;
-	}
-
-	public List<Contacto> getContactos()
-	{
-		return contactos;
-	}
-
-	public void setContactos(List<Contacto> contactos)
-	{
-		this.contactos = contactos;
-	}
-
-	public Paciente getPaciente()
-	{
-		return paciente;
-	}
-
-	public void setPaciente(Paciente paciente)
-	{
-		this.paciente = paciente;
-	}
-
-	public TipoGestion getTipoGestion()
-	{
-		return tipoGestion;
-	}
-
-	public void setTipoGestion(TipoGestion tipoGestion)
-	{
-		this.tipoGestion = tipoGestion;
-	}
-
-	public String getIdTareaWunderlist()
-	{
-		return idTareaWunderlist;
-	}
-
-	public void setIdTareaWunderlist(String idTareaWunderlist)
-	{
-		this.idTareaWunderlist = idTareaWunderlist;
-	}
-
-	public String getIdListaWunderlist()
-	{
-		return idListaWunderlist;
-	}
-
-	public void setIdListaWunderlist(String idListaWunderlist)
-	{
-		this.idListaWunderlist = idListaWunderlist;
-	}
-
-	public String getFolio()
-	{
-		return folio;
-	}
-
-	public void setFolio(String folio)
-	{
-		this.folio = folio;
-	}
-
-	public CategoriaGestion getCategoria()
-	{
-		return categoria;
-	}
-
-	public void setCategoria(CategoriaGestion categoria)
-	{
-		this.categoria = categoria;
-	}
-
-	public Task getTareaW()
-	{
-		return tareaW;
-	}
-
-	public void setTareaW(Task tareaW)
-	{
-		this.tareaW = tareaW;
-	}
 
 }

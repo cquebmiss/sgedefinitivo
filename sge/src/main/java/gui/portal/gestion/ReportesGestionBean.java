@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
@@ -33,7 +34,7 @@ import util.UtilidadesCalendario;
 import util.gestion.UtilidadesGestion;
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 @Getter
 @Setter
 public class ReportesGestionBean
@@ -100,13 +101,13 @@ public class ReportesGestionBean
 	{
 		this.añoTendencia = LocalDate.now().getYear() - 1;
 		this.graficasService = new GraficasService();
-		this.jsonTotalGestiones = "[]";
-		this.jsonSolicitantes = "[]";
-		this.jsonLugaresResidencia = "[]";
-		this.jsonCategorias = "[]";
-		this.jsonSeguridadSocial = "[]";
-		this.jsonSexos = "[]";
-		this.jsonEdades = "[]";
+		this.jsonTotalGestiones = "[\"27-59 años\",7],[\"0-5 años\",4]";
+		this.jsonSolicitantes = "[\"27-59 años\",7],[\"0-5 años\",4]";
+		this.jsonLugaresResidencia = "[\"27-59 años\",7],[\"0-5 años\",4]";
+		this.jsonCategorias = "[\"27-59 años\",7],[\"0-5 años\",4]";
+		this.jsonSeguridadSocial = "[\"27-59 años\",7],[\"0-5 años\",4]";
+		this.jsonSexos = "[\"27-59 años\",7],[\"0-5 años\",4]";
+		this.jsonEdades = "[\"27-59 años\",7],[\"0-5 años\",4]";
 	}
 
 	public void actionInicializaReportes()
