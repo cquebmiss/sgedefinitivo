@@ -5,13 +5,13 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="webrh"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/sge" username="indesalud" />
+		url="jdbc:mysql://sge-mysql:3307/sge" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="archivodigitalweb"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/archivodigitalweb"
+		url="jdbc:mysql://sge-mysql:3307/archivodigitalweb"
 		username="indesalud" />
 
 
@@ -19,25 +19,25 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="siri"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/siri" username="indesalud" />
+		url="jdbc:mysql://sge-mysql:3307/siri" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="nominas"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/nominas" username="indesalud" />
+		url="jdbc:mysql://sge-mysql:3307/nominas" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="timbrado"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/timbrado" username="indesalud" />
+		url="jdbc:mysql://sge-mysql:3307/timbrado" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="spoolerpdf"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/spoolerpdf"
+		url="jdbc:mysql://sge-mysql:3307/spoolerpdf"
 		username="indesalud" />
 
 
@@ -45,19 +45,19 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="minutas"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/minutas" username="indesalud" />
+		url="jdbc:mysql://sge-mysql:3307/minutas" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="gestiones"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/gestiones" username="indesalud" />
+		url="jdbc:mysql://sge-mysql:3307/gestiones" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="climalaboral"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/climalaboral"
+		url="jdbc:mysql://sge-mysql:3307/climalaboral"
 		username="indesalud" />
 
 </Context>

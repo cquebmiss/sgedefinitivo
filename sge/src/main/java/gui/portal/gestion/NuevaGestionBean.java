@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -18,7 +17,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import javassist.bytecode.analysis.Type;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Sesion;
@@ -31,6 +29,7 @@ import modelo.gestion.Note;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Task;
 import modelo.gestion.TaskComment;
+import modelo.gestion.TipoDescuento;
 import modelo.gestion.TipoGestion;
 import modelo.gestion.UnidadSalud;
 import modelo.gestion.WUsuario;
@@ -51,6 +50,7 @@ public class NuevaGestionBean
 	private List<SeguridadSocial>	catSeguridadSocial;
 	private List<CategoriaGestion>	catCategoriaGestion;
 	private List<UnidadSalud>		catUnidadSalud;
+	private List<TipoDescuento>		catTipoDescuento;
 
 	private Gestion					gestion;
 	private int						editarGestion;
@@ -88,6 +88,7 @@ public class NuevaGestionBean
 		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
 		this.catCategoriaGestion = UtilidadesGestion.getCatCategoriaGestion();
 		setCatUnidadSalud(UtilidadesGestion.getCatUnidadSalud());
+		setCatTipoDescuento(UtilidadesGestion.getCatTipoDescuento());
 
 		this.gestion = new Gestion();
 		// Se hardcodea en lugar de elegir desde el catálogo
@@ -137,6 +138,20 @@ public class NuevaGestionBean
 					&& this.gestion.getPaciente().getReferenciadoA().getIdUnidadSalud() == us.getIdUnidadSalud())
 			{
 				this.gestion.getPaciente().setReferenciadoA(us);
+			}
+
+		}
+
+		if (this.gestion.getCosto().getTipoDescuento() != null)
+		{
+			for (TipoDescuento tipoDescuento : getCatTipoDescuento())
+			{
+				if (this.gestion.getCosto().getTipoDescuento().getIdTipoDescuento() == tipoDescuento
+						.getIdTipoDescuento())
+				{
+					this.gestion.getCosto().setTipoDescuento(tipoDescuento);
+					break;
+				}
 			}
 
 		}
@@ -241,8 +256,8 @@ public class NuevaGestionBean
 				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 				conexion.setAutoCommit(false);
 				conexion.rollback();
-				
-				if( this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim().isEmpty() )
+
+				if (this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim().isEmpty())
 				{
 					this.gestion.getPaciente().getLugarResidencia().setDescripcion("Sin información");
 				}
@@ -323,19 +338,20 @@ public class NuevaGestionBean
 
 					// Se insertan los costos de la gestión
 					prep = conexion.prepareStatement(
-							"INSERT INTO sge.costo(idGestion,CostoCirugias,CostoMateriales,CostoEstudios,CostoMedicamentos,"
-									+ "DescuentoCirugias,DescuentoMateriales,DescuentoEstudios,DescuentoMedicamentos)"
-									+ "VALUES(?,?,?,?,?,?,?,?,?)");
+							"INSERT INTO sge.costo(idGestion,CostoOriginal,TotalAPagar,idTipoDescuento)"
+									+ "VALUES(?,?,?,?)");
 
 					prep.setInt(1, this.gestion.getIdGestion());
-					prep.setBigDecimal(2, this.gestion.getCosto().getCostoCirugias());
-					prep.setBigDecimal(3, this.gestion.getCosto().getCostoMateriales());
-					prep.setBigDecimal(4, this.gestion.getCosto().getCostoEstudios());
-					prep.setBigDecimal(5, this.gestion.getCosto().getCostoMedicamentos());
-					prep.setBigDecimal(6, this.gestion.getCosto().getDescuentoCirugias());
-					prep.setBigDecimal(7, this.gestion.getCosto().getDescuentoMateriales());
-					prep.setBigDecimal(8, this.gestion.getCosto().getDescuentoEstudios());
-					prep.setBigDecimal(9, this.gestion.getCosto().getDescuentoMedicamentos());
+					prep.setBigDecimal(2, this.gestion.getCosto().getCostoOriginal());
+					prep.setBigDecimal(3, this.gestion.getCosto().getTotalAPagar());
+
+					if (this.gestion.getCosto().getTipoDescuento() != null)
+					{
+						prep.setInt(4, this.gestion.getCosto().getTipoDescuento().getIdTipoDescuento());
+					} else
+					{
+						prep.setNull(4, Types.DOUBLE);
+					}
 
 					prep.executeUpdate();
 
@@ -360,18 +376,19 @@ public class NuevaGestionBean
 
 					// Se actualizan los costos de la gestión
 					prep = conexion.prepareStatement(
-							"UPDATE sge.costo SET CostoCirugias=?,CostoMateriales=?,CostoEstudios=?,CostoMedicamentos=?,"
-									+ "DescuentoCirugias=?,DescuentoMateriales=?,DescuentoEstudios=?,DescuentoMedicamentos=? WHERE idGestion=? ");
+							"UPDATE sge.costo SET CostoOriginal=?,TotalAPagar=?,idTipoDescuento=? WHERE idGestion=? ");
 
-					prep.setInt(9, this.gestion.getIdGestion());
-					prep.setBigDecimal(1, this.gestion.getCosto().getCostoCirugias());
-					prep.setBigDecimal(2, this.gestion.getCosto().getCostoMateriales());
-					prep.setBigDecimal(3, this.gestion.getCosto().getCostoEstudios());
-					prep.setBigDecimal(4, this.gestion.getCosto().getCostoMedicamentos());
-					prep.setBigDecimal(5, this.gestion.getCosto().getDescuentoCirugias());
-					prep.setBigDecimal(6, this.gestion.getCosto().getDescuentoMateriales());
-					prep.setBigDecimal(7, this.gestion.getCosto().getDescuentoEstudios());
-					prep.setBigDecimal(8, this.gestion.getCosto().getDescuentoMedicamentos());
+					prep.setInt(4, this.gestion.getIdGestion());
+					prep.setBigDecimal(1, this.gestion.getCosto().getCostoOriginal());
+					prep.setBigDecimal(2, this.gestion.getCosto().getTotalAPagar());
+
+					if (this.gestion.getCosto().getTipoDescuento() != null)
+					{
+						prep.setInt(3, this.gestion.getCosto().getTipoDescuento().getIdTipoDescuento());
+					} else
+					{
+						prep.setNull(3, Types.DOUBLE);
+					}
 
 					prep.executeUpdate();
 

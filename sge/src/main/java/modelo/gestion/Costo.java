@@ -11,25 +11,13 @@ public class Costo
 {
 	private int			idCosto;
 	private Gestion		gestion;
-	private BigDecimal	costoCirugias;
-	private BigDecimal	costoMateriales;
-	private BigDecimal	costoEstudios;
-	private BigDecimal	costoMedicamentos;
-	private BigDecimal	descuentoCirugias;
-	private BigDecimal	descuentoMateriales;
-	private BigDecimal	descuentoEstudios;
-	private BigDecimal	descuentoMedicamentos;
+	private BigDecimal costoOriginal;
+	private BigDecimal 	totalAPagar;
+	private TipoDescuento tipoDescuento;
 
 	public Costo()
 	{
-		this.costoCirugias = BigDecimal.valueOf(0);
-		this.costoMateriales = BigDecimal.valueOf(0);
-		this.costoEstudios = BigDecimal.valueOf(0);
-		this.costoMedicamentos = BigDecimal.valueOf(0);
-		this.descuentoCirugias = BigDecimal.valueOf(0);
-		this.descuentoMateriales = BigDecimal.valueOf(0);
-		this.descuentoEstudios = BigDecimal.valueOf(0);
-		this.descuentoMedicamentos = BigDecimal.valueOf(0);
-
+		this.costoOriginal = BigDecimal.valueOf(0);
+		this.totalAPagar = BigDecimal.valueOf(0);
 	}
 }

@@ -17,6 +17,7 @@ import modelo.actividades.StatusActividad;
 import modelo.gestion.CategoriaGestion;
 import modelo.gestion.Gestion;
 import modelo.gestion.SeguridadSocial;
+import modelo.gestion.TipoDescuento;
 import modelo.gestion.TipoGestion;
 import modelo.gestion.UnidadSalud;
 import resources.DataBase;
@@ -25,7 +26,7 @@ import util.FacesUtils;
 public class UtilidadesGestion
 {
 	public static int		idListaGestiones	= 338456892;
-//	 public static int idListaGestiones = 354697479; //pruebas
+//	public static int		idListaGestiones	= 354697479;																// pruebas
 	public static int		idListaPruebas		= 354697479;
 	public static String	wunderlistWSBean	= "wunderlistWSBean";
 	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
@@ -482,6 +483,55 @@ public class UtilidadesGestion
 		}
 
 		return catUnidadSalud;
+
+	}
+
+	public static List<TipoDescuento> getCatTipoDescuento()
+	{
+		PreparedStatement	prep			= null;
+		ResultSet			rBD				= null;
+
+		List<TipoDescuento>	catTipoDescuento	= new ArrayList<>();
+
+		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
+		{
+			prep = conexion.prepareStatement(" SELECT * FROM tipodescuento order by idTipoDescuento ASC");
+
+			rBD = prep.executeQuery();
+
+			if (rBD.next())
+			{
+				do
+				{
+					catTipoDescuento.add(new TipoDescuento(rBD.getInt("idTipoDescuento"), rBD.getString("Descripcion")));
+
+				} while (rBD.next());
+
+			}
+
+		} catch (Exception e)
+		{
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Excepción",
+					"Ha ocurrido una excepción al obtener el catálogo de los tipos de descuento, favor de contactar con el desarrollador del sistema."));
+
+			e.printStackTrace();
+		} finally
+		{
+			if (prep != null)
+			{
+				try
+				{
+					prep.close();
+				} catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return catTipoDescuento;
 
 	}
 

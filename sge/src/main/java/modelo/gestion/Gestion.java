@@ -201,7 +201,9 @@ public class Gestion
 					ajustarFolioSegunDescripcion();
 					
 					//Se obtienen los costos de la gestión
-					prep = conexion.prepareStatement("SELECT * FROM costo WHERE idGestion=?");
+					prep = conexion.prepareStatement("SELECT g.*,c.CostoOriginal,c.TotalAPagar,c.idTipoDescuento, td.descripcion as descTipoDescuento FROM costo c RIGHT JOIN gestion g ON c.idGestion = g.idGestion \n" + 
+							"LEFT JOIN tipodescuento td ON c.idTipoDescuento = td.idTipoDescuento WHERE g.idGestion=? \n" + 
+							"ORDER BY g.idGestion DESC ");
 					prep.setInt(1, getIdGestion());
 					
 					rBD = prep.executeQuery();
@@ -210,15 +212,15 @@ public class Gestion
 
 					if( rBD.next())
 					{
-						costo.setCostoCirugias(rBD.getBigDecimal("CostoCirugias"));
-						costo.setCostoMateriales(rBD.getBigDecimal("CostoMateriales"));
-						costo.setCostoEstudios(rBD.getBigDecimal("CostoEstudios"));
-						costo.setCostoMedicamentos(rBD.getBigDecimal("CostoMedicamentos"));
+						costo.setCostoOriginal(rBD.getBigDecimal("CostoOriginal"));
+						costo.setTotalAPagar(rBD.getBigDecimal("TotalAPagar"));
 						
-						costo.setDescuentoCirugias(rBD.getBigDecimal("DescuentoCirugias"));
-						costo.setDescuentoMateriales(rBD.getBigDecimal("DescuentoMateriales"));
-						costo.setDescuentoEstudios(rBD.getBigDecimal("DescuentoEstudios"));
-						costo.setDescuentoMedicamentos(rBD.getBigDecimal("DescuentoMedicamentos"));
+						if( rBD.getString("idTipoDescuento") != null )
+						{
+							TipoDescuento tipoDescuento = new TipoDescuento(rBD.getInt("idTipoDescuento"), rBD.getString("descTipoDescuento"));
+							costo.setTipoDescuento(tipoDescuento);
+							
+						}
 						
 					}
 					
