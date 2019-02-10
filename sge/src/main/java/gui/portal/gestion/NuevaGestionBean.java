@@ -104,6 +104,7 @@ public class NuevaGestionBean
 		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
 		this.catCategoriaGestion = UtilidadesGestion.getCatCategoriaGestion();
 		setCatUnidadSalud(UtilidadesGestion.getCatUnidadSalud());
+		setCatTipoDescuento(UtilidadesGestion.getCatTipoDescuento());
 
 		this.gestion = gestionEdicion;
 
