@@ -5,17 +5,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.StringJoiner;
 
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.CategoryAxis;
-import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LineChartModel;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dao.GestionesDAO;
 import lombok.Getter;
@@ -28,6 +20,7 @@ import modelo.gestion.LugarResidencia;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Sexo;
 import modelo.gestion.Solicitante;
+import modelo.gestion.TipoDescuento;
 import util.gestion.UtilidadesGestion;
 
 @NoArgsConstructor
@@ -50,11 +43,11 @@ public class GraficasService
 
 	public String getChartMensualTotalGestionesAño(int añoTendencia, int añoTendenciaBase)
 	{
-		GestionesDAO							gestionesDAO	= new GestionesDAO();
+		GestionesDAO							gestionesDAO		= new GestionesDAO();
 		List<LinkedHashMap<String, Integer>>	listaAñosTendencia	= new ArrayList<>();
 
-		StringJoiner							stjFinal		= new StringJoiner(",", "[", "]");
-		StringJoiner							stjAuxiliar		= new StringJoiner(",", "[", "]");
+		StringJoiner							stjFinal			= new StringJoiner(",", "[", "]");
+		StringJoiner							stjAuxiliar			= new StringJoiner(",", "[", "]");
 		stjAuxiliar.add("'Mes'");
 
 		for (int x = añoTendenciaBase; x <= añoTendencia; x++)
@@ -65,37 +58,36 @@ public class GraficasService
 
 		stjFinal.add(stjAuxiliar.toString());
 
-		StringJoiner tendencia;
-		String mes;
-		LinkedHashMap<String, Integer> linkedAñoTendencia;
-		Integer frecuenciaMes;
+		StringJoiner					tendencia;
+		String							mes;
+		LinkedHashMap<String, Integer>	linkedAñoTendencia;
+		Integer							frecuenciaMes;
 
 		for (int x = 0; x < 12; x++)
 		{
 			tendencia = new StringJoiner(",", "[", "]");
-			
+
 			mes = this.meses[x];
-			tendencia.add("'"+mes+"'");
-			
+			tendencia.add("'" + mes + "'");
+
 			for (int a = añoTendenciaBase; a <= añoTendencia; a++)
 			{
-				linkedAñoTendencia = listaAñosTendencia.get(a-añoTendenciaBase);
+				linkedAñoTendencia = listaAñosTendencia.get(a - añoTendenciaBase);
 				frecuenciaMes = linkedAñoTendencia.get(mes);
-				
-				if( frecuenciaMes != null )
+
+				if (frecuenciaMes != null)
 				{
-					tendencia.add(""+frecuenciaMes.intValue()+"");
-				}
-				else
+					tendencia.add("" + frecuenciaMes.intValue() + "");
+				} else
 				{
 					tendencia.add("0");
 				}
 			}
-			
+
 			stjFinal.add(tendencia.toString());
 		}
 
-		System.out.println("Json tendencia: "+stjFinal.toString());
+		System.out.println("Json tendencia: " + stjFinal.toString());
 		return stjFinal.toString();
 	}
 
@@ -110,7 +102,7 @@ public class GraficasService
 		StringJoiner	stJ						= new StringJoiner(",");
 
 		stJ.add("[" + "\"Activas (" + gestionesActivas.size() + ")\"," + gestionesActivas.size() + "]");
-		stJ.add("[" + "\"Finalizadas (" + gestionesActivas.size() + ")\"," + gestionesFinalizadas.size() + "]");
+		stJ.add("[" + "\"Finalizadas (" + gestionesFinalizadas.size() + ")\"," + gestionesFinalizadas.size() + "]");
 
 		System.out.println("Total de gestiones: " + stJ.toString());
 		this.jsonTotalGestiones = stJ.toString();
@@ -297,7 +289,8 @@ public class GraficasService
 
 		for (SeguridadSocial seguridadSoc : seguridadSocial)
 		{
-			stJ.add("[\"" + seguridadSoc.getDescripcion() + "\"," + seguridadSoc.getTotal() + "]");
+			stJ.add("[\"" + seguridadSoc.getDescripcion() + " (" + seguridadSoc.getTotal() + ") \","
+					+ seguridadSoc.getTotal() + "]");
 		}
 
 		System.out.println("Json Seguridad Social: " + stJ.toString());
@@ -336,13 +329,50 @@ public class GraficasService
 		return sexos;
 	}
 
+	public List<TipoDescuento> getEstadisticaTipoDescuento(List<Gestion> allGestiones)
+	{
+		List<TipoDescuento> tiposDescuento = new ArrayList<>();
+
+		for (Gestion gestion : allGestiones)
+		{
+			if (gestion.getCosto().getTipoDescuento() == null)
+			{
+				continue;
+			}
+
+			TipoDescuento objTipoDescuento = new TipoDescuento();
+			objTipoDescuento.setDescripcion(gestion.getCosto().getTipoDescuento().getDescripcion());
+
+			boolean encontrado = false;
+
+			for (TipoDescuento tipoDescuento : tiposDescuento)
+			{
+				if (tipoDescuento.getDescripcion().equalsIgnoreCase(objTipoDescuento.getDescripcion()))
+				{
+					tipoDescuento.incrementar();
+					encontrado = true;
+					break;
+				}
+			}
+
+			if (!encontrado)
+			{
+				tiposDescuento.add(objTipoDescuento);
+			}
+		}
+
+		tiposDescuento.sort(Comparator.comparing(TipoDescuento::getTotal).reversed());
+
+		return tiposDescuento;
+	}
+
 	public String getChartSexos(List<Sexo> sexos)
 	{
 		StringJoiner stJ = new StringJoiner(",");
 
 		for (Sexo sexo : sexos)
 		{
-			stJ.add("[\"" + sexo.getDescripcion() + "\"," + sexo.getTotal() + "]");
+			stJ.add("[\"" + sexo.getDescripcion() + " (" + sexo.getTotal() + ")\"," + sexo.getTotal() + "]");
 		}
 
 		System.out.println("Json Sexo: " + stJ.toString());
@@ -430,10 +460,24 @@ public class GraficasService
 
 		for (Edad edad : edades)
 		{
-			stJ.add("[\"" + edad.getDescripcion() + "\"," + edad.getTotal() + "]");
+			stJ.add("[\"" + edad.getDescripcion() + " (" + edad.getTotal() + ")\"," + edad.getTotal() + "]");
 		}
 
 		System.out.println("Json Edades: " + stJ.toString());
+		return stJ.toString();
+	}
+
+	public String getChartApoyoEconomico(List<TipoDescuento> tiposDescuento)
+	{
+		StringJoiner stJ = new StringJoiner(",");
+
+		for (TipoDescuento tipoDescuento : tiposDescuento)
+		{
+			stJ.add("[\"" + tipoDescuento.getDescripcion() + " (" + tipoDescuento.getTotal() + ")\","
+					+ tipoDescuento.getTotal() + "]");
+		}
+
+		System.out.println("Json Tipos de Apoyo Económico: " + stJ.toString());
 		return stJ.toString();
 	}
 

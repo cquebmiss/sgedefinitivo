@@ -1,6 +1,7 @@
 package gui.portal.gestion;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
@@ -22,19 +22,21 @@ import lombok.Getter;
 import lombok.Setter;
 import modelo.Sesion;
 import modelo.gestion.CategoriaGestion;
+import modelo.gestion.Costo;
 import modelo.gestion.Edad;
 import modelo.gestion.Gestion;
 import modelo.gestion.LugarResidencia;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Sexo;
 import modelo.gestion.Solicitante;
+import modelo.gestion.TipoDescuento;
 import service.GraficasService;
 import util.FacesUtils;
 import util.UtilidadesCalendario;
 import util.gestion.UtilidadesGestion;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 @Getter
 @Setter
 public class ReportesGestionBean
@@ -66,6 +68,7 @@ public class ReportesGestionBean
 	private List<SeguridadSocial>	seguridadSocial;
 	private List<Sexo>				sexos;
 	private List<Edad>				edades;
+	private List<TipoDescuento>		tiposDescuento;
 
 	// Gráfica lineal de total de gestiones mensuales
 	private LineChartModel			lineModel;
@@ -80,6 +83,13 @@ public class ReportesGestionBean
 	private String					jsonSeguridadSocial;
 	private String					jsonSexos;
 	private String					jsonEdades;
+	private String					jsonTipoApoyoEconomico;
+
+	private int						totalGestionesConAhorro;
+	private BigDecimal				montoAhorado;
+
+	private String					alturaChartSolicitantes;
+	private String					alturaChartLugaresResidencia;
 
 	public ReportesGestionBean()
 	{
@@ -101,13 +111,6 @@ public class ReportesGestionBean
 	{
 		this.añoTendencia = LocalDate.now().getYear() - 1;
 		this.graficasService = new GraficasService();
-		this.jsonTotalGestiones = "[\"27-59 años\",7],[\"0-5 años\",4]";
-		this.jsonSolicitantes = "[\"27-59 años\",7],[\"0-5 años\",4]";
-		this.jsonLugaresResidencia = "[\"27-59 años\",7],[\"0-5 años\",4]";
-		this.jsonCategorias = "[\"27-59 años\",7],[\"0-5 años\",4]";
-		this.jsonSeguridadSocial = "[\"27-59 años\",7],[\"0-5 años\",4]";
-		this.jsonSexos = "[\"27-59 años\",7],[\"0-5 años\",4]";
-		this.jsonEdades = "[\"27-59 años\",7],[\"0-5 años\",4]";
 	}
 
 	public void actionInicializaReportes()
@@ -174,6 +177,7 @@ public class ReportesGestionBean
 		analizaSeguridadSocial();
 		analizaSexos();
 		analizaEdades();
+		analizaApoyoEconomico();
 
 	}
 
@@ -210,12 +214,16 @@ public class ReportesGestionBean
 	{
 		this.solicitantes = this.graficasService.getEstadisticaSolicitantes(this.allGestiones);
 		this.jsonSolicitantes = this.graficasService.getChartSolicitantes(solicitantes);
+
+		this.alturaChartSolicitantes = "" +(100 + (28 * this.solicitantes.size() ) ) + "px";
 	}
 
 	public void analizaLugaresResidencia()
 	{
 		this.lugaresResidencia = this.graficasService.getEstadisticaLugarResidencia(this.allGestiones);
 		this.jsonLugaresResidencia = this.graficasService.getChartLugarResidencia(this.lugaresResidencia);
+		
+		this.alturaChartLugaresResidencia = "" + ( 100 + (28 * this.lugaresResidencia.size() ) ) + "px";
 	}
 
 	public void analizaCategorias()
@@ -240,6 +248,38 @@ public class ReportesGestionBean
 	{
 		this.edades = this.graficasService.getEstadisticaEdades(this.allGestiones);
 		this.jsonEdades = this.graficasService.getChartEdades(this.edades);
+	}
+
+	public void analizaApoyoEconomico()
+	{
+		this.tiposDescuento = this.graficasService.getEstadisticaTipoDescuento(this.allGestiones);
+		this.jsonTipoApoyoEconomico = this.graficasService.getChartApoyoEconomico(this.tiposDescuento);
+
+		this.totalGestionesConAhorro = 0;
+		this.montoAhorado = BigDecimal.valueOf(0);
+
+		Costo costo;
+
+		// Analiza las estadísticas generales de ahorros
+		for (Gestion gestion : this.allGestiones)
+		{
+			costo = gestion.getCosto();
+
+			if (costo.getCostoOriginal() != null && costo.getCostoOriginal().compareTo(BigDecimal.ZERO) > 0
+					|| costo.getTotalAPagar() != null && costo.getTotalAPagar().compareTo(BigDecimal.ZERO) > 0
+					|| costo.getTipoDescuento() != null)
+			{
+				this.totalGestionesConAhorro++;
+			}
+
+			if (costo.getCostoOriginal() != null && costo.getCostoOriginal().compareTo(BigDecimal.ZERO) > 0
+					&& costo.getTotalAPagar() != null && costo.getTotalAPagar().compareTo(BigDecimal.ZERO) > 0)
+			{
+				this.montoAhorado = this.montoAhorado.add((costo.getCostoOriginal().subtract(costo.getTotalAPagar())));
+			}
+
+		}
+
 	}
 
 }

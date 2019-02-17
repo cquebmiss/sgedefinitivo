@@ -14,6 +14,10 @@
 
 	<ui:define name="content">
 
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"></script>
+
+
 		<div class="ui-g">
 			<div class="ui-g-12 card">
 
@@ -72,7 +76,7 @@
 
 							<p:commandButton value="Generar"
 								actionListener="#{reportesGestionBean.updateEstadisticas}"
-								oncomplete="drawAllCharts()"></p:commandButton>
+								update="@(.panelGraficas)"></p:commandButton>
 
 						</p:panelGrid>
 
@@ -82,7 +86,7 @@
 					<br></br>
 					<br></br>
 
-					<h:panelGroup>
+					<p:outputPanel styleClass="panelGraficas">
 
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group form-elements graficasService"
@@ -108,6 +112,27 @@
 								<h:outputText
 									value="#{reportesGestionBean.tiempoPromedioFinalizacion} día(s)"></h:outputText>
 
+								<p:outputLabel value="Gestiones con Apoyo Económico"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.totalGestionesConAhorro}"></h:outputText>
+
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+
+								<p:outputLabel value="Monto Total de Ahorro para los Pacientes:"></p:outputLabel>
+								<h:outputText value="#{reportesGestionBean.montoAhorado}">
+									<f:convertNumber type="currency" currencySymbol="$" />
+								</h:outputText>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
 
 
 							</p:panelGrid>
@@ -115,14 +140,11 @@
 
 						</p:panelGrid>
 						<div id="totalGestionesChart" style="width: 90%; height: 490px;"></div>
-						<div id="chart_div"></div>
 
 						<br></br>
 
 
 						<p:tabView>
-
-							<p:ajax event="tabChange" oncomplete="drawAllCharts()" />
 
 							<p:tab title="Solicitantes">
 
@@ -263,10 +285,10 @@
 
 						</p:tabView>
 
-						<p:panel header="Gráficas" style="width: 100%;">
-<script type="text/javascript"
-			src="https://www.gstatic.com/charts/loader.js"></script>
-							<h:outputScript target="body" >
+
+
+
+						<script type="text/javascript">
 							
 
 		 google.charts.load('current', {'packages':[['corechart'],['bar'],['map']]});
@@ -284,33 +306,9 @@
 				google.charts.setOnLoadCallback(drawChartSeguridadSocial);
 				google.charts.setOnLoadCallback(drawChartGenero);
 				google.charts.setOnLoadCallback(drawChartEdad);
-				google.charts.setOnLoadCallback(drawMap);
+				google.charts.setOnLoadCallback(drawChartApoyoEconomico);
 			}
 			
-			function drawMap() {
-      var data = google.visualization.arrayToDataTable([
-        ['Country', 'Population'],
-        ['China', 'China: 1,363,800,000'],
-        ['India', 'India: 1,242,620,000'],
-        ['US', 'US: 317,842,000'],
-        ['Indonesia', 'Indonesia: 247,424,598'],
-        ['Brazil', 'Brazil: 201,032,714'],
-        ['Pakistan', 'Pakistan: 186,134,000'],
-        ['Nigeria', 'Nigeria: 173,615,000'],
-        ['Bangladesh', 'Bangladesh: 152,518,015'],
-        ['Russia', 'Russia: 146,019,512'],
-        ['Japan', 'Japan: 127,120,000']
-      ]);
-
-    var options = {
-      showTooltip: true,
-      showInfoWindow: true
-    };
-
-    var map = new google.visualization.Map(document.getElementById('chart_div'));
-
-    map.draw(data, options);
-  };
 
 			
 			function drawChartTotalGestiones() {
@@ -326,6 +324,11 @@
 				var options = {
 					title : ' ',
 					pieHole : 0,
+					is3D: true,
+					slices: {  0: {offset: 0.1, color: 'green'},
+						1: {offset: 0.1, color: 'red'},
+	          },
+
 				};
 
 				var chart = new google.visualization.PieChart(document
@@ -428,6 +431,7 @@
 				var options = {
 					title : 'Seguridad Social',
 					pieHole : 0,
+					is3D: true
 				};
 
 				var chart = new google.visualization.PieChart(document
@@ -448,6 +452,9 @@
 				var options = {
 					title : 'Género',
 					pieHole : 0,
+					is3D: true,
+					slices: { 0:{  color: 'pink'},
+						1: {color: '#0e96e0'}}
 				};
 
 				var chart = new google.visualization.PieChart(document
@@ -468,28 +475,54 @@
 				var options = {
 					title : 'Edad',
 					pieHole : 0,
+					is3D: true
 				};
 
 				var chart = new google.visualization.PieChart(document
 						.getElementById('edadChart'));
 				chart.draw(data, options);
 			}
+
+		function drawChartApoyoEconomico() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Tipo Apoyo Económico');
+				data.addColumn('number', 'Cantidad');
+				
+				data.addRows([
+					#{reportesGestionBean.jsonTipoApoyoEconomico}
+					]);
+
+				var options = {
+					title : 'Tipo de Apoyo Económico',
+					pieHole : 0,
+					is3D: true
+				};
+
+				var chart = new google.visualization.PieChart(document
+						.getElementById('tipoApoyoEconomicoChart'));
+				chart.draw(data, options);
+			}
 			
-			
-
-							</h:outputScript>
+		</script>
 
 
 
+						<p:panel header="Gráficas" style="width: 100%;">
 							<p:panelGrid columns="1">
 
 								<p:column colspan="30" rowspan="30">
-									<div id="solicitantesChart" style="width: 100%; height: 400px;"></div>
+									<div id="tipoApoyoEconomicoChart"
+										style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="solicitantesChart" style="width: 100%; height: #{reportesGestionBean.alturaChartSolicitantes};"></div>
 								</p:column>
 
 								<p:column colspan="30" rowspan="30">
 									<div id="lugarResidenciaChart"
-										style="width: 100%; height: 400px;"></div>
+										style="width: 100%; height: #{reportesGestionBean.alturaChartLugaresResidencia};"></div>
 								</p:column>
 
 								<p:column colspan="30" rowspan="30">
@@ -513,7 +546,7 @@
 
 						</p:panel>
 
-					</h:panelGroup>
+					</p:outputPanel>
 				</h:form>
 
 			</div>

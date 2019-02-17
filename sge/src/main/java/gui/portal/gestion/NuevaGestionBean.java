@@ -256,7 +256,7 @@ public class NuevaGestionBean
 				// Se obtiene el Usuario de la sesión
 				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 				conexion.setAutoCommit(false);
-				conexion.rollback();
+				conexion.rollback();	
 
 				if (this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim().isEmpty())
 				{
