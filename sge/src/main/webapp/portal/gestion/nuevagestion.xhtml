@@ -130,14 +130,52 @@
 											<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
 										</p:selectOneMenu>
 
-										<p:outputLabel for="campoLugarOrigen" value="Lugar de Origen"></p:outputLabel>
-
-										<p:autoComplete id="campoLugarOrigen" minQueryLength="3"
-											effect="fade"
+										<p:outputLabel for="campoLugarOrigen" value="Estado"></p:outputLabel>
+										<p:autoComplete id="campoLugarOrigen" styleClass="classEdo"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.estadoINEGI}"
 											completeMethod="#{nuevaGestionBean.autoCompleteLugarOrigen}"
-											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.descripcion}"
+											var="obj" itemLabel="#{obj.nom_agee}" itemValue="#{obj}"
+											converter="estadoConverter" effect="fade"
+											forceSelection="true" minQueryLength="3" scrollHeight="200">
+
+											<p:ajax event="itemSelect"
+												listener="#{nuevaGestionBean.onItemSelectEstado}"
+												update="@(.panelPrincipal)"></p:ajax>
+
+											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}" update="@(.classMun) @(.classLoc)"></p:ajax>
+
+
+										</p:autoComplete>
+
+										<p:outputLabel for="campoMunicipioOrigen"
+											value="Municipio"></p:outputLabel>
+
+										<p:autoComplete id="campoMunicipioOrigen" minQueryLength="3"
+											effect="fade" forceSelection="true" styleClass="classMun"
+											completeMethod="#{nuevaGestionBean.autoCompleteMunicipio}"
+											converter="municipioConverter" var="theme"
+											itemLabel="#{theme.nom_agem}" itemValue="#{theme}"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.municipioINEGI}"
+											scrollHeight="200">
+
+											<p:ajax event="itemSelect"
+												listener="#{nuevaGestionBean.onItemSelectMunicipio}"
+												update="@(.panelPrincipal)" />
+											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}" update="@(.classEdo) @(.classLoc)"></p:ajax>
+
+										</p:autoComplete>
+
+										<p:outputLabel for="campoLocalidadOrigen"
+											value="Localidad"></p:outputLabel>
+
+										<p:autoComplete id="campoLocalidadOrigen" minQueryLength="3"
+											effect="fade" forceSelection="true" styleClass="classLoc"
+											completeMethod="#{nuevaGestionBean.autoCompleteLocalidades}"
+											converter="localidadConverter" var="theme"
+											itemLabel="#{theme.cve_loc} #{theme.nom_loc}" itemValue="#{theme}"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.localidadINEGI}"
 											scrollHeight="300">
-											<p:ajax event="blur" process="@this"></p:ajax>
+											<p:ajax event="itemSelect" />
 										</p:autoComplete>
 
 

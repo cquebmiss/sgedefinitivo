@@ -1,12 +1,24 @@
 package modelo.gestion;
 
+import lombok.Getter;
+import lombok.Setter;
+import modelo.gestion.json.EstadoINEGI;
+import modelo.gestion.json.LocalidadINEGI;
+import modelo.gestion.json.MunicipioINEGI;
+
+@Getter
+@Setter
 public class LugarResidencia
 {
-	private int		idLugarResidencia;
-	private String	descripcion;
+	private int				idLugarResidencia;
+	private String			descripcion;
 
-	//Auxiliar para los reportes
-	private int		total;
+	private EstadoINEGI		estadoINEGI;
+	private MunicipioINEGI	municipioINEGI;
+	private LocalidadINEGI	localidadINEGI;
+
+	// Auxiliar para los reportes
+	private int				total;
 
 	public LugarResidencia()
 	{
@@ -25,36 +37,6 @@ public class LugarResidencia
 	public void incrementar()
 	{
 		this.total++;
-	}
-
-	public int getIdLugarResidencia()
-	{
-		return idLugarResidencia;
-	}
-
-	public void setIdLugarResidencia(int idLugarResidencia)
-	{
-		this.idLugarResidencia = idLugarResidencia;
-	}
-
-	public String getDescripcion()
-	{
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion)
-	{
-		this.descripcion = descripcion;
-	}
-
-	public int getTotal()
-	{
-		return total;
-	}
-
-	public void setTotal(int total)
-	{
-		this.total = total;
 	}
 
 }

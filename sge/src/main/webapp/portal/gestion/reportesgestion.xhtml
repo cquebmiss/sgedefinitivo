@@ -307,6 +307,8 @@
 				google.charts.setOnLoadCallback(drawChartGenero);
 				google.charts.setOnLoadCallback(drawChartEdad);
 				google.charts.setOnLoadCallback(drawChartApoyoEconomico);
+				google.charts.setOnLoadCallback(drawChartAtendidosEn);
+				google.charts.setOnLoadCallback(drawChartReferenciadosA);
 			}
 			
 
@@ -431,7 +433,19 @@
 				var options = {
 					title : 'Seguridad Social',
 					pieHole : 0,
-					is3D: true
+					is3D: true,chartArea: {
+						
+					      left: 10,
+					      top: 40,
+					      height: 300,
+					      width: 900
+					    },
+					    legend: {
+					      maxLines: 3,
+					      textStyle: {
+					        fontSize: 15
+					      }
+					    },
 				};
 
 				var chart = new google.visualization.PieChart(document
@@ -454,7 +468,20 @@
 					pieHole : 0,
 					is3D: true,
 					slices: { 0:{  color: 'pink'},
-						1: {color: '#0e96e0'}}
+						1: {color: '#0e96e0'}},
+						chartArea: {
+							
+						      left: 10,
+						      top: 40,
+						      height: 300,
+						      width: 900
+						    },
+						    legend: {
+						      maxLines: 3,
+						      textStyle: {
+						        fontSize: 15
+						      }
+						    },
 				};
 
 				var chart = new google.visualization.PieChart(document
@@ -475,7 +502,20 @@
 				var options = {
 					title : 'Edad',
 					pieHole : 0,
-					is3D: true
+					is3D: true,
+					chartArea: {
+						
+					      left: 10,
+					      top: 40,
+					      height: 300,
+					      width: 900
+					    },
+					    legend: {
+					      maxLines: 3,
+					      textStyle: {
+					        fontSize: 15
+					      }
+					    },
 				};
 
 				var chart = new google.visualization.PieChart(document
@@ -496,13 +536,95 @@
 				var options = {
 					title : 'Tipo de Apoyo Económico',
 					pieHole : 0,
-					is3D: true
+					is3D: true,
+					chartArea: {
+						
+					      left: 10,
+					      top: 40,
+					      height: 300,
+					      width: 900
+					    },
+					    legend: {
+					      maxLines: 3,
+					      textStyle: {
+					        fontSize: 15
+					      }
+					    },
 				};
 
 				var chart = new google.visualization.PieChart(document
 						.getElementById('tipoApoyoEconomicoChart'));
 				chart.draw(data, options);
 			}
+		
+		function drawChartAtendidosEn() {
+			
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'Unidad de Salud');
+			data.addColumn('number', 'Frecuencia');
+			
+			data.addRows([
+				#{reportesGestionBean.jsonAtendidosEn}
+				]);
+
+			var options = {
+				title : 'Unidades de Atención',
+				pieHole : 0,
+				is3D: true,
+				chartArea: {
+						
+				      left: 10,
+				      top: 40,
+				      height: 300,
+				      width: 900
+				    },
+				    legend: {
+				      maxLines: 3,
+				      textStyle: {
+				        fontSize: 15
+				      }
+				    },
+				  
+			};
+
+			var chart = new google.visualization.PieChart(document
+					.getElementById('atendidosEnChart'));
+			chart.draw(data, options);
+		}
+
+		function drawChartReferenciadosA() {
+			
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'Unidad de Salud');
+			data.addColumn('number', 'Frecuencia');
+			
+			data.addRows([
+				#{reportesGestionBean.jsonReferenciadosA}
+				]);
+
+			var options = {
+				title : 'Referencias',
+				pieHole : 0,
+				is3D: true,
+				chartArea: {
+					
+				      left: 10,
+				      top: 40,
+				      height: 300,
+				      width: 900
+				    },
+				    legend: {
+				      maxLines: 3,
+				      textStyle: {
+				        fontSize: 15
+				      }
+				    },
+			};
+
+			var chart = new google.visualization.PieChart(document
+					.getElementById('referenciadosAChart'));
+			chart.draw(data, options);
+		}
 			
 		</script>
 
@@ -540,6 +662,14 @@
 
 								<p:column colspan="30" rowspan="30">
 									<div id="edadChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="atendidosEnChart" style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="referenciadosAChart" style="width: 100%; height: 400px;"></div>
 								</p:column>
 
 							</p:panelGrid>

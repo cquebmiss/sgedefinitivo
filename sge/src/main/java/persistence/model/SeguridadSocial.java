@@ -1,46 +1,24 @@
 package persistence.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "seguridadsocial")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class SeguridadSocial {
 
 	@Id
-	@Column(name = "idSeguridadSocial")
-	public int idSeguridadSocial;
+	private Integer idSeguridadSocial;
 
-	@Column(name = "descripcion")
 	private String descripcion;
 
-	public SeguridadSocial() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public SeguridadSocial(int idSeguridadSocial, String descripcion) {
-		super();
-		this.idSeguridadSocial = idSeguridadSocial;
-		this.descripcion = descripcion;
-	}
-
-	public int getIdSeguridadSocial() {
-		return idSeguridadSocial;
-	}
-
-	public void setIdSeguridadSocial(int idSeguridadSocial) {
-		this.idSeguridadSocial = idSeguridadSocial;
-	}
-
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
 
 }

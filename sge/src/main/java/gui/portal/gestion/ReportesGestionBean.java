@@ -30,6 +30,7 @@ import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Sexo;
 import modelo.gestion.Solicitante;
 import modelo.gestion.TipoDescuento;
+import modelo.gestion.UnidadSalud;
 import service.GraficasService;
 import util.FacesUtils;
 import util.UtilidadesCalendario;
@@ -69,6 +70,8 @@ public class ReportesGestionBean
 	private List<Sexo>				sexos;
 	private List<Edad>				edades;
 	private List<TipoDescuento>		tiposDescuento;
+	private List<UnidadSalud>		atendidosEn;
+	private List<UnidadSalud>		referenciadosA;
 
 	// Gráfica lineal de total de gestiones mensuales
 	private LineChartModel			lineModel;
@@ -84,6 +87,8 @@ public class ReportesGestionBean
 	private String					jsonSexos;
 	private String					jsonEdades;
 	private String					jsonTipoApoyoEconomico;
+	private String					jsonAtendidosEn;
+	private String					jsonReferenciadosA;
 
 	private int						totalGestionesConAhorro;
 	private BigDecimal				montoAhorado;
@@ -178,6 +183,8 @@ public class ReportesGestionBean
 		analizaSexos();
 		analizaEdades();
 		analizaApoyoEconomico();
+		analizaAtendidosEn();
+		analizaReferenciadosA();
 
 	}
 
@@ -215,15 +222,15 @@ public class ReportesGestionBean
 		this.solicitantes = this.graficasService.getEstadisticaSolicitantes(this.allGestiones);
 		this.jsonSolicitantes = this.graficasService.getChartSolicitantes(solicitantes);
 
-		this.alturaChartSolicitantes = "" +(100 + (28 * this.solicitantes.size() ) ) + "px";
+		this.alturaChartSolicitantes = "" + (100 + (28 * this.solicitantes.size())) + "px";
 	}
 
 	public void analizaLugaresResidencia()
 	{
 		this.lugaresResidencia = this.graficasService.getEstadisticaLugarResidencia(this.allGestiones);
 		this.jsonLugaresResidencia = this.graficasService.getChartLugarResidencia(this.lugaresResidencia);
-		
-		this.alturaChartLugaresResidencia = "" + ( 100 + (28 * this.lugaresResidencia.size() ) ) + "px";
+
+		this.alturaChartLugaresResidencia = "" + (100 + (28 * this.lugaresResidencia.size())) + "px";
 	}
 
 	public void analizaCategorias()
@@ -280,6 +287,18 @@ public class ReportesGestionBean
 
 		}
 
+	}
+
+	public void analizaAtendidosEn()
+	{
+		this.atendidosEn = this.graficasService.getEstadisticaCentroAtencion(this.allGestiones, 0);
+		this.jsonAtendidosEn = this.graficasService.getChartCentroAtencion(this.atendidosEn);
+	}
+
+	public void analizaReferenciadosA()
+	{
+		this.referenciadosA = this.graficasService.getEstadisticaCentroAtencion(this.allGestiones, 1);
+		this.jsonReferenciadosA = this.graficasService.getChartCentroAtencion(this.referenciadosA);
 	}
 
 }

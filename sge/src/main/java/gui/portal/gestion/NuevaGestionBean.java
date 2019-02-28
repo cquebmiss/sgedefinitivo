@@ -5,10 +5,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -16,6 +19,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+
+import org.primefaces.event.SelectEvent;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +30,7 @@ import modelo.gestion.CategoriaGestion;
 import modelo.gestion.Contacto;
 import modelo.gestion.Gestion;
 import modelo.gestion.ListElement;
+import modelo.gestion.LugarResidencia;
 import modelo.gestion.Note;
 import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Task;
@@ -33,7 +39,14 @@ import modelo.gestion.TipoDescuento;
 import modelo.gestion.TipoGestion;
 import modelo.gestion.UnidadSalud;
 import modelo.gestion.WUsuario;
+import modelo.gestion.json.EstadoINEGI;
+import modelo.gestion.json.LocalidadINEGI;
+import modelo.gestion.json.MunicipioINEGI;
+import modelo.gestion.json.RespuestaEstadosJson;
+import modelo.gestion.json.RespuestaLocalidadesJson;
+import modelo.gestion.json.RespuestaMunicipiosJson;
 import resources.DataBase;
+import service.INEGIService;
 import util.FacesUtils;
 import util.gestion.UtilidadesGestion;
 
@@ -58,6 +71,12 @@ public class NuevaGestionBean
 
 	private List<ListElement>		listasUsuario;
 	private List<Task>				listaTareas;
+
+	// WebService de INEGI
+	private INEGIService			inegiService	= new INEGIService();
+	private List<EstadoINEGI>		estados;
+	private List<MunicipioINEGI>	municipios;
+	private List<LocalidadINEGI>	localidades;
 
 	public NuevaGestionBean()
 	{
@@ -194,15 +213,150 @@ public class NuevaGestionBean
 		}
 	}
 
+	public void blur()
+	{
+
+		if (this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI() == null)
+		{
+			this.gestion.getPaciente().getLugarResidencia().setMunicipioINEGI(null);
+			this.gestion.getPaciente().getLugarResidencia().setLocalidadINEGI(null);
+		} else if (this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI() == null)
+		{
+			this.gestion.getPaciente().getLugarResidencia().setLocalidadINEGI(null);
+		}
+
+		System.out.println("Estado: "
+				+ (this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI().getNom_agee()
+						: " NA")
+				+ (this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI().getNom_agem()
+						: "N/A")
+				+ (this.gestion.getPaciente().getLugarResidencia().getLocalidadINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getLocalidadINEGI().getNom_loc()
+						: "N/A"));
+	}
+
 	// MÉTODOS PARA AUTOCOMPLETES
 	public List<String> autoCompleteSolicitadoA(String query)
 	{
 		return UtilidadesGestion.getCoincidenciasSolicitantes(query);
 	}
 
-	public List<String> autoCompleteLugarOrigen(String query)
+	public List<EstadoINEGI> autoCompleteLugarOrigen(String query)
 	{
-		return UtilidadesGestion.getCoincidenciasLugarOrigen(query);
+		return getEstadosINEGI(query);
+		// return UtilidadesGestion.getCoincidenciasLugarOrigen(query);
+	}
+
+	public List<MunicipioINEGI> autoCompleteMunicipio(String query)
+	{
+		return this.municipios != null
+				? (List<MunicipioINEGI>) this.municipios.stream()
+						.filter(mun -> mun.getNom_agem().toLowerCase().contains(query.toLowerCase()))
+						.collect(Collectors.toList())
+				: new ArrayList<>();
+	}
+
+	public List<LocalidadINEGI> autoCompleteLocalidades(String query)
+	{
+		return this.localidades != null
+				? (List<LocalidadINEGI>) this.localidades.stream()
+						.filter(loc -> loc.getNom_loc().toLowerCase().contains(query.toLowerCase()))
+						.collect(Collectors.toList())
+				: new ArrayList<>();
+	}
+
+	public void onItemSelectEstado(SelectEvent event)
+	{
+		System.out.println("Estado: "
+				+ (this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI().getNom_agee()
+						: " NA")
+				+ (this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI().getNom_agem()
+						: "N/A")
+				+ (this.gestion.getPaciente().getLugarResidencia().getLocalidadINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getLocalidadINEGI().getNom_loc()
+						: "N/A"));
+
+		EstadoINEGI estadoSelec = (EstadoINEGI) event.getObject();
+
+		setMunicipiosINEGI(estadoSelec.getCve_agee());
+
+		System.out.println("Estado: "
+				+ (this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getEstadoINEGI().getNom_agee()
+						: " NA")
+				+ (this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getMunicipioINEGI().getNom_agem()
+						: "N/A")
+				+ (this.gestion.getPaciente().getLugarResidencia().getLocalidadINEGI() != null
+						? this.gestion.getPaciente().getLugarResidencia().getLocalidadINEGI().getNom_loc()
+						: "N/A"));
+	}
+
+	public void setMunicipiosINEGI(String cve_agee)
+	{
+		this.municipios = getMunicipiosINEGI(cve_agee);
+		this.gestion.getPaciente().getLugarResidencia().setMunicipioINEGI(null);
+		this.localidades = null;
+		this.gestion.getPaciente().getLugarResidencia().setLocalidadINEGI(null);
+	}
+
+	public void onItemSelectMunicipio(SelectEvent event)
+	{
+		MunicipioINEGI municipioSelec = (MunicipioINEGI) event.getObject();
+		this.localidades = getLocalidadesINEGI(municipioSelec.getCve_agee(), municipioSelec.getCve_agem());
+		this.gestion.getPaciente().getLugarResidencia().setLocalidadINEGI(null);
+	}
+
+	public List<EstadoINEGI> getEstadosINEGI(String busqueda)
+	{
+		RespuestaEstadosJson respuesta = this.inegiService.getEstados(busqueda);
+
+		this.estados = respuesta.getDatos();
+
+		if (this.estados == null)
+		{
+			this.estados = new ArrayList<>();
+		}
+
+		this.estados.forEach(estado -> System.out.println(estado.getNom_agee()));
+
+		return this.estados;
+	}
+
+	public List<MunicipioINEGI> getMunicipiosINEGI(String idEstado)
+	{
+		RespuestaMunicipiosJson respuesta = this.inegiService.getMunicipios(idEstado);
+
+		this.municipios = respuesta.getDatos();
+
+		if (this.municipios == null)
+		{
+			this.municipios = new ArrayList<>();
+		}
+
+		this.municipios.forEach(mun -> System.out.println(mun.getNom_agem()));
+
+		return this.municipios;
+	}
+
+	public List<LocalidadINEGI> getLocalidadesINEGI(String idEstado, String idMunicipio)
+	{
+		RespuestaLocalidadesJson respuesta = this.inegiService.getLocalidades(idEstado, idMunicipio);
+
+		this.localidades = respuesta.getDatos();
+
+		if (this.localidades == null)
+		{
+			this.localidades = new ArrayList<>();
+		}
+
+		this.localidades.forEach(loc -> System.out.println(loc.getNom_loc()));
+
+		return this.localidades;
 	}
 
 	// FIN DE MÉTODOS PARA AUTOCOMPLETES
@@ -256,11 +410,30 @@ public class NuevaGestionBean
 				// Se obtiene el Usuario de la sesión
 				Sesion sesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 				conexion.setAutoCommit(false);
-				conexion.rollback();	
+				conexion.rollback();
 
-				if (this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim().isEmpty())
+				LugarResidencia lResidencia = this.gestion.getPaciente().getLugarResidencia();
+
+				if (lResidencia.getEstadoINEGI() == null)
 				{
-					this.gestion.getPaciente().getLugarResidencia().setDescripcion("Sin información");
+					lResidencia.setDescripcion("Sin información");
+				} else
+				{
+					String ubicFinal = lResidencia.getEstadoINEGI().getNom_agee();
+
+					if (lResidencia.getMunicipioINEGI() != null)
+					{
+						ubicFinal += ", " + lResidencia.getMunicipioINEGI().getNom_agem();
+
+						if (lResidencia.getLocalidadINEGI() != null)
+						{
+							ubicFinal += ", " + lResidencia.getLocalidadINEGI().getNom_loc();
+						}
+
+					}
+					
+					lResidencia.setDescripcion(ubicFinal);
+
 				}
 
 				if (this.gestion.getIdGestion() < 0)
@@ -415,10 +588,44 @@ public class NuevaGestionBean
 
 					prep.close();
 
-					prep = conexion.prepareStatement("INSERT INTO lugarresidencia (Descripcion) VALUES (?)",
+					prep = conexion.prepareStatement(
+							"INSERT INTO lugarresidencia (Descripcion,cve_agee,Estado,cve_agem,Municipio,cve_loc,Localidad) VALUES (?, ?, ?, ?, ?, ?, ?)",
 							PreparedStatement.RETURN_GENERATED_KEYS);
 
 					prep.setString(1, this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim());
+					
+					if( lResidencia.getEstadoINEGI() != null )
+					{
+						prep.setString(2, lResidencia.getEstadoINEGI().getCve_agee());
+						prep.setString(3, lResidencia.getEstadoINEGI().getNom_agee());
+					}
+					else
+					{
+						prep.setNull(2, Types.VARCHAR);
+						prep.setNull(3, Types.VARCHAR);
+					}
+
+					if( lResidencia.getMunicipioINEGI() != null )
+					{
+						prep.setString(4, lResidencia.getMunicipioINEGI().getCve_agem());
+						prep.setString(5, lResidencia.getMunicipioINEGI().getNom_agem());
+					}
+					else
+					{
+						prep.setNull(4, Types.VARCHAR);
+						prep.setNull(5, Types.VARCHAR);
+					}
+
+					if( lResidencia.getLocalidadINEGI() != null )
+					{
+						prep.setString(6, lResidencia.getLocalidadINEGI().getCve_loc());
+						prep.setString(7, lResidencia.getLocalidadINEGI().getNom_loc());
+					}
+					else
+					{
+						prep.setNull(6, Types.VARCHAR);
+						prep.setNull(7, Types.VARCHAR);
+					}
 
 					prep.executeUpdate();
 

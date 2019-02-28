@@ -21,6 +21,7 @@ import modelo.gestion.SeguridadSocial;
 import modelo.gestion.Sexo;
 import modelo.gestion.Solicitante;
 import modelo.gestion.TipoDescuento;
+import modelo.gestion.UnidadSalud;
 import util.gestion.UtilidadesGestion;
 
 @NoArgsConstructor
@@ -365,6 +366,61 @@ public class GraficasService
 
 		return tiposDescuento;
 	}
+	
+	//0 atendido en, 1 referenciado a
+	public List<UnidadSalud> getEstadisticaCentroAtencion(List<Gestion> allGestiones, int tipoEstadistica)
+	{
+		List<UnidadSalud> unidadesSalud = new ArrayList<>();
+
+		for (Gestion gestion : allGestiones)
+		{
+
+			UnidadSalud objUnidadSalud = new UnidadSalud();
+			
+			if( tipoEstadistica == 0)
+			{
+				if( gestion.getPaciente().getAtendidoEn() == null )
+				{
+					continue;
+				}
+				
+				objUnidadSalud.setDescripcion(gestion.getPaciente().getAtendidoEn().getDescripcion());
+			}
+			else 
+			{
+				
+				if( gestion.getPaciente().getReferenciadoA() == null || gestion.getPaciente().getReferenciadoA().getIdUnidadSalud() == 0)
+				{
+					continue;
+				}
+				
+				objUnidadSalud.setDescripcion(gestion.getPaciente().getReferenciadoA().getDescripcion());
+			}
+
+			boolean encontrado = false;
+
+			for (UnidadSalud unidadSalud : unidadesSalud)
+			{
+				if (unidadSalud.getDescripcion().equalsIgnoreCase(objUnidadSalud.getDescripcion()))
+				{
+					unidadSalud.incrementar();
+					encontrado = true;
+					break;
+				}
+			}
+
+			if (!encontrado)
+			{
+				unidadesSalud.add(objUnidadSalud);
+
+			}
+
+		}
+
+		unidadesSalud.sort(Comparator.comparing(UnidadSalud::getTotal).reversed());
+
+		return unidadesSalud;
+	}
 
 	public String getChartSexos(List<Sexo> sexos)
 	{
@@ -478,6 +534,20 @@ public class GraficasService
 		}
 
 		System.out.println("Json Tipos de Apoyo Económico: " + stJ.toString());
+		return stJ.toString();
+	}
+
+	public String getChartCentroAtencion(List<UnidadSalud> unidadesSalud)
+	{
+		StringJoiner stJ = new StringJoiner(",");
+		
+		for (UnidadSalud unidadSalud : unidadesSalud)
+		{
+			stJ.add("[\'" + unidadSalud.getDescripcion() + " (" + unidadSalud.getTotal() + ")\',"
+					+ unidadSalud.getTotal() + "]");
+		}
+		
+		System.out.println("Json Tipos de Centros de Atención: " + stJ.toString());
 		return stJ.toString();
 	}
 

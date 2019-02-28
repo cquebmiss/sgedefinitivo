@@ -10,17 +10,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import gui.portal.AppControllerBean;
 import modelo.Sesion;
+import modelo.gestion.json.RespuestaEstadosJson;
 import resources.DataBase;
+import service.INEGIService;
 import util.FacesUtils;
 import util.utilidades;
 
@@ -33,10 +35,9 @@ import util.utilidades;
 @SessionScoped
 public class Login implements Serializable
 {
-	private String		usuario;
-	private String		contrasena;
-	private String		mensajeError;
-
+	private String	usuario;
+	private String	contrasena;
+	private String	mensajeError;
 
 	public Login()
 	{
@@ -115,6 +116,12 @@ public class Login implements Serializable
 
 	public void actionBotonAcceder(ActionEvent e)
 	{
+		INEGIService				inegiService	= new INEGIService();
+
+		RespuestaEstadosJson	respuesta		= inegiService.getEstados("Camp");
+
+		respuesta.getDatos().forEach(estado -> System.out.println(estado.getNom_agee()));
+
 		/*
 		 * EntityManagerFactory sessionFactory =
 		 * Persistence.createEntityManagerFactory("CRM");
@@ -128,8 +135,8 @@ public class Login implements Serializable
 		 * entityManager.getTransaction().commit(); entityManager.close();
 		 */
 		// Inicia el scheduler de respaldos
-		AppControllerBean	appControllerBean = (AppControllerBean) FacesUtils.getManagedBean("appControllerBean");
-		appControllerBean.startSchedulerRespaldos();
+	//	AppControllerBean appControllerBean = (AppControllerBean) FacesUtils.getManagedBean("appControllerBean");
+	//	appControllerBean.startSchedulerRespaldos();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();)
 		{

@@ -18,6 +18,9 @@ import lombok.Setter;
 import modelo.Sesion;
 import modelo.Usuario;
 import modelo.actividades.StatusActividad;
+import modelo.gestion.json.EstadoINEGI;
+import modelo.gestion.json.LocalidadINEGI;
+import modelo.gestion.json.MunicipioINEGI;
 import resources.DataBase;
 import util.FacesUtils;
 import util.gestion.UtilidadesGestion;
@@ -148,7 +151,7 @@ public class Gestion
 					prep.close();
 
 					prep = conexion.prepareStatement("SELECT p.*,\n"
-							+ "	lr.descripcion AS descLugarResidencia,\n"
+							+ "	lr.descripcion AS descLugarResidencia, lr.cve_agee, lr.Estado, lr.cve_agem, lr.Municipio, lr.cve_loc, lr.Localidad,\n"
 							+ "	ss.descripcion AS descSeguridadSocial,\n" + "	us1.descripcion AS descAtendidoEn,\n"
 							+ "	us2.descripcion AS descReferenciadoA\n" + "FROM\n" + "	paciente p\n"
 							+ "INNER JOIN lugarresidencia lr ON p.idLugarResidencia = lr.idLugarResidencia\n"
@@ -174,6 +177,23 @@ public class Gestion
 						objPaciente.setCURP(rBD.getString("CURP"));
 						objPaciente.setLugarResidencia(new LugarResidencia(rBD.getInt("idLugarResidencia"),
 								rBD.getString("descLugarResidencia")));
+						
+						if( rBD.getString("cve_agee") != null )
+						{
+							objPaciente.getLugarResidencia().setEstadoINEGI(new EstadoINEGI(rBD.getString("cve_agee"), rBD.getString("Estado")));
+						}
+						
+						if( rBD.getString("cve_agem") != null )
+						{
+							objPaciente.getLugarResidencia().setMunicipioINEGI(new MunicipioINEGI(rBD.getString("cve_agem"), rBD.getString("Municipio")));
+						}
+
+						if( rBD.getString("cve_loc") != null )
+						{
+							objPaciente.getLugarResidencia().setLocalidadINEGI(
+									new LocalidadINEGI(rBD.getString("cve_loc"), rBD.getString("Localidad")));
+						}
+						
 						objPaciente.setDiagnostico(rBD.getString("Diagnostico"));
 						objPaciente.setHospitalizadoEn(rBD.getString("HospitalizadoEn"));
 						objPaciente.setSeguridadSocial(new SeguridadSocial(rBD.getInt("idSeguridadSocial"),
