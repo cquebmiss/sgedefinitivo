@@ -1,0 +1,687 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Sistema de Gestión Empresarial - Reportes de Gestiones</ui:define>
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li>Reportes de Gestiones</li>
+	</ui:define>
+
+
+	<ui:define name="content">
+
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+		<div class="ui-g">
+			<div class="ui-g-12 card">
+
+
+				<h:form>
+
+					<h:panelGroup>
+						<h1>Filtros</h1>
+
+						<p:panelGrid columns="2" layout="grid"
+							style="border:0px none; background-color:transparent;">
+
+							<p:panelGrid columns="2">
+
+								<f:facet name="header">Fecha de Recepción</f:facet>
+
+								<p:outputLabel value="Fecha Inicial"></p:outputLabel>
+								<p:calendar value="#{reportesGestionBean.fechaInicial}"></p:calendar>
+
+
+								<p:outputLabel value="Fecha Final"></p:outputLabel>
+								<p:calendar value="#{reportesGestionBean.fechaFinal}"></p:calendar>
+
+								<p:column></p:column>
+								<p:column></p:column>
+
+
+							</p:panelGrid>
+
+
+							<p:panelGrid columns="2">
+
+								<f:facet name="header">Fecha de Finalización</f:facet>
+
+								<p:outputLabel value="Fecha Inicial"></p:outputLabel>
+								<p:calendar
+									value="#{reportesGestionBean.fechaFinalizacionInicial}"></p:calendar>
+
+
+								<p:outputLabel value="Fecha Final"></p:outputLabel>
+								<p:calendar
+									value="#{reportesGestionBean.fechaFinalizacionFinal}"></p:calendar>
+
+								<p:column></p:column>
+								<p:column></p:column>
+
+
+							</p:panelGrid>
+
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="2" layout="grid"
+							style="border:0px none; background-color:transparent;">
+
+
+							<p:commandButton value="Generar"
+								actionListener="#{reportesGestionBean.updateEstadisticas}"
+								update="@(.panelGraficas)"></p:commandButton>
+
+						</p:panelGrid>
+
+
+					</h:panelGroup>
+
+					<br></br>
+					<br></br>
+
+					<p:outputPanel styleClass="panelGraficas">
+
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+							style="border:0px none; background-color:transparent;">
+
+							<p:panelGrid columns="8" layout="grid"
+								styleClass="ui-panelgrid-blank form-group form-elements"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel value="Total de Gestiones del Periodo"></p:outputLabel>
+								<h:outputText value="#{reportesGestionBean.totalGestiones}"></h:outputText>
+
+								<p:outputLabel value="Gestiones Activas"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.totalGestionesActivas}"></h:outputText>
+
+
+								<p:outputLabel value="Gestiones Finalizadas"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.totalGestionesFinalizadas}"></h:outputText>
+
+								<p:outputLabel value="Tiempo Promedio de Gestión"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.tiempoPromedioFinalizacion} día(s)"></h:outputText>
+
+								<p:outputLabel value="Gestiones con Apoyo Económico"></p:outputLabel>
+								<h:outputText
+									value="#{reportesGestionBean.totalGestionesConAhorro}"></h:outputText>
+
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+
+								<p:outputLabel value="Monto Total de Ahorro para los Pacientes:"></p:outputLabel>
+								<h:outputText value="#{reportesGestionBean.montoAhorado}">
+									<f:convertNumber type="currency" currencySymbol="$" />
+								</h:outputText>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+
+
+							</p:panelGrid>
+
+
+						</p:panelGrid>
+						<div id="totalGestionesChart" style="width: 90%; height: 490px;"></div>
+
+						<br></br>
+
+
+						<p:tabView>
+
+							<p:tab title="Solicitantes">
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+									style="border:0px none; background-color:transparent;">
+
+									<p:dataList value="#{reportesGestionBean.solicitantes}"
+										var="car" type="unordered" itemType="none" paginator="true"
+										rows="10" styleClass="paginated" emptyMessage="...">
+										<f:facet name="header">
+								            Detalles
+								        </f:facet>
+										<h:outputText value="#{car.descripcion}" escape="false"
+											style="display:inline-block" />
+										<h:outputText value=", #{car.total}" escape="false"
+											style="display:inline-block; font-weight: bolder;" />
+									</p:dataList>
+
+
+
+
+								</p:panelGrid>
+
+							</p:tab>
+
+							<p:tab title="Lugar de Residencia">
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+									style="border:0px none; background-color:transparent;">
+
+									<p:dataList value="#{reportesGestionBean.lugaresResidencia}"
+										var="lug" type="unordered" itemType="none" paginator="true"
+										rows="10" styleClass="paginated" emptyMessage="...">
+										<f:facet name="header">
+								            Detalles
+								        </f:facet>
+										<h:outputText value="#{lug.descripcion}" escape="false"
+											style="display:inline-block" />
+										<h:outputText value=", #{lug.total}" escape="false"
+											style="display:inline-block; font-weight: bolder;" />
+									</p:dataList>
+
+
+
+								</p:panelGrid>
+
+							</p:tab>
+
+							<p:tab title="Categorías">
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+									style="border:0px none; background-color:transparent;">
+
+									<p:dataList value="#{reportesGestionBean.categorias}"
+										var="catGestion" type="unordered" itemType="none"
+										paginator="true" rows="10" styleClass="paginated"
+										emptyMessage="...">
+										<f:facet name="header">
+								            Detalles
+								        </f:facet>
+										<h:outputText value="#{catGestion.descripcion}" escape="false"
+											style="display:inline-block" />
+										<h:outputText value=", #{catGestion.total}" escape="false"
+											style="display:inline-block; font-weight: bolder;" />
+									</p:dataList>
+
+								</p:panelGrid>
+							</p:tab>
+
+							<p:tab title="Seguridad Social">
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+									style="border:0px none; background-color:transparent;">
+
+									<p:dataList value="#{reportesGestionBean.seguridadSocial}"
+										var="segSocial" type="unordered" itemType="none"
+										paginator="true" rows="10" styleClass="paginated"
+										emptyMessage="...">
+										<f:facet name="header">
+								            Detalles
+								        </f:facet>
+										<h:outputText value="#{segSocial.descripcion}" escape="false"
+											style="display:inline-block" />
+										<h:outputText value=", #{segSocial.total}" escape="false"
+											style="display:inline-block; font-weight: bolder;" />
+									</p:dataList>
+
+								</p:panelGrid>
+							</p:tab>
+
+							<p:tab title="Géneros">
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+									style="border:0px none; background-color:transparent;">
+
+									<p:dataList value="#{reportesGestionBean.sexos}" var="sexo"
+										type="unordered" itemType="none" paginator="true" rows="10"
+										styleClass="paginated" emptyMessage="...">
+										<f:facet name="header">
+								            Detalles
+								        </f:facet>
+										<h:outputText value="#{sexo.descripcion}" escape="false"
+											style="display:inline-block" />
+										<h:outputText value=", #{sexo.total}" escape="false"
+											style="display:inline-block; font-weight: bolder;" />
+									</p:dataList>
+
+								</p:panelGrid>
+							</p:tab>
+
+							<p:tab title="Edades">
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group form-elements graficasService"
+									style="border:0px none; background-color:transparent;">
+
+									<p:dataList value="#{reportesGestionBean.edades}" var="edad"
+										type="unordered" itemType="none" paginator="true" rows="10"
+										styleClass="paginated" emptyMessage="...">
+										<f:facet name="header">
+								            Detalles
+								        </f:facet>
+										<h:outputText value="#{edad.descripcion}" escape="false"
+											style="display:inline-block" />
+										<h:outputText value=", #{edad.total}" escape="false"
+											style="display:inline-block; font-weight: bolder;" />
+									</p:dataList>
+
+
+								</p:panelGrid>
+
+							</p:tab>
+
+						</p:tabView>
+
+
+
+
+						<script type="text/javascript">
+							
+
+		 google.charts.load('current', {'packages':[['corechart'],['bar'],['map']]});
+
+			
+			//Dibujamos todas las gráficas
+			drawAllCharts();
+			
+			function drawAllCharts()
+			{
+				google.charts.setOnLoadCallback(drawChartTotalGestiones);
+				google.charts.setOnLoadCallback(drawChartSolicitantes);
+				google.charts.setOnLoadCallback(drawChartLugarResidencia);
+				google.charts.setOnLoadCallback(drawChartCategorias);
+				google.charts.setOnLoadCallback(drawChartSeguridadSocial);
+				google.charts.setOnLoadCallback(drawChartGenero);
+				google.charts.setOnLoadCallback(drawChartEdad);
+				google.charts.setOnLoadCallback(drawChartApoyoEconomico);
+				google.charts.setOnLoadCallback(drawChartAtendidosEn);
+				google.charts.setOnLoadCallback(drawChartReferenciadosA);
+			}
+			
+
+			
+			function drawChartTotalGestiones() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Gestión');
+				data.addColumn('number', 'Total');
+				
+				data.addRows([
+					#{reportesGestionBean.jsonTotalGestiones}
+					]);
+
+				var options = {
+					title : ' ',
+					pieHole : 0,
+					is3D: true,
+					slices: {  0: {offset: 0.1, color: 'green'},
+						1: {offset: 0.1, color: 'red'},
+	          },
+
+				};
+
+				var chart = new google.visualization.PieChart(document
+						.getElementById('totalGestionesChart'));
+				chart.draw(data, options);
+			}
+			
+			function drawChartSolicitantes() {
+				
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', ' ');
+					data.addColumn('number', 'Frecuencia');
+				
+					data.addRows([#{reportesGestionBean.jsonSolicitantes}]);
+
+			        var options = {
+			          title: 'Solicitantes',
+			          width: 900,
+			          legend: { position: 'none' },
+			          chart: { title: 'Solicitantes de Gestión'},
+			          bars: 'horizontal', // Required for Material Bar Charts.
+			          axes: {
+			            x: {
+			              0: { side: 'top', label: 'Número de solicitudes'} // Top x-axis.
+			            }
+			          },
+			          bar: { groupWidth: "90%" }
+			        };
+
+
+		        var chart = new google.charts.Bar(document.getElementById('solicitantesChart'));
+
+		        chart.draw(data, google.charts.Bar.convertOptions(options));
+		      }
+
+			function drawChartLugarResidencia() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Lugar de Residencia');
+				data.addColumn('number', 'Cantidad');
+			
+				data.addRows([#{reportesGestionBean.jsonLugaresResidencia}]);
+
+		        var options = {
+		          title: 'Lugares de Residencia',
+		          width: 900,
+		          legend: { position: 'none' },
+		          chart: { title: 'Lugares de residencia de los pacientes'},
+		          bars: 'horizontal', // Required for Material Bar Charts.
+		          axes: {
+		            x: {
+		              0: { side: 'top', label: 'Frecuencia de aparición'} // Top x-axis.
+		            }
+		          },
+		          bar: { groupWidth: "90%" }
+		        };
+
+
+	        var chart = new google.charts.Bar(document.getElementById('lugarResidenciaChart'));
+	        chart.draw(data, google.charts.Bar.convertOptions(options));
+	      }
+
+			function drawChartCategorias() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Categoria');
+				data.addColumn('number', 'Cantidad');
+			
+				data.addRows([#{reportesGestionBean.jsonCategorias}]);
+
+		        var options = {
+		          title: 'Categorías de gestión',
+		          width: 900,
+		          legend: { position: 'none' },
+		          chart: { title: 'Categoría'},
+		          bars: 'vertical', // Required for Material Bar Charts.
+		          axes: {
+		            x: {
+		              0: { side: 'top', label: 'Frecuencia de aparición'} // Top x-axis.
+		            }
+		          },
+		          bar: { groupWidth: "90%" }
+		        };
+
+
+	        var chart = new google.charts.Bar(document.getElementById('categoriasChart'));
+	        chart.draw(data, google.charts.Bar.convertOptions(options));
+	      }
+			
+		function drawChartSeguridadSocial() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'SeguridadSocial');
+				data.addColumn('number', 'Cantidad');
+				
+				data.addRows([
+					#{reportesGestionBean.jsonSeguridadSocial}
+					]);
+
+				var options = {
+					title : 'Seguridad Social',
+					pieHole : 0,
+					is3D: true,chartArea: {
+						
+					      left: 10,
+					      top: 40,
+					      height: 300,
+					      width: 900
+					    },
+					    legend: {
+					      maxLines: 3,
+					      textStyle: {
+					        fontSize: 15
+					      }
+					    },
+				};
+
+				var chart = new google.visualization.PieChart(document
+						.getElementById('seguridadSocialChart'));
+				chart.draw(data, options);
+			}
+			
+		function drawChartGenero() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Genero');
+				data.addColumn('number', 'Cantidad');
+				
+				data.addRows([
+					#{reportesGestionBean.jsonSexos}
+					]);
+
+				var options = {
+					title : 'Género',
+					pieHole : 0,
+					is3D: true,
+					slices: { 0:{  color: 'pink'},
+						1: {color: '#0e96e0'}},
+						chartArea: {
+							
+						      left: 10,
+						      top: 40,
+						      height: 300,
+						      width: 900
+						    },
+						    legend: {
+						      maxLines: 3,
+						      textStyle: {
+						        fontSize: 15
+						      }
+						    },
+				};
+
+				var chart = new google.visualization.PieChart(document
+						.getElementById('generoChart'));
+				chart.draw(data, options);
+			}
+			
+		function drawChartEdad() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Edad');
+				data.addColumn('number', 'Cantidad');
+				
+				data.addRows([
+					#{reportesGestionBean.jsonEdades}
+					]);
+
+				var options = {
+					title : 'Edad',
+					pieHole : 0,
+					is3D: true,
+					chartArea: {
+						
+					      left: 10,
+					      top: 40,
+					      height: 300,
+					      width: 900
+					    },
+					    legend: {
+					      maxLines: 3,
+					      textStyle: {
+					        fontSize: 15
+					      }
+					    },
+				};
+
+				var chart = new google.visualization.PieChart(document
+						.getElementById('edadChart'));
+				chart.draw(data, options);
+			}
+
+		function drawChartApoyoEconomico() {
+				
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Tipo Apoyo Económico');
+				data.addColumn('number', 'Cantidad');
+				
+				data.addRows([
+					#{reportesGestionBean.jsonTipoApoyoEconomico}
+					]);
+
+				var options = {
+					title : 'Tipo de Apoyo Económico',
+					pieHole : 0,
+					is3D: true,
+					chartArea: {
+						
+					      left: 10,
+					      top: 40,
+					      height: 300,
+					      width: 900
+					    },
+					    legend: {
+					      maxLines: 3,
+					      textStyle: {
+					        fontSize: 15
+					      }
+					    },
+				};
+
+				var chart = new google.visualization.PieChart(document
+						.getElementById('tipoApoyoEconomicoChart'));
+				chart.draw(data, options);
+			}
+		
+		function drawChartAtendidosEn() {
+			
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'Unidad de Salud');
+			data.addColumn('number', 'Frecuencia');
+			
+			data.addRows([
+				#{reportesGestionBean.jsonAtendidosEn}
+				]);
+
+			var options = {
+				title : 'Unidades de Atención',
+				pieHole : 0,
+				is3D: true,
+				chartArea: {
+						
+				      left: 10,
+				      top: 40,
+				      height: 300,
+				      width: 900
+				    },
+				    legend: {
+				      maxLines: 3,
+				      textStyle: {
+				        fontSize: 15
+				      }
+				    },
+				  
+			};
+
+			var chart = new google.visualization.PieChart(document
+					.getElementById('atendidosEnChart'));
+			chart.draw(data, options);
+		}
+
+		function drawChartReferenciadosA() {
+			
+			var data = new google.visualization.DataTable();
+			data.addColumn('string', 'Unidad de Salud');
+			data.addColumn('number', 'Frecuencia');
+			
+			data.addRows([
+				#{reportesGestionBean.jsonReferenciadosA}
+				]);
+
+			var options = {
+				title : 'Referencias',
+				pieHole : 0,
+				is3D: true,
+				chartArea: {
+					
+				      left: 10,
+				      top: 40,
+				      height: 300,
+				      width: 900
+				    },
+				    legend: {
+				      maxLines: 3,
+				      textStyle: {
+				        fontSize: 15
+				      }
+				    },
+			};
+
+			var chart = new google.visualization.PieChart(document
+					.getElementById('referenciadosAChart'));
+			chart.draw(data, options);
+		}
+			
+		</script>
+
+
+
+						<p:panel header="Gráficas" style="width: 100%;">
+							<p:panelGrid columns="1">
+
+								<p:column colspan="30" rowspan="30">
+									<div id="tipoApoyoEconomicoChart"
+										style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="solicitantesChart" style="width: 100%; height: #{reportesGestionBean.alturaChartSolicitantes};"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="lugarResidenciaChart"
+										style="width: 100%; height: #{reportesGestionBean.alturaChartLugaresResidencia};"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="categoriasChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="seguridadSocialChart"
+										style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="generoChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="edadChart" style="width: 90%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="atendidosEnChart" style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+								<p:column colspan="30" rowspan="30">
+									<div id="referenciadosAChart" style="width: 100%; height: 400px;"></div>
+								</p:column>
+
+							</p:panelGrid>
+
+						</p:panel>
+
+					</p:outputPanel>
+				</h:form>
+
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

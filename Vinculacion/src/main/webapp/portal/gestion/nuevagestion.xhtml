@@ -1,0 +1,475 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">Sistema de Gestión Empresarial - Nueva Solicitud de Gestión</ui:define>
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li>Solicitud de Gestión</li>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form>
+			<div class="ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+
+
+							<h1>
+								Solicitud de Gestión
+								<h:outputText style="font-weight: bolder;"
+									value=" #{nuevaGestionBean.gestion.idGestion gt -1 ? '(Edición)' : ''} "></h:outputText>
+							</h1>
+
+							<h:form id="formGeneral">
+
+								<p:focus for="campoSolicitadoA"></p:focus>
+
+								<p:outputPanel id="outputPanelPrincipal"
+									styleClass="panelPrincipal">
+
+									<p:panelGrid columns="4"
+										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+										layout="grid"
+										styleClass="ui-panelgrid-blank form-group form-elements"
+										style="border:0px none; background-color:transparent;">
+
+										<p:outputLabel for="campoFolio" value="Folio"></p:outputLabel>
+										<h:outputText id="campoFolio"
+											value="#{nuevaGestionBean.gestion.folio}"></h:outputText>
+
+										<p:inputText placeholder="Folio"
+											value="#{nuevaGestionBean.gestion.folio}"
+											rendered="#{nuevaGestionBean.gestion.idGestion lt 0}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+										<p:inputText placeholder="Tarea Wunderlist"
+											value="#{nuevaGestionBean.gestion.idTareaWunderlist}"
+											rendered="#{nuevaGestionBean.gestion.idGestion lt 0}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+
+										<p:column
+											rendered="#{nuevaGestionBean.gestion.idGestion gt -1}"></p:column>
+										<p:column
+											rendered="#{nuevaGestionBean.gestion.idGestion gt -1}"></p:column>
+
+										<p:outputLabel for="campoFechaRecepcion"
+											value="Fecha de Recepción" />
+
+										<p:calendar id="campoFechaRecepcion" pattern="MM/dd/yyyy"
+											value="#{nuevaGestionBean.gestion.fechaRecepcion}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:calendar>
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+										<p:outputLabel for="campoSolicitadoA" value="Solicitante"></p:outputLabel>
+
+										<p:autoComplete id="campoSolicitadoA" minQueryLength="3"
+											effect="fade"
+											completeMethod="#{nuevaGestionBean.autoCompleteSolicitadoA}"
+											value="#{nuevaGestionBean.gestion.solicitadoA}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:autoComplete>
+
+
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+										<p:outputLabel for="listaCategoriaGestion"
+											value="Categoría de la Gestión"></p:outputLabel>
+										<p:selectOneMenu id="listaCategoriaGestion"
+											value="#{nuevaGestionBean.gestion.categoria}"
+											converter="categoriaGestionConverter">
+											<p:ajax event="change"></p:ajax>
+											<f:selectItems
+												value="#{nuevaGestionBean.catCategoriaGestion}" var="cat"
+												itemLabel="#{cat.descripcion}" itemValue="#{cat}"></f:selectItems>
+										</p:selectOneMenu>
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+									</p:panelGrid>
+
+									<h2>Datos del Paciente</h2>
+
+									<p:panelGrid columns="4"
+										columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2 ui-grc-2,ui-g-12 ui-md-4"
+										layout="grid"
+										styleClass="ui-panelgrid-blank form-group form-elements"
+										style="border:0px none; background-color:transparent;">
+
+										<p:outputLabel value="Nombre *" for="campoNombre"></p:outputLabel>
+										<p:inputText id="campoNombre"
+											value="#{nuevaGestionBean.gestion.paciente.nombre}">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+
+										<p:outputLabel for="campoEdad" value="Edad"></p:outputLabel>
+										<p:inputMask mask="99" id="campoEdad"
+											value="#{nuevaGestionBean.gestion.paciente.edad}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputMask>
+
+
+										<p:outputLabel for="campoSexo" value="Sexo"></p:outputLabel>
+
+										<p:selectOneMenu id="campoSexo"
+											value="#{nuevaGestionBean.gestion.paciente.sexo}">
+											<p:ajax event="change"></p:ajax>
+											<f:selectItem itemLabel="Masculino" itemValue="m"></f:selectItem>
+											<f:selectItem itemLabel="Femenino" itemValue="f"></f:selectItem>
+										</p:selectOneMenu>
+
+										<p:outputLabel for="campoLugarOrigen" value="Estado"></p:outputLabel>
+										<p:autoComplete id="campoLugarOrigen" styleClass="classEdo"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.estadoINEGI}"
+											completeMethod="#{nuevaGestionBean.autoCompleteLugarOrigen}"
+											var="obj" itemLabel="#{obj.nom_agee}" itemValue="#{obj}"
+											converter="estadoConverter" effect="fade"
+											forceSelection="true" minQueryLength="3" scrollHeight="200">
+
+											<p:ajax event="itemSelect"
+												listener="#{nuevaGestionBean.onItemSelectEstado}"
+												update="@(.panelPrincipal)"></p:ajax>
+
+											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}" update="@(.classMun) @(.classLoc)"></p:ajax>
+
+
+										</p:autoComplete>
+
+										<p:outputLabel for="campoMunicipioOrigen"
+											value="Municipio"></p:outputLabel>
+
+										<p:autoComplete id="campoMunicipioOrigen" minQueryLength="3"
+											effect="fade" forceSelection="true" styleClass="classMun"
+											completeMethod="#{nuevaGestionBean.autoCompleteMunicipio}"
+											converter="municipioConverter" var="theme"
+											itemLabel="#{theme.nom_agem}" itemValue="#{theme}"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.municipioINEGI}"
+											scrollHeight="200">
+
+											<p:ajax event="itemSelect"
+												listener="#{nuevaGestionBean.onItemSelectMunicipio}"
+												update="@(.panelPrincipal)" />
+											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}" update="@(.classEdo) @(.classLoc)"></p:ajax>
+
+										</p:autoComplete>
+
+										<p:outputLabel for="campoLocalidadOrigen"
+											value="Localidad"></p:outputLabel>
+
+										<p:autoComplete id="campoLocalidadOrigen" minQueryLength="3"
+											effect="fade" forceSelection="true" styleClass="classLoc"
+											completeMethod="#{nuevaGestionBean.autoCompleteLocalidades}"
+											converter="localidadConverter" var="theme"
+											itemLabel="#{theme.cve_loc} #{theme.nom_loc}" itemValue="#{theme}"
+											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.localidadINEGI}"
+											scrollHeight="300">
+											<p:ajax event="itemSelect" />
+										</p:autoComplete>
+
+
+										<p:outputLabel for="campoSeguridadSocial"
+											value="Seguridad Social" />
+										<p:selectOneMenu
+											value="#{nuevaGestionBean.gestion.paciente.seguridadSocial}"
+											id="campoSeguridadSocial"
+											converter="seguridadSocialConverter">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+
+											<f:selectItems value="#{nuevaGestionBean.catSeguridadSocial}"
+												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+
+										</p:selectOneMenu>
+
+										<p:outputLabel for="campoAfiliacion"
+											value="Código de Afiliación" />
+										<p:inputText id="campoAfiliacion"
+											value="#{nuevaGestionBean.gestion.paciente.afiliacion}">
+											<p:ajax event="blur" process="@this"></p:ajax>
+										</p:inputText>
+
+
+										<p:outputLabel for="campoAtendidoEn" value="Atendido en" />
+										<p:selectOneMenu
+											value="#{nuevaGestionBean.gestion.paciente.atendidoEn}"
+											id="campoAtendidoEn" converter="unidadSaludConverter"
+											filterMatchMode="contains" filter="true">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+
+											<f:selectItems value="#{nuevaGestionBean.catUnidadSalud}"
+												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+
+										</p:selectOneMenu>
+
+										<p:column></p:column>
+										<p:column></p:column>
+
+										<p:outputLabel for="campoReferenciadoA" value="Referenciado a" />
+										<p:selectOneMenu
+											value="#{nuevaGestionBean.gestion.paciente.referenciadoA}"
+											id="campoReferenciadoA" converter="unidadSaludConverter"
+											filter="true" filterMatchMode="contains">
+
+											<p:ajax event="blur" process="@this"></p:ajax>
+
+											<f:selectItems value="#{nuevaGestionBean.catUnidadSalud}"
+												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+
+										</p:selectOneMenu>
+
+
+
+									</p:panelGrid>
+
+									<p:outputLabel for="campoDiagnostico" value="Diagnóstico" />
+									<p:inputTextarea id="campoDiagnostico"
+										value="#{nuevaGestionBean.gestion.paciente.diagnostico}">
+										<p:ajax event="blur" process="@this"></p:ajax>
+									</p:inputTextarea>
+
+									<p:outputLabel for="campoObservaciones"
+										value="Observaciones y/o datos complementarios sobre el caso" />
+									<p:inputTextarea id="campoObservaciones"
+										value="#{nuevaGestionBean.gestion.detallesGenerales}">
+										<p:ajax event="blur" process="@this"></p:ajax>
+									</p:inputTextarea>
+
+									<p:outputLabel for="campoSolicitud"
+										value="Solicitud que realiza *"></p:outputLabel>
+									<p:inputTextarea id="campoSolicitud"
+										value="#{nuevaGestionBean.gestion.solicitud}">
+										<p:ajax event="blur" process="@this"></p:ajax>
+									</p:inputTextarea>
+
+									<br></br>
+									<br></br>
+									<br></br>
+									<h2>Costos para el Paciente</h2>
+
+
+									<p:panelGrid columns="3" layout="grid"
+										styleClass="ui-panelgrid-blank form-group form-elements"
+										style="border:0px none; background-color:transparent;">
+
+										<p:column>
+											<h:panelGrid columns="1">
+												<h:outputText value="Costo Original"></h:outputText>
+												<p:inputNumber
+													value="#{nuevaGestionBean.gestion.costo.costoOriginal}"
+													decimalPlaces="2">
+
+													<p:ajax event="blur" process="@this"></p:ajax>
+												</p:inputNumber>
+											</h:panelGrid>
+										</p:column>
+
+										<p:column>
+											<h:panelGrid columns="1">
+												<h:outputText value="Total a Pagar"></h:outputText>
+												<p:inputNumber
+													value="#{nuevaGestionBean.gestion.costo.totalAPagar}"
+													decimalPlaces="2">
+
+													<p:ajax event="blur" process="@this"></p:ajax>
+												</p:inputNumber>
+											</h:panelGrid>
+										</p:column>
+
+										<p:column>
+											<h:panelGrid columns="1">
+												<h:outputText value="Tipo de Descuento"></h:outputText>
+												<p:selectOneMenu id="listaTipoDescuento"
+													value="#{nuevaGestionBean.gestion.costo.tipoDescuento}"
+													converter="tipoDescuentoConverter">
+													<p:ajax event="change"></p:ajax>
+													<f:selectItem itemLabel="..." noSelectionOption="true"></f:selectItem>
+													<f:selectItems value="#{nuevaGestionBean.catTipoDescuento}"
+														var="td" itemLabel="#{td.descripcion}" itemValue="#{td}"></f:selectItems>
+												</p:selectOneMenu>
+											</h:panelGrid>
+										</p:column>
+
+									</p:panelGrid>
+
+								</p:outputPanel>
+
+								<p:outputPanel id="outputContactos">
+
+									<p:autoUpdate></p:autoUpdate>
+									<br></br>
+									<h2>Contactos</h2>
+
+									<p:dataTable styleClass="dataTableClass"
+										value="#{nuevaGestionBean.gestion.contactos}" var="con"
+										reflow="true" emptyMessage="...">
+
+										<p:column headerText="Nombre">
+											<h:outputText value="#{con.nombres}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="Teléfono(s)">
+											<h:outputText value="#{con.telefonos}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="Email">
+											<h:outputText value="#{con.email}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="Observación">
+											<h:outputText value="#{con.observaciones}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="" style="width: 50px;">
+
+											<p:commandButton icon="fa fa-edit" process="@this"
+												oncomplete="PF('dlgContacto').show()"
+												update="@(.classDlgContacto)">
+												<f:setPropertyActionListener value="#{con}"
+													target="#{dialogoContactoBean.contacto}" />
+											</p:commandButton>
+
+
+										</p:column>
+										<p:column headerText="" style="width: 50px;">
+											<p:commandButton icon="fa fa-close" process="@this"
+												actionListener="#{nuevaGestionBean.actionEliminarContact(con)}"
+												update="@(.dataTableClass)"></p:commandButton>
+										</p:column>
+
+									</p:dataTable>
+
+									<p:commandButton icon="fa fa-plus"
+										actionListener="#{dialogoContactoBean.addNuevoContacto}"
+										process="@this"
+										update="@(.classDlgContacto) @(.dataTableClass)"
+										oncomplete="PF('dlgContacto').show()"></p:commandButton>
+
+
+									<br></br>
+									<br></br>
+
+									<p:messages id="msjGlobal" globalOnly="true" showDetail="true"
+										closable="true"></p:messages>
+
+
+
+								</p:outputPanel>
+
+
+
+								<p:commandButton id="saveBtn" value="Guardar"
+									onclick="customfunction();" update="@(.panelPrincipal)"
+									actionListener="#{nuevaGestionBean.actionGuardarSolicitud}"></p:commandButton>
+
+								<script type="text/javascript">
+									function customfunction() {
+										if (!navigator.onLine) {
+											alert("No hay conexión a Internet, verifique la conexión de su navegador.");
+										}
+									}
+								</script>
+
+
+							</h:form>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</h:form>
+
+
+
+
+
+		<!-- DIALOGO PARA AÑADIR CONTACTO DE FAMILIAR O PARA LA GESTION -->
+
+		<h:form id="formDlgContacto">
+
+			<p:dialog header="Contacto" widgetVar="dlgContacto" modal="true"
+				responsive="true" draggable="false" width="300" minimizable="false"
+				maximizable="true" closeOnEscape="true" closable="true">
+
+				<p:outputPanel styleClass="classDlgContacto">
+
+
+					<div class="card card-w-title">
+
+						<h1>Datos del Contacto</h1>
+
+						<p:messages styleClass="msjDlgContacto" closable="true"
+							showDetail="true">
+						</p:messages>
+
+						<p:focus for="inputNombreContacto"></p:focus>
+
+						<p:panelGrid id="panelGridNDlgContacto" columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group">
+
+							<p:inputText value="#{dialogoContactoBean.contacto.nombres}"
+								id="inputNombreContacto" style="width: 95%;"
+								placeholder="Nombre">
+								<p:ajax event="blur" process="@this"></p:ajax>
+							</p:inputText>
+
+							<p:inputText value="#{dialogoContactoBean.contacto.telefonos}"
+								id="inputTelefonos" style="width: 95%;"
+								placeholder="Teléfono(s)">
+								<p:ajax event="blur" process="@this"></p:ajax>
+							</p:inputText>
+
+							<p:inputText value="#{dialogoContactoBean.contacto.email}"
+								id="inputEmail" style="width: 95%;" placeholder="Email">
+								<p:ajax event="blur" process="@this" update="@(.msjDlgContacto)"></p:ajax>
+							</p:inputText>
+
+
+							<p:inputText
+								value="#{dialogoContactoBean.contacto.observaciones}"
+								id="campoObservacion" style="width: 95%;"
+								placeholder="Observación">
+								<p:ajax event="blur" process="@this"></p:ajax>
+							</p:inputText>
+
+						</p:panelGrid>
+					</div>
+
+				</p:outputPanel>
+
+				<f:facet name="header">
+
+
+					<p:commandButton id="botonAceptarDlgContacto"
+						widgetVar="wbotonAceptarDlgContacto" value="Aceptar"
+						icon="fa fa-check" onclick="PF('dlgContacto').hide()" />
+
+
+				</f:facet>
+
+
+
+			</p:dialog>
+
+		</h:form>
+
+
+	</ui:define>
+
+
+
+
+</ui:composition>

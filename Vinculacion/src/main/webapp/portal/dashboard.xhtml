@@ -1,0 +1,60 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:v-on="https://cdn.jsdelivr.net/npm/vue">
+
+	<ui:define name="title">Sistema de Gestión de Empresarial - Tablero de Control</ui:define>
+
+	<ui:define name="head">
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js"></script>
+
+	</ui:define>
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li><p:link outcome="/portal/dashboard">Dashboard</p:link></li>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style type="text/css">
+.ui-chart {
+	margin-bottom: 50px;
+}
+</style>
+
+		<script type="text/javascript">
+			google.charts.load('current', {
+				'packages' : [ 'corechart' ]
+			});
+			google.charts.setOnLoadCallback(drawChart);
+
+			function drawChart() {
+				
+				 var data = google.visualization.arrayToDataTable(#{dashBoardBean.jsonTendenciaGestiones});
+
+				 var options = {
+				          title: 'Tendencia de Gestión',
+				          hAxis: {title: 'Mes',  titleTextStyle: {color: '#333'}},
+				          vAxis: {minValue: 0}
+				        };
+
+		        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+		        chart.draw(data, options);
+
+			}
+		</script>
+
+
+
+		<div id="chart_div" style="width: 100%; height: 500px;"></div>
+		
+		<!--the inclusion line in the including page with the content-->
+<!--  <ui:include src="vue.html"/> -->
+
+	</ui:define>
+
+</ui:composition>
