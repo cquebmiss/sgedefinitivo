@@ -875,7 +875,7 @@ public class NuevaGestionBean
 					taskComment.setList_id(wUsuario.getTarea().getList_id());
 					taskComment.setText("Datos Editados");
 
-					wUsuario.postComentarioTareaWunderlist(taskComment);
+//					wUsuario.postComentarioTareaWunderlist(taskComment);
 
 					// Se actualiza el título de la tarea
 					wUsuario.getTareaWunderlist(this.gestion.getIdTareaWunderlist());
