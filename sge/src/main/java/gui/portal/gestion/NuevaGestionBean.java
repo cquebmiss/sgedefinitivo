@@ -818,10 +818,10 @@ public class NuevaGestionBean
 				contenidoNota += "Seguridad Social: " + this.gestion.getPaciente().getSeguridadSocial().getDescripcion()
 						+ "\n";
 				contenidoNota += "Número o Folio de Afiliación: " + this.gestion.getPaciente().getAfiliacion() + "\n\n";
-				contenidoNota += "Atendido en:  " + this.gestion.getPaciente().getAtendidoEn() != null
+				contenidoNota += "<Atendido en>:  " + this.gestion.getPaciente().getAtendidoEn() != null
 						? this.gestion.getPaciente().getAtendidoEn().getDescripcion()
 						: "Sin información" + "\n\n";
-				contenidoNota += "Referenciado a:  " + this.gestion.getPaciente().getReferenciadoA() != null
+				contenidoNota += "<Referenciado a>:  " + this.gestion.getPaciente().getReferenciadoA() != null
 						? this.gestion.getPaciente().getReferenciadoA().getDescripcion()
 						: "Sin información" + "\n\n";
 				contenidoNota += "<DIAGNÓSTICO>: " + this.gestion.getPaciente().getDiagnostico() + "\n\n";
