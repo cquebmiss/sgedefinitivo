@@ -17,9 +17,9 @@
 				value="com.mysql.jdbc.Driver" />
 
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:mysql://localhost:3306/vinculacion" />
+				value="jdbc:mysql://jws-app-mysql/vinculacion" />
 
-			<property name="javax.persistence.jdbc.user" value="indesalud" />
+			<property name="javax.persistence.jdbc.user" value="vinculacion" />
 
 			<property name="javax.persistence.jdbc.password"
 				value="@FPD1730yendoqueb" />
