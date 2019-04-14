@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import gui.Login;
 import modelo.Sesion;
 
 /**
@@ -63,9 +64,9 @@ public class FiltroResources implements Filter
 
 		if (session != null)
 		{
-			Sesion sesionBean = (Sesion) session.getAttribute("Sesion");
+			Login sesionBean = (Login) session.getAttribute("login");
 
-			if (sesionBean != null && sesionBean.getSesionActiva() != null && !sesionBean.getSesionActiva().isEmpty())
+			if( sesionBean.getUsuarioEnSesion() != null)
 			{
 				loggedIn = true;
 			}

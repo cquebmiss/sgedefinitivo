@@ -11,68 +11,26 @@
 			<div class="nano-content menu-scroll-content">
 				<h:form id="menuform">
 					<ph:menu widgetVar="me">
+
 						<p:menuitem id="om_dashboard" value="Dashboard"
 							icon="fa fa-fw fa-dashboard" outcome="/portal/dashboard" />
 
-						<p:submenu id="om_gestiones" label="Gestiones"
-							icon="fa fa-fw fa-clipboard">
-							<p:menuitem id="om_histgestion" value="Historial"
-								icon="fa fa-fw fa-history"
-								action="#{historialGestionBean.actionHistorialGestiones}" />
-							<p:menuitem id="om_nuevagestion" value="Nueva Gestión"
-								icon="fa fa-fw fa-plus"
-								action="#{nuevaGestionBean.actionNuevaGestion}">
-							</p:menuitem>
-							<p:menuitem id="om_reportesgestion" value="Reportes"
-								icon="fa fa-fw fa-list"
-								action="#{reportesGestionBean.actionInicializaReportes}">
-							</p:menuitem>
+						<p:menuitem id="om_captura" value="Captura"
+							outcome="/portal/captura" icon="fa fa-fw fa-plus" />
 
-							<p:menuitem id="om_catalogogestion" value="Catálogos"
-								icon="fa fa-fw fa-leanpub"
-								action="#{minutaBean.actionNuevaMinuta}">
-							</p:menuitem>
+						<p:menuitem id="om_reportes" value="Reportes"
+							icon="fa fa-fw fa-list" />
 
-						</p:submenu>
+						<p:menuitem id="om_estad" value="Estadísticas"
+							icon="fa fa-fw fa-align-center" />
 
-						<p:submenu id="om_minutas" label="Minutas"
-							icon="fa fa-fw fa-file-text">
-							<p:menuitem id="om_histMinutas" value="Historial"
-								icon="fa fa-fw fa-history" outcome="/portal/historialminutas" />
-							<p:menuitem id="om_nuevaminuta" value="Nueva Minuta"
-								icon="fa fa-fw fa-plus" action="#{minutaBean.actionNuevaMinuta}"
-								update="@all">
-							</p:menuitem>
-
-						</p:submenu>
-
-
-						<p:menuitem id="om_buy" value="Compromisos"
-							icon="fa fa-fw fa-paperclip " outcome="/portal/compromisos" />
-
-						<p:submenu id="om_modEncuestas" label="Clima Laboral"
-							icon="fa fa-fw fa-users">
-							<p:menuitem id="om_muestreo" value="Muestreo Aleatorio"
-								icon="fa fa-fw fa-random"
-								outcome="/portal/climalaboral/muestreo" />
-
-							<p:menuitem id="om_encuesta" value="Encuestas"
-								icon="fa fa-fw fa-align-center "
-								outcome="/portal/climalaboral/encuestas" update="@all">
-							</p:menuitem>
-
-							<p:menuitem id="om_resultados" value="Resultados"
-								icon="fa fa-fw fa-check"
-								outcome="/portal/climalaboral/resultados" update="@all">
-							</p:menuitem>
-
-						</p:submenu>
-
+						<p:menuitem id="om_admin" value="Administración"
+							icon="fa fa-fw fa-gear" outcome="/portal/administracion"/>
 						<p:separator></p:separator>
 
 						<p:menuitem id="om_close" value="Cerrar Sesión"
 							icon="fa fa-fw fa-power-off" immediate="true"
-							action="#{Sesion.actionCerrarSesion}" />
+							action="#{login.actionCerrarSesion}" />
 
 					</ph:menu>
 

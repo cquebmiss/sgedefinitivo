@@ -7,17 +7,19 @@ package modelo;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
+
 import util.utilidades;
 
 @ManagedBean(name = "Sesion")
 @SessionScoped
 public class Sesion implements Serializable
 {
+	private Usuario usuario;
 
 	private String					sesionActiva	= "";
 	private String					nombreUsuario	= "";

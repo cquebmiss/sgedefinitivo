@@ -11,17 +11,15 @@
             Persistence unit for Hibernate User Guide
         </description>
 
-		<class>persistence.model.GestionJPA</class>
-		<class>persistence.model.SeguridadSocial</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.driver"
 				value="com.mysql.jdbc.Driver" />
 
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:mysql://localhost:3306/sge" />
+				value="jdbc:mysql://localhost:3306/vinculacion" />
 
-			<property name="javax.persistence.jdbc.user" value="root" />
+			<property name="javax.persistence.jdbc.user" value="indesalud" />
 
 			<property name="javax.persistence.jdbc.password"
 				value="@FPD1730yendoqueb" />

@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form>
+
+		<p:outputPanel>
+			<p:autoUpdate></p:autoUpdate>
+
+
+			<h:panelGroup rendered="#{capturaBean.personaSeleccionada != null}">
+
+				<ul class="route-bar-menu">
+
+					<li><a onclick="cancelar()"> <i class="fa fa-close" /> <span>Cancelar</span>
+					</a></li>
+
+				</ul>
+
+				<p:tooltip globalSelector=".route-bar-menu a" position="bottom"
+					showDelay="0" />
+
+			</h:panelGroup>
+
+			<p:remoteCommand name="cancelar"
+				actionListener="#{capturaBean.actionDetenerCaptura}" update="@(.outputTable)"></p:remoteCommand>
+
+		</p:outputPanel>
+	</h:form>
+
+
+
+</ui:composition>

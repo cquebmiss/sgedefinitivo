@@ -1,0 +1,184 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:v-on="https://cdn.jsdelivr.net/npm/vue">
+
+	<ui:define name="title">Sistema de Vinculación Política - Módulo de Administración del Sistema</ui:define>
+
+
+
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li><p:link outcome="/portal/dashboard">Dashboard</p:link></li>
+
+	</ui:define>
+
+	<ui:define name="routebar">
+		<ui:include src="/WEB-INF/routebar-administracion.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<p:outputPanel>
+
+			<p:autoUpdate></p:autoUpdate>
+
+			<h:panelGroup rendered="#{administracionBean.tipoPanel == 0}">
+
+
+				<h:form>
+
+					<h:outputText value="Panel Bienvenida"></h:outputText>
+
+				</h:form>
+
+			</h:panelGroup>
+
+		</p:outputPanel>
+
+
+		<p:outputPanel styleClass="outputUsuarios">
+
+			<h:form>
+				<h:panelGroup rendered="#{administracionBean.tipoPanel == 1}">
+
+					<h4>
+						<h:outputText value="Usuarios Registrados"></h:outputText>
+					</h4>
+					<br></br>
+					<p:commandButton value="Nuevo Usuario"
+						actionListener="#{administracionBean.actionNuevoUsuario}" update="@(.outputUsuarios)"></p:commandButton>
+					<br></br>
+					<br></br>
+
+					<p:dataTable styleClass="tablaUsuarios" var="usu"
+						value="#{administracionBean.usuariosSistema}"
+						filteredValue="#{administracionBean.usuariosSistemaFilter}"
+						rowKey="#{usu.idUsuario}" emptyMessage="..." reflow="true"
+						paginator="true" rows="10">
+
+
+
+						<p:column style="width:50px">
+							<p:commandButton icon="fa fa-icon fa-edit"
+								actionListener="#{administracionBean.actionSeleccionUsuario(usu)}"
+								update="@(.outputTable) @(.outputUsuarios)"></p:commandButton>
+						</p:column>
+
+						<p:column headerText="idUsuario" sortBy="#{usu.idUSuario}"
+							filterBy="#{usu.idUsuario}" filterMatchMode="contains">
+							<h:outputText value="#{usu.idUsuario}" />
+						</p:column>
+
+						<p:column headerText="Nombre" sortBy="#{usu.nombre}"
+							filterBy="#{usu.nombre}" filterMatchMode="contains">
+							<h:outputText value="#{usu.nombre}" />
+						</p:column>
+
+						<p:column headerText="Permiso"
+							sortBy="#{usu.permisoUsuario.descripcion}"
+							filterBy="#{usu.permisoUsuario.descripcion}"
+							filterMatchMode="contains">
+							<h:outputText value="#{usu.permisoUsuario.descripcion}" />
+						</p:column>
+
+					</p:dataTable>
+				</h:panelGroup>
+
+			</h:form>
+		</p:outputPanel>
+
+		<p:outputPanel>
+			<p:autoUpdate></p:autoUpdate>
+
+			<h:form>
+				<h:panelGroup rendered="#{administracionBean.tipoPanel == 2}">
+
+					<div class="ui-fluid">
+
+
+						<div class="ui-fluid" style="width: 100%;">
+							<h3>
+								<h:outputText value="Usuario"></h:outputText>
+							</h3>
+						</div>
+
+						<br></br>
+
+						<p:panelGrid columns="2" layout="grid">
+							<p:column>
+								<p:outputLabel value="Permiso" for="selectPermisoUsuario"></p:outputLabel>
+								<p:selectOneMenu id="selectPermisoUsuario"
+									converter="permisoUsuarioConverter"
+									value="#{administracionBean.usuarioSeleccionado.permisoUsuario}">
+									<f:selectItems value="#{administracionBean.catPermisoUsuario}"
+										var="per" itemLabel="#{per.descripcion}" itemValue="#{per}"></f:selectItems>
+								</p:selectOneMenu>
+							</p:column>
+							<p:column></p:column>
+
+							<p:column>
+								<p:outputLabel value="Status" for="selectStatusUsuario"></p:outputLabel>
+								<p:selectOneMenu id="selectStatusUsuario"
+									converter="statusUsuarioConverter"
+									value="#{administracionBean.usuarioSeleccionado.statusUsuario}">
+									<f:selectItems value="#{administracionBean.catStatusUsuario}"
+										var="sta" itemLabel="#{sta.descripcion}" itemValue="#{sta}"></f:selectItems>
+								</p:selectOneMenu>
+							</p:column>
+							<p:column></p:column>
+
+							<p:column>
+								<p:outputLabel value="Nombre de Usuario"></p:outputLabel>
+								<p:inputText
+									value="#{administracionBean.usuarioSeleccionado.nombre}"></p:inputText>
+							</p:column>
+							<p:column></p:column>
+
+							<p:column>
+								<p:outputLabel value="Contraseña"></p:outputLabel>
+								<p:inputText
+									value="#{administracionBean.usuarioSeleccionado.contraseña}"></p:inputText>
+							</p:column>
+							<p:column></p:column>
+
+						</p:panelGrid>
+
+						<div class="ui-g-12 ui-lg-12">
+							<h3>Localidades</h3>
+							<p:pickList id="pickList"
+								value="#{administracionBean.localidadesDualListModel}" var="loc"
+								itemLabel="#{loc}" itemValue="#{loc}"  
+								converter="localidadesConverter"  
+								showSourceFilter="true" filterMatchMode="contains"
+								showTargetFilter="true" responsive="true">
+								<f:facet name="sourceCaption">Localidades</f:facet>
+								<f:facet name="targetCaption">Asignadas</f:facet>
+							</p:pickList>
+						</div>
+
+						<p:spacer height="20"></p:spacer>
+						<p:messages globalOnly="true" showDetail="true" closable="true"></p:messages>
+						<div style="text-align: right;">
+
+							<p:commandButton value="Aceptar"
+								actionListener="#{administracionBean.actionGuardarUsuario}"></p:commandButton>
+
+						</div>
+
+					</div>
+
+				</h:panelGroup>
+
+			</h:form>
+
+		</p:outputPanel>
+
+
+
+	</ui:define>
+
+</ui:composition>

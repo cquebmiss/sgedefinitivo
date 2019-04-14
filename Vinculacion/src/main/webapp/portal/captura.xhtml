@@ -1,0 +1,292 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:v-on="https://cdn.jsdelivr.net/npm/vue">
+
+	<ui:define name="title">Sistema de Vinculación Política - Módulo de Captura</ui:define>
+
+
+	<ui:define name="viewname">
+		<li>Portal</li>
+		<li>/</li>
+		<li><p:link outcome="/portal/dashboard">Dashboard</p:link></li>
+
+	</ui:define>
+
+	<ui:define name="routebar">
+		<ui:include src="/WEB-INF/routebar-captura.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<p:outputPanel styleClass="outputTable">
+
+
+			<h:form>
+
+				<div class="ui-g layout-dashboard">
+
+
+					<h:panelGroup rendered="#{capturaBean.personaSeleccionada == null}">
+
+						<div class="ui-g-12 ui-lg-12">
+							<h:outputText value="Seleccione la persona a capturar"></h:outputText>
+						</div>
+
+
+						<div class="ui-g-12 ui-lg-12">
+
+							<p:panel header="Personas Entrevistadas" >
+
+								<p:dataTable var="per"
+									value="#{capturaBean.personasEntrevistadas}"
+									filteredValue="#{capturaBean.personasEntrevistadasFilter}"
+									rowKey="#{per.idPersona}"  emptyMessage="..."
+									widgetVar="wTablaPersonasEntrevistadas" reflow="true"
+									paginator="true" rows="10" >
+									
+									
+
+									<p:column style="width:50px">
+										<p:commandButton icon="fa fa-icon fa-edit"
+											actionListener="#{capturaBean.actionPersonaSelect(per)}" update="@(.outputTable)"></p:commandButton>
+									</p:column>
+
+									<p:column headerText="Nombre"
+										sortBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+										filterBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+										filterMatchMode="contains">
+										<h:outputText
+											value="#{per.nombres} #{per.apPaterno} #{per.apMaterno}" />
+									</p:column>
+
+									<p:column headerText="Sexo" sortBy="#{per.sexo}"
+										filterBy="#{per.sexo}" filterMatchMode="contains">
+										<h:outputText value="#{per.sexo}" />
+									</p:column>
+
+									<p:column headerText="Estado/Municipio/Localidad"
+										sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
+										filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
+										filterMatchMode="contains">
+										<h:outputText
+											value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}" />
+									</p:column>
+
+									<p:column headerText="Apoyo"
+										filterBy="#{per.decision.descripcion}"
+										filterMatchMode="contains"
+										sortBy="#{per.decision.descripcion}">
+										<h:outputText value="#{per.decision.descripcion}" />
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+						</div>
+
+					</h:panelGroup>
+
+
+				</div>
+
+			</h:form>
+		</p:outputPanel>
+
+		<p:outputPanel>
+			<p:autoUpdate></p:autoUpdate>
+
+			<h:form>
+				<h:panelGroup rendered="#{capturaBean.personaSeleccionada != null}">
+
+					<div class="ui-fluid">
+
+
+						<div class="ui-fluid" style="width: 100%;">
+
+							<h:outputText value="Persona encuestando:"></h:outputText>
+							<h:outputText style="font-weight: bold"
+								value="#{capturaBean.personaSeleccionada}"></h:outputText>
+
+						</div>
+
+						<h:panelGroup rendered="#{capturaBean.idDecision == -1}">
+
+							<br></br>
+							<br></br>
+
+							<p:outputLabel value="¿Se suma a la causa?"></p:outputLabel>
+
+							<br></br>
+							<br></br>
+
+							<p:selectOneButton required="true" id="oneBtn"
+								style="text-align: center;" value="#{capturaBean.idDecision}">
+
+								<div class="ui-fluid" style="width: 100%;">
+
+									<f:selectItem itemLabel="Sí" itemValue="1"></f:selectItem>
+									<f:selectItem itemLabel="No" itemValue="0"></f:selectItem>
+									<f:selectItem itemLabel="Quizá más adelante" itemValue="2"></f:selectItem>
+
+								</div>
+
+							</p:selectOneButton>
+
+							<p:spacer height="20"></p:spacer>
+
+							<div style="text-align: right;">
+
+								<p:commandButton icon=" fa fa-step-forward " value="Aceptar"
+									actionListener="#{capturaBean.actionGuardarDecision}"></p:commandButton>
+
+							</div>
+
+
+
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{capturaBean.idDecision == 1}">
+
+
+							<br></br>
+
+							<p:panelGrid columns="2" layout="grid">
+
+								<p:column>
+									<p:outputLabel value="¿Vive?"></p:outputLabel>
+									<p:selectBooleanCheckbox
+										value="#{capturaBean.personaSeleccionada.vive}"></p:selectBooleanCheckbox>
+								</p:column>
+								<p:column></p:column>
+
+								<p:column>
+									<p:outputLabel value="Nombre"></p:outputLabel>
+									<p:inputText value="#{capturaBean.personaSeleccionada.nombres}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Apellido Paterno"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.apPaterno}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Apellido Materno"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.apMaterno}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Fecha de Nacimiento"></p:outputLabel>
+									<p:calendar pattern="MM/dd/yyyy"
+										converter="localDateTimeConverter"
+										value="#{capturaBean.personaSeleccionada.fechaNacimiento}"></p:calendar>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Dirección"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.direccion}"></p:inputText>
+								</p:column>
+								<p:column></p:column>
+								<p:column>
+									<p:outputLabel value="Teléfono Celular"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.telefonoCelular}"></p:inputText>
+								</p:column>
+								<p:column></p:column>
+								<p:column>
+									<p:outputLabel value="¿Utiliza WhatsApp?"></p:outputLabel>
+									<p:selectBooleanCheckbox
+										value="#{capturaBean.personaSeleccionada.whatsApp}"></p:selectBooleanCheckbox>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="¿Utiliza Mensajes de Texto?"></p:outputLabel>
+									<p:selectBooleanCheckbox
+										value="#{capturaBean.personaSeleccionada.SMS}"></p:selectBooleanCheckbox>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Correo Electrónico"></p:outputLabel>
+									<p:inputText value="#{capturaBean.personaSeleccionada.email}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Facebook"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.facebook}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Twitter"></p:outputLabel>
+									<p:inputText value="#{capturaBean.personaSeleccionada.twitter}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Instagram"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.instagram}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel
+										value="¿Nos apoyaría para compartir en redes sociales?"></p:outputLabel>
+									<p:selectBooleanCheckbox
+										value="#{capturaBean.personaSeleccionada.apoyaCompartirRedesSociales}"></p:selectBooleanCheckbox>
+								</p:column>
+								<p:column></p:column>
+								<p:column>
+									<p:outputLabel value="Ocupación / Profesión/ Oficio"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.ocupacion}"></p:inputText>
+								</p:column>
+								<p:column></p:column>
+								<p:outputLabel value="Observaciones"></p:outputLabel>
+								<p:column></p:column>
+								<p:inputTextarea
+									value="#{capturaBean.personaSeleccionada.observaciones}"></p:inputTextarea>
+
+							</p:panelGrid>
+
+							<p:spacer height="20"></p:spacer>
+
+							<div style="text-align: right;">
+
+								<p:commandButton icon=" fa fa-step-forward " value="Aceptar"
+									actionListener="#{capturaBean.actionGuardarFormularioAcepta}"></p:commandButton>
+
+							</div>
+
+
+
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{capturaBean.idDecision == 2}">
+
+							<br></br>
+
+							<p:outputLabel
+								value="Qué dudas tiene? Por favor déjeme saberlo..."></p:outputLabel>
+
+							<br></br>
+							<br></br>
+
+
+							<p:spacer height="20"></p:spacer>
+
+							<div style="text-align: right;">
+
+								<p:commandButton icon=" fa fa-step-forward " value="Aceptar"
+									actionListener="#{encuestasBean.actionSiguientePregunta}"></p:commandButton>
+
+							</div>
+
+
+
+						</h:panelGroup>
+
+
+
+					</div>
+
+				</h:panelGroup>
+			</h:form>
+		</p:outputPanel>
+
+
+
+	</ui:define>
+
+</ui:composition>

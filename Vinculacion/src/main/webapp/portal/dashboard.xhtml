@@ -5,13 +5,9 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:v-on="https://cdn.jsdelivr.net/npm/vue">
 
-	<ui:define name="title">Sistema de Gestión de Empresarial - Tablero de Control</ui:define>
+	<ui:define name="title">Sistema de Vinculación Política</ui:define>
 
-	<ui:define name="head">
-		<script type="text/javascript"
-			src="https://www.gstatic.com/charts/loader.js"></script>
 
-	</ui:define>
 	<ui:define name="viewname">
 		<li>Portal</li>
 		<li>/</li>
@@ -20,40 +16,107 @@
 
 	<ui:define name="content">
 
-		<style type="text/css">
-.ui-chart {
-	margin-bottom: 50px;
-}
-</style>
-
-		<script type="text/javascript">
-			google.charts.load('current', {
-				'packages' : [ 'corechart' ]
-			});
-			google.charts.setOnLoadCallback(drawChart);
-
-			function drawChart() {
-				
-				 var data = google.visualization.arrayToDataTable(#{dashBoardBean.jsonTendenciaGestiones});
-
-				 var options = {
-				          title: 'Tendencia de Gestión',
-				          hAxis: {title: 'Mes',  titleTextStyle: {color: '#333'}},
-				          vAxis: {minValue: 0}
-				        };
-
-		        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-		        chart.draw(data, options);
-
-			}
-		</script>
+		<div class="ui-g layout-dashboard">
 
 
+			<div class="ui-g-12 ui-lg-8">
 
-		<div id="chart_div" style="width: 100%; height: 500px;"></div>
-		
-		<!--the inclusion line in the including page with the content-->
-<!--  <ui:include src="vue.html"/> -->
+
+				<p:panel header="Personas Asignadas" styleClass="inventory">
+
+					<h:form>
+
+						<p:dataTable var="per"
+							value="#{dashBoardBean.personasEntrevistadas}"
+							filteredValue="#{dashBoardBean.personasEntrevistadasFilter}"
+							rowKey="#{per.idPersona}" widgetVar="wTablaPersonasEntrevistadas"
+							reflow="true" paginator="true" rows="10">
+
+							<p:column headerText="Nombre"
+								sortBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+								filterBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+								filterMatchMode="contains">
+								<h:outputText
+									value="#{per.nombres} #{per.apPaterno} #{per.apMaterno}" />
+							</p:column>
+
+							<p:column headerText="Sexo" sortBy="#{per.sexo}"
+								filterBy="#{per.sexo}" filterMatchMode="contains">
+								<h:outputText value="#{per.sexo}" />
+							</p:column>
+
+							<p:column headerText="Estado/Municipio/Localidad"
+								sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
+								filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
+								filterMatchMode="contains">
+								<h:outputText
+									value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}" />
+							</p:column>
+
+							<p:column headerText="Apoyo" sortBy="#{per.decision.descripcion}"
+								filterBy="#{per.decision.descripcion}"
+								filterMatchMode="contains">
+								<h:outputText value="#{per.decision.descripcion}" />
+							</p:column>
+						</p:dataTable>
+
+					</h:form>
+
+				</p:panel>
+			</div>
+			<div class="ui-g-12 ui-lg-4">
+				<p:panel header="Actividad Reciente" styleClass="latest-activities">
+					<ul>
+						<li>
+							<div class="activity-link runway-link"></div> <a
+							class="activity-logo runway"> <i class="fa fa-plane runway"></i>
+						</a>
+							<div class="activity-detail">
+								<span>Entrevista</span> Miguel Parra <span>Campeche</span> <span
+									class="time">15.52</span>
+							</div>
+						</li>
+						<li>
+							<div class="activity-link management-link"></div> <a
+							class="activity-logo management"> <i
+								class="fa fa-sitemap management"></i>
+						</a>
+							<div class="activity-detail">
+								<span>Entrevista</span> Nora Nely Trejo Huchin <span
+									class="time">15.55</span>
+							</div>
+						</li>
+						<li>
+							<div class="activity-link management-link"></div> <a
+							class="activity-logo management"> <i
+								class="fa fa-sitemap management"></i>
+						</a>
+							<div class="activity-detail">
+								Datos Editados <span>Localidad Nueva</span> <span class="time">16.21</span>
+							</div>
+						</li>
+						<li>
+							<div class="activity-link runway-link"></div> <a
+							class="activity-logo runway"> <i class="fa fa-plane runway"></i>
+						</a>
+							<div class="activity-detail">
+								<span>Entrevista</span> Jose Pérez Pérez <span>Champotón,
+									Campeche</span> <span class="time">16.49</span>
+							</div>
+						</li>
+						<li>
+							<div class="activity-link announcement-link"></div> <a
+							class="activity-logo announcement"> <i
+								class="fa fa-globe announcement"></i>
+						</a>
+							<div class="activity-detail">
+								Datos Editados <span>Cambio Localidad</span> <span class="time">16.51</span>
+							</div>
+						</li>
+					</ul>
+				</p:panel>
+			</div>
+		</div>
 
 	</ui:define>
 

@@ -38,18 +38,26 @@
 	<navigation-rule>
 		<from-view-id>/login.xhtml</from-view-id>
 		<navigation-case>
-			<from-outcome>Admin</from-outcome>
+			<from-outcome>Captura</from-outcome>
 			<to-view-id>/portal/dashboard.xhtml</to-view-id>
 			<redirect include-view-params="true"></redirect>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>Usuario</from-outcome>
+			<from-outcome>Administrador</from-outcome>
 			<to-view-id>/portal/dashboard.xhtml</to-view-id>
 			<redirect include-view-params="true"></redirect>
 		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>login.xhtml</from-view-id>
 		<navigation-case>
-			<from-outcome>SuperAdmin</from-outcome>
-			<to-view-id>/portal/dashboard.xhtml</to-view-id>
+			<from-outcome>Captura</from-outcome>
+			<to-view-id>portal/dashboard.xhtml</to-view-id>
+			<redirect include-view-params="true"></redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>Administrador</from-outcome>
+			<to-view-id>portal/dashboard.xhtml</to-view-id>
 			<redirect include-view-params="true"></redirect>
 		</navigation-case>
 	</navigation-rule>
@@ -70,113 +78,8 @@
 			<to-view-id>/portal/dashboard.xhtml</to-view-id>
 			<redirect include-view-params="true"></redirect>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>gestionproductos</from-outcome>
-			<to-view-id>/portal/nominas/gestionproductos.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>gestionarchivosbanco</from-outcome>
-			<to-view-id>/portal/nominas/gestionarchivosbanco.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>gestionpuestos</from-outcome>
-			<to-view-id>/portal/nominas/gestionpuestos.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>gestiontimbrado</from-outcome>
-			<to-view-id>/portal/nominas/gestiontimbrado.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>consultatrabajador</from-outcome>
-			<to-view-id>/portal/nominas/consultatrabajador.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>consultaproducto</from-outcome>
-			<to-view-id>/portal/nominas/consultaproducto.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>perded</from-outcome>
-			<to-view-id>/portal/nominas/generacionperded.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>sindicato</from-outcome>
-			<to-view-id>/portal/nominas/infosindicato.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>catalogosnomina</from-outcome>
-			<to-view-id>/portal/nominas/catalogos.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>trimestrales</from-outcome>
-			<to-view-id>/portal/nominas/trimestrales.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>flujoefectivo</from-outcome>
-			<to-view-id>/portal/nominas/flujoefectivo.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>consultaconpers</from-outcome>
-			<to-view-id>/portal/nominas/consultaconpers.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>unificacion</from-outcome>
-			<to-view-id>/portal/nominas/unificacion.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>mantempleados</from-outcome>
-			<to-view-id>/portal/nominas/mantempleados.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>plantillas</from-outcome>
-			<to-view-id>/portal/nominas/plantillas.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>validacionrfc</from-outcome>
-			<to-view-id>/portal/nominas/validacionrfc.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>archivodigital</from-outcome>
-			<to-view-id>/portal/archivodigital/index.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>siri</from-outcome>
-			<to-view-id>/portal/siri/index.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
+		
 	</navigation-rule>
-	<navigation-rule>
-		<from-view-id>/portal/*</from-view-id>
-		<navigation-case>
-			<from-outcome>ConfigurarUsuarios</from-outcome>
-			<to-view-id>/portal/administracion/usuarios.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<from-view-id>/portal/*</from-view-id>
-		<navigation-case>
-			<from-outcome>spoolerPDF</from-outcome>
-			<to-view-id>/portal/spooler/index.xhtml</to-view-id>
-			<redirect include-view-params="true"></redirect>
-		</navigation-case>
-	</navigation-rule>
-
+	
 
 </faces-config>
