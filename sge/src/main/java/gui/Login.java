@@ -116,28 +116,6 @@ public class Login implements Serializable
 
 	public void actionBotonAcceder(ActionEvent e)
 	{
-		INEGIService				inegiService	= new INEGIService();
-
-		RespuestaEstadosJson	respuesta		= inegiService.getEstados("Camp");
-
-		respuesta.getDatos().forEach(estado -> System.out.println(estado.getNom_agee()));
-
-		/*
-		 * EntityManagerFactory sessionFactory =
-		 * Persistence.createEntityManagerFactory("CRM");
-		 * 
-		 * EntityManager entityManager = sessionFactory.createEntityManager();
-		 * entityManager.getTransaction().begin(); List<SeguridadSocial> result =
-		 * entityManager.createQuery("from seguridadsocial g").getResultList();
-		 * 
-		 * for (SeguridadSocial ss : result) { System.out.println("Event (" +
-		 * ss.getIdSeguridadSocial() + ") : " + ss.getDescripcion()); }
-		 * entityManager.getTransaction().commit(); entityManager.close();
-		 */
-		// Inicia el scheduler de respaldos
-	//	AppControllerBean appControllerBean = (AppControllerBean) FacesUtils.getManagedBean("appControllerBean");
-	//	appControllerBean.startSchedulerRespaldos();
-
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();)
 		{
 			Sesion controlSesion = (Sesion) FacesUtils.getManagedBean("Sesion");

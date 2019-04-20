@@ -15,7 +15,7 @@
 							icon="fa fa-fw fa-dashboard" outcome="/portal/dashboard" />
 
 						<p:submenu id="om_gestiones" label="Gestiones"
-							icon="fa fa-fw fa-clipboard">
+							icon="fa fa-fw fa-clipboard" expanded="true">
 							<p:menuitem id="om_histgestion" value="Historial"
 								icon="fa fa-fw fa-history"
 								action="#{historialGestionBean.actionHistorialGestiones}" />
@@ -28,45 +28,14 @@
 								action="#{reportesGestionBean.actionInicializaReportes}">
 							</p:menuitem>
 
-							<p:menuitem id="om_catalogogestion" value="Catálogos"
-								icon="fa fa-fw fa-leanpub"
-								action="#{minutaBean.actionNuevaMinuta}">
-							</p:menuitem>
 
-						</p:submenu>
-
-						<p:submenu id="om_minutas" label="Minutas"
-							icon="fa fa-fw fa-file-text">
-							<p:menuitem id="om_histMinutas" value="Historial"
-								icon="fa fa-fw fa-history" outcome="/portal/historialminutas" />
-							<p:menuitem id="om_nuevaminuta" value="Nueva Minuta"
-								icon="fa fa-fw fa-plus" action="#{minutaBean.actionNuevaMinuta}"
-								update="@all">
-							</p:menuitem>
 
 						</p:submenu>
 
 
-						<p:menuitem id="om_buy" value="Compromisos"
-							icon="fa fa-fw fa-paperclip " outcome="/portal/compromisos" />
 
-						<p:submenu id="om_modEncuestas" label="Clima Laboral"
-							icon="fa fa-fw fa-users">
-							<p:menuitem id="om_muestreo" value="Muestreo Aleatorio"
-								icon="fa fa-fw fa-random"
-								outcome="/portal/climalaboral/muestreo" />
 
-							<p:menuitem id="om_encuesta" value="Encuestas"
-								icon="fa fa-fw fa-align-center "
-								outcome="/portal/climalaboral/encuestas" update="@all">
-							</p:menuitem>
 
-							<p:menuitem id="om_resultados" value="Resultados"
-								icon="fa fa-fw fa-check"
-								outcome="/portal/climalaboral/resultados" update="@all">
-							</p:menuitem>
-
-						</p:submenu>
 
 						<p:separator></p:separator>
 

@@ -10,6 +10,7 @@ import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,25 +59,25 @@ public class NuevaGestionBean
 {
 	// Dado que una gestión es una actividad se comparte el catálogo de status de
 	// actividades
-	private List<StatusActividad>	catStatusActividad;
-	private List<TipoGestion>		catTiposGestion;
-	private List<SeguridadSocial>	catSeguridadSocial;
-	private List<CategoriaGestion>	catCategoriaGestion;
-	private List<UnidadSalud>		catUnidadSalud;
-	private List<TipoDescuento>		catTipoDescuento;
+	private List<StatusActividad> catStatusActividad;
+	private List<TipoGestion> catTiposGestion;
+	private List<SeguridadSocial> catSeguridadSocial;
+	private List<CategoriaGestion> catCategoriaGestion;
+	private List<UnidadSalud> catUnidadSalud;
+	private List<TipoDescuento> catTipoDescuento;
 
-	private Gestion					gestion;
-	private int						editarGestion;
-	private String					webservice;
+	private Gestion gestion;
+	private int editarGestion;
+	private String webservice;
 
-	private List<ListElement>		listasUsuario;
-	private List<Task>				listaTareas;
+	private List<ListElement> listasUsuario;
+	private List<Task> listaTareas;
 
 	// WebService de INEGI
-	private INEGIService			inegiService	= new INEGIService();
-	private List<EstadoINEGI>		estados;
-	private List<MunicipioINEGI>	municipios;
-	private List<LocalidadINEGI>	localidades;
+	private INEGIService inegiService = new INEGIService();
+	private List<EstadoINEGI> estados;
+	private List<MunicipioINEGI> municipios;
+	private List<LocalidadINEGI> localidades;
 
 	public NuevaGestionBean()
 	{
@@ -176,9 +177,26 @@ public class NuevaGestionBean
 
 		}
 
-		// Se hardcodea en lugar de elegir desde el catálogo
-		// this.gestion.setStatus(this.catStatusActividad.get(0));
-		// this.gestion.setTipoGestion(new TipoGestion(-1, ""));
+		// Se llenan los catálogos de INEGI manualmente desde el objeto de gestión para
+		// que los convertidores puedan hacer su función
+		if (gestionEdicion.getPaciente().getLugarResidencia() != null)
+		{
+			if (gestionEdicion.getPaciente().getLugarResidencia().getEstadoINEGI() != null)
+			{
+				this.estados = Arrays.asList(gestionEdicion.getPaciente().getLugarResidencia().getEstadoINEGI());
+			}
+
+			if (gestionEdicion.getPaciente().getLugarResidencia().getMunicipioINEGI() != null)
+			{
+				this.municipios = Arrays.asList(gestionEdicion.getPaciente().getLugarResidencia().getMunicipioINEGI());
+			}
+
+			if (gestionEdicion.getPaciente().getLugarResidencia().getLocalidadINEGI() != null)
+			{
+				this.localidades = Arrays.asList(gestionEdicion.getPaciente().getLugarResidencia().getLocalidadINEGI());
+			}
+
+		}
 
 	}
 
@@ -396,10 +414,10 @@ public class NuevaGestionBean
 		wUsuario.initClient();
 		wUsuario.initToken();
 
-		PreparedStatement	prep			= null;
-		ResultSet			rBD				= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		boolean				nuevaGestion	= this.gestion.getIdGestion() < 0 ? true : false;
+		boolean nuevaGestion = this.gestion.getIdGestion() < 0 ? true : false;
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -431,19 +449,19 @@ public class NuevaGestionBean
 						}
 
 					}
-					
+
 					lResidencia.setDescripcion(ubicFinal);
 
 				}
 
 				if (this.gestion.getIdGestion() < 0)
 				{
-					int		indiceComplemento		= 10;
-					String	complementoAtributo		= "";
-					String	complementoValor		= "";
+					int indiceComplemento = 10;
+					String complementoAtributo = "";
+					String complementoValor = "";
 
-					String	complementoAtributoW	= "";
-					String	complementoValorW		= "";
+					String complementoAtributoW = "";
+					String complementoValorW = "";
 
 					if (!this.gestion.getFolio().trim().isEmpty())
 					{
@@ -593,35 +611,32 @@ public class NuevaGestionBean
 							PreparedStatement.RETURN_GENERATED_KEYS);
 
 					prep.setString(1, this.gestion.getPaciente().getLugarResidencia().getDescripcion().trim());
-					
-					if( lResidencia.getEstadoINEGI() != null )
+
+					if (lResidencia.getEstadoINEGI() != null)
 					{
 						prep.setString(2, lResidencia.getEstadoINEGI().getCve_agee());
 						prep.setString(3, lResidencia.getEstadoINEGI().getNom_agee());
-					}
-					else
+					} else
 					{
 						prep.setNull(2, Types.VARCHAR);
 						prep.setNull(3, Types.VARCHAR);
 					}
 
-					if( lResidencia.getMunicipioINEGI() != null )
+					if (lResidencia.getMunicipioINEGI() != null)
 					{
 						prep.setString(4, lResidencia.getMunicipioINEGI().getCve_agem());
 						prep.setString(5, lResidencia.getMunicipioINEGI().getNom_agem());
-					}
-					else
+					} else
 					{
 						prep.setNull(4, Types.VARCHAR);
 						prep.setNull(5, Types.VARCHAR);
 					}
 
-					if( lResidencia.getLocalidadINEGI() != null )
+					if (lResidencia.getLocalidadINEGI() != null)
 					{
 						prep.setString(6, lResidencia.getLocalidadINEGI().getCve_loc());
 						prep.setString(7, lResidencia.getLocalidadINEGI().getNom_loc());
-					}
-					else
+					} else
 					{
 						prep.setNull(6, Types.VARCHAR);
 						prep.setNull(7, Types.VARCHAR);
@@ -769,9 +784,9 @@ public class NuevaGestionBean
 				nuevaTarea = new Task();
 				nuevaTarea.setList_id(UtilidadesGestion.idListaGestiones);
 
-				LocalDate	ldt		= LocalDate.now();
+				LocalDate ldt = LocalDate.now();
 
-				String		folio	= "Folio: F-" + ldt.getYear() + "-" + this.gestion.getIdGestion() + ". - Paciente: "
+				String folio = "Folio: F-" + ldt.getYear() + "-" + this.gestion.getIdGestion() + ". - Paciente: "
 						+ this.gestion.getPaciente().getNombre();
 
 				nuevaTarea.setTitle(folio);
@@ -805,29 +820,34 @@ public class NuevaGestionBean
 
 				String contenidoNota = "Fecha de Recepción: "
 						+ new SimpleDateFormat("yyyy-MM-dd - HH:mm:dd").format(this.gestion.getFechaRecepcion()) + "\n";
-				contenidoNota += "Usuario: " + sesion.getIdUsuario() + " - " + sesion.getNombreUsuario() + "\n\n";
-				contenidoNota += "Solicitado por: " + this.gestion.getSolicitadoA() + "\n\n";
-				contenidoNota += "Categoría de la gestión: " + this.gestion.getCategoria().getDescripcion() + "\n\n";
-				contenidoNota += "Paciente: \n";
-				contenidoNota += "Nombre: " + this.gestion.getPaciente().getNombre() + "\n";
-				contenidoNota += "Edad: " + this.gestion.getPaciente().getEdad() + "\n";
-				contenidoNota += "Sexo: "
+				contenidoNota += "USUARIO: " + sesion.getIdUsuario() + " - " + sesion.getNombreUsuario() + "\n\n";
+				contenidoNota += "SOLICITADO POR: " + this.gestion.getSolicitadoA() + "\n\n";
+				contenidoNota += "CATEGORÍA DE LA GESTIÓN: " + this.gestion.getCategoria().getDescripcion() + "\n\n";
+				contenidoNota += "PACIENTE: \n";
+				contenidoNota += "NOMBRE: " + this.gestion.getPaciente().getNombre() + "\n";
+				contenidoNota += "EDAD: " + this.gestion.getPaciente().getEdad() + "\n";
+				contenidoNota += "SEXO: "
 						+ (this.gestion.getPaciente().getSexo().equals("m") ? "Masculino" : "Femenino") + "\n";
-				contenidoNota += "Lugar de Origen: " + this.gestion.getPaciente().getLugarResidencia().getDescripcion()
+				contenidoNota += "LUGAR DE ORIGEN: " + this.gestion.getPaciente().getLugarResidencia().getDescripcion()
+						+ "\n\n";
+				contenidoNota += "SEGURIDAD SOCIAL: " + this.gestion.getPaciente().getSeguridadSocial().getDescripcion()
 						+ "\n";
-				contenidoNota += "Seguridad Social: " + this.gestion.getPaciente().getSeguridadSocial().getDescripcion()
-						+ "\n";
-				contenidoNota += "Número o Folio de Afiliación: " + this.gestion.getPaciente().getAfiliacion() + "\n\n";
-				contenidoNota += "<Atendido en>:  " + this.gestion.getPaciente().getAtendidoEn() != null
+				contenidoNota += "NÚMERO O FOLIO DE AFILIACIÓN: " + this.gestion.getPaciente().getAfiliacion() + "\n";
+				contenidoNota += "ATENDIDO EN: ";
+				contenidoNota += this.gestion.getPaciente().getAtendidoEn() != null
 						? this.gestion.getPaciente().getAtendidoEn().getDescripcion()
-						: "Sin información" + "\n\n";
-				contenidoNota += "<Referenciado a>:  " + this.gestion.getPaciente().getReferenciadoA() != null
+						: "Sin información";
+				contenidoNota += "\n\n";
+				contenidoNota += "REFERENCIADO A: ";
+				contenidoNota += this.gestion.getPaciente().getReferenciadoA() != null
 						? this.gestion.getPaciente().getReferenciadoA().getDescripcion()
-						: "Sin información" + "\n\n";
-				contenidoNota += "<DIAGNÓSTICO>: " + this.gestion.getPaciente().getDiagnostico() + "\n\n";
-				contenidoNota += "<OBSERVACIONES DEL CASO>: " + this.gestion.getDetallesGenerales() + "\n\n";
-				contenidoNota += "<SOLICITUD>: " + this.gestion.getSolicitud() + "\n\n";
-				contenidoNota += "Contactos: \n";
+						: "Sin información";
+				contenidoNota += "\n\n";
+				
+				contenidoNota += "DIAGNÓSTICO: " + this.gestion.getPaciente().getDiagnostico() + "\n\n";
+				contenidoNota += "OBSERVACIONES DEL CASO: " + this.gestion.getDetallesGenerales() + "\n\n";
+				contenidoNota += "SOLICITUD: " + this.gestion.getSolicitud() + "\n\n";
+				contenidoNota += "CONTACTOS: \n";
 
 				for (Contacto contacto : this.gestion.getContactos())
 				{
