@@ -5,7 +5,7 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="webrh"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/sge" username="indesalud" />
+		url="jdbc:mysql://app-sge-mysql:3306/sge" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
@@ -31,13 +31,13 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="timbrado"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/timbrado" username="indesalud" />
+		url="jdbc:mysql://app-sge-mysql:3306/timbrado" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="spoolerpdf"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/spoolerpdf"
+		url="jdbc:mysql://app-sge-mysql:3306/spoolerpdf"
 		username="indesalud" />
 
 
@@ -45,19 +45,19 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="minutas"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/minutas" username="indesalud" />
+		url="jdbc:mysql://app-sge-mysql:3306/minutas" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="gestiones"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/gestiones" username="indesalud" />
+		url="jdbc:mysql://app-sge-mysql:3306/gestiones" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="climalaboral"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/climalaboral"
+		url="jdbc:mysql://app-sge-mysql:3306/climalaboral"
 		username="indesalud" />
 
 </Context>
