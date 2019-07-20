@@ -30,11 +30,20 @@ public class DashBoardController
 		this.usuarioEnSesion = login.getUsuarioEnSesion();
 
 	}
+	
+	public List<Persona> getPersonasNoEntrevistadas()
+	{
+		return this.entityManagerCRM.createQuery(
+				"FROM persona p WHERE p.decision.idDecision = -1 AND (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
+				+ "IN ( SELECT cnf.confUsuarioPK.idEstado,cnf.confUsuarioPK.idMunicipio,cnf.confUsuarioPK.idLocalidad FROM confusuario cnf "
+				+ "WHERE cnf.confUsuarioPK.idUsuario= :idUsuario)",
+				Persona.class).setParameter("idUsuario", this.usuarioEnSesion.getIdUsuario()).getResultList();
+	}
 
 	public List<Persona> getPersonasEntrevistadas()
 	{
 		return this.entityManagerCRM.createQuery(
-				"FROM persona p WHERE (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
+				"FROM persona p WHERE p.decision.idDecision > -1 AND (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
 				+ "IN ( SELECT cnf.confUsuarioPK.idEstado,cnf.confUsuarioPK.idMunicipio,cnf.confUsuarioPK.idLocalidad FROM confusuario cnf "
 				+ "WHERE cnf.confUsuarioPK.idUsuario= :idUsuario)",
 				Persona.class).setParameter("idUsuario", this.usuarioEnSesion.getIdUsuario()).getResultList();

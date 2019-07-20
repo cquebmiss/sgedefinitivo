@@ -118,10 +118,10 @@ public class ReestructuradorApplication {
                 if( tarea.getCompleted_at() != null )
                 {
                     instant = Instant.parse(tarea.getCompleted_at());
-                    ldFinalizacion = LocalDateTime.ofInstant(instant, ZoneId.of("Mexico/General"));
+                    ldFinalizacion = LocalDateTime.ofInstant(instant, ZoneId.of("Mexico/Gen                                                                                                                                                                                                                                                                                                                                                                                                                 eral"));
                 }
 
-
+                                            
                 gestion = new Gestion();
                 gestion.setIdGestion(Integer.parseInt(descripcion.substring(14, 17)));
                 gestion.setDescripcion(descripcion);
@@ -144,9 +144,12 @@ public class ReestructuradorApplication {
                 gestion.setIdCategoriaGestion(0);
                 gestion.setIdStatusActividad(finalizadas ? 1 : -1);
 
-                gestionRepository.save(gestion);
+     //           gestionRepository.save(gestion);
 
                 log.info("Tarea " + tarea.getId() + " - " + tarea.getTitle() + " - " + tarea.isCompleted() + " creada en " + instant);
+
+                if( 1==1)
+                {    continue;}
 
                 //Se complementa la información con la nota de cada tarea..
                 URI targetNoteUrl = UriComponentsBuilder.fromUriString("https://a.wunderlist.com/api")
@@ -269,7 +272,7 @@ public class ReestructuradorApplication {
 
                 paciente.setIdSeguridadSocial(seguridadSocial1.getIdSeguridadSocial());
 
-                getPacienteRepository().save(paciente);
+  //              getPacienteRepository().save(paciente);
 
 
                 gestion.setSolicitadoA(solicitadoA);
@@ -282,7 +285,7 @@ public class ReestructuradorApplication {
                     gestion.setResumenFinal(conclusion);
                 }
 
-                getGestionRepository().save(gestion);
+//                getGestionRepository().save(gestion);
 
 
                 log.info("Nota encontraa: "+notes.toString());

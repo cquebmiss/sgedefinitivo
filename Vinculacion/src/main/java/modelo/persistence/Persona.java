@@ -26,9 +26,11 @@ public class Persona
 	private String apMaterno;
 	private Character sexo;
 
-
 	private LocalDate fechaNacimiento;
-	private String direccion;
+	private String calle;
+	private Integer numero;
+	private String entreCalles;
+	private String coloniaBarrio;
 	private String telefonoCelular;
 	private Boolean whatsApp;
 	private Boolean sMS;
@@ -38,6 +40,7 @@ public class Persona
 	private String instagram;
 	private Boolean apoyaCompartirRedesSociales;
 	private String ocupacion;
+	private String seccionElectoral;
 
 	@ManyToOne
 	@JoinColumn(name = "idLocalidad", referencedColumnName = "idLocalidad")

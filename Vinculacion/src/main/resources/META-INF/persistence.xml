@@ -17,6 +17,27 @@
 				value="com.mysql.jdbc.Driver" />
 
 			<property name="javax.persistence.jdbc.url"
+				value="jdbc:mysql://localhost:3306/vinculacion" />
+
+			<property name="javax.persistence.jdbc.user" value="indesalud" />
+
+			<property name="javax.persistence.jdbc.password"
+				value="@FPD1730yendoqueb" />
+
+			<property name="hibernate.show_sql" value="true" />
+
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+
+			<property name="hibernate.dialect"
+				value="org.hibernate.dialect.MySQL5Dialect" />
+
+		</properties>
+		<!-- 
+		<properties>
+			<property name="javax.persistence.jdbc.driver"
+				value="com.mysql.jdbc.Driver" />
+
+			<property name="javax.persistence.jdbc.url"
 				value="jdbc:mysql://jws-app-mysql/vinculacion" />
 
 			<property name="javax.persistence.jdbc.user" value="vinculacion" />
@@ -32,7 +53,7 @@
 				value="org.hibernate.dialect.MySQL5Dialect" />
 
 		</properties>
-
+ -->
 	</persistence-unit>
 
 </persistence>

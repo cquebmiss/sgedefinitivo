@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:v-on="https://cdn.jsdelivr.net/npm/vue">
 
-	<ui:define name="title">Sistema de Vinculación Política</ui:define>
+	<ui:define name="title">Sistema de Amigos - DashBoard</ui:define>
 
 
 	<ui:define name="viewname">
@@ -19,7 +19,7 @@
 		<div class="ui-g layout-dashboard">
 
 
-			<div class="ui-g-12 ui-lg-8">
+			<div class="ui-g-12 ui-lg-12">
 
 
 				<p:panel header="Personas Asignadas" styleClass="inventory">
@@ -45,12 +45,19 @@
 								<h:outputText value="#{per.sexo}" />
 							</p:column>
 
-							<p:column headerText="Estado/Municipio/Localidad"
-								sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
-								filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
+							<p:column headerText="Clave Localidad"
+								sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}}"
+								filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}"
 								filterMatchMode="contains">
 								<h:outputText
-									value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}" />
+									value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}" />
+							</p:column>
+
+							<p:column headerText="Estado/Municipio/Localidad"
+								sortBy="#{per.localidad.descripcion}"
+								filterBy="#{per.localidad.descripcion}"
+								filterMatchMode="contains">
+								<h:outputText value="#{per.localidad.descripcion}" />
 							</p:column>
 
 							<p:column headerText="Apoyo" sortBy="#{per.decision.descripcion}"
@@ -64,7 +71,7 @@
 
 				</p:panel>
 			</div>
-			<div class="ui-g-12 ui-lg-4">
+		<!-- 	<div class="ui-g-12 ui-lg-4">
 				<p:panel header="Actividad Reciente" styleClass="latest-activities">
 					<ul>
 						<li>
@@ -115,7 +122,7 @@
 						</li>
 					</ul>
 				</p:panel>
-			</div>
+			</div>-->
 		</div>
 
 	</ui:define>

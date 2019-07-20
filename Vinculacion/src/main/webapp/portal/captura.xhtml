@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:v-on="https://cdn.jsdelivr.net/npm/vue">
 
-	<ui:define name="title">Sistema de Vinculación Política - Módulo de Captura</ui:define>
+	<ui:define name="title">Sistema de Amigos - Módulo de Captura</ui:define>
 
 
 	<ui:define name="viewname">
@@ -30,60 +30,141 @@
 
 
 					<h:panelGroup rendered="#{capturaBean.personaSeleccionada == null}">
+					<div>
+					<p:commandButton value="Añadir Persona" icon="fa fa-user-plus"></p:commandButton>
+					</div>
 
 						<div class="ui-g-12 ui-lg-12">
-							<h:outputText value="Seleccione la persona a capturar"></h:outputText>
+							
 						</div>
 
 
 						<div class="ui-g-12 ui-lg-12">
+							<p:tabView>
 
-							<p:panel header="Personas Entrevistadas" >
+								<p:tab title="Personas No Entrevistadas">
+									<p:panel>
 
-								<p:dataTable var="per"
-									value="#{capturaBean.personasEntrevistadas}"
-									filteredValue="#{capturaBean.personasEntrevistadasFilter}"
-									rowKey="#{per.idPersona}"  emptyMessage="..."
-									widgetVar="wTablaPersonasEntrevistadas" reflow="true"
-									paginator="true" rows="10" >
-									
-									
+										<p:dataTable var="per"
+											value="#{capturaBean.personasNoEntrevistadas}"
+											filteredValue="#{capturaBean.personasNoEntrevistadasFilter}"
+											rowKey="#{per.idPersona}" emptyMessage="..."
+											widgetVar="wTablaPersonasNoEntrevistadas" reflow="true"
+											paginator="true" rows="10">
 
-									<p:column style="width:50px">
-										<p:commandButton icon="fa fa-icon fa-edit"
-											actionListener="#{capturaBean.actionPersonaSelect(per)}" update="@(.outputTable)"></p:commandButton>
-									</p:column>
 
-									<p:column headerText="Nombre"
-										sortBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
-										filterBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
-										filterMatchMode="contains">
-										<h:outputText
-											value="#{per.nombres} #{per.apPaterno} #{per.apMaterno}" />
-									</p:column>
 
-									<p:column headerText="Sexo" sortBy="#{per.sexo}"
-										filterBy="#{per.sexo}" filterMatchMode="contains">
-										<h:outputText value="#{per.sexo}" />
-									</p:column>
+											<p:column style="width:50px">
 
-									<p:column headerText="Estado/Municipio/Localidad"
-										sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
-										filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}"
-										filterMatchMode="contains">
-										<h:outputText
-											value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad} #{per.localidad.descripcion}" />
-									</p:column>
+												<p:commandButton icon="fa fa-icon fa-edit"
+													rendered="#{per.vive}"
+													actionListener="#{capturaBean.actionPersonaSelect(per)}"
+													update="@(.outputTable)"></p:commandButton>
+											</p:column>
 
-									<p:column headerText="Apoyo"
-										filterBy="#{per.decision.descripcion}"
-										filterMatchMode="contains"
-										sortBy="#{per.decision.descripcion}">
-										<h:outputText value="#{per.decision.descripcion}" />
-									</p:column>
-								</p:dataTable>
-							</p:panel>
+											<p:column headerText="Nombre"
+												sortBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+												filterBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+												filterMatchMode="contains">
+												<h:outputText
+													value="#{per.nombres} #{per.apPaterno} #{per.apMaterno}" />
+											</p:column>
+
+											<p:column headerText="Sexo" sortBy="#{per.sexo}"
+												filterBy="#{per.sexo}" filterMatchMode="contains">
+												<h:outputText value="#{per.sexo}" />
+											</p:column>
+
+											<p:column headerText="Clave Localidad"
+												sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}}"
+												filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}"
+												filterMatchMode="contains">
+												<h:outputText
+													value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}" />
+											</p:column>
+
+											<p:column headerText="Estado/Municipio/Localidad"
+												sortBy="#{per.localidad.descripcion}"
+												filterBy="#{per.localidad.descripcion}"
+												filterMatchMode="contains">
+												<h:outputText value="#{per.localidad.descripcion}" />
+											</p:column>
+
+
+											<p:column headerText="Resultado de la Entrevista"
+												filterBy="#{per.decision.descripcion}"
+												filterMatchMode="contains"
+												sortBy="#{per.decision.descripcion}">
+												<h:outputText value="#{per.decision.descripcion}" />
+											</p:column>
+
+											<p:column headerText="Vive" style="width:80px">
+												<p:selectBooleanButton id="value2" value="#{per.vive}"
+													onLabel="Sí" offLabel="No" onIcon="pi pi-check"
+													offIcon="pi pi-times">
+													<p:ajax listener="#{capturaBean.actionGuardarPersona(per)}"
+														update="@(.outputTable)" />
+												</p:selectBooleanButton>
+											</p:column>
+										</p:dataTable>
+									</p:panel>
+								</p:tab>
+								<p:tab title="Personas Entrevistadas">
+									<p:panel>
+
+										<p:dataTable var="per"
+											value="#{capturaBean.personasEntrevistadas}"
+											filteredValue="#{capturaBean.personasEntrevistadasFilter}"
+											rowKey="#{per.idPersona}" emptyMessage="..."
+											widgetVar="wTablaPersonasEntrevistadas" reflow="true"
+											paginator="true" rows="10">
+
+
+
+											<p:column style="width:50px">
+												<p:commandButton icon="fa fa-icon fa-search"></p:commandButton>
+											</p:column>
+
+											<p:column headerText="Nombre"
+												sortBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+												filterBy="#{per.nombres} #{per.apPaterno} #{per.apMaterno}"
+												filterMatchMode="contains">
+												<h:outputText
+													value="#{per.nombres} #{per.apPaterno} #{per.apMaterno}" />
+											</p:column>
+
+											<p:column headerText="Sexo" sortBy="#{per.sexo}"
+												filterBy="#{per.sexo}" filterMatchMode="contains">
+												<h:outputText value="#{per.sexo}" />
+											</p:column>
+
+											<p:column headerText="Clave Localidad"
+												sortBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}}"
+												filterBy="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}"
+												filterMatchMode="contains">
+												<h:outputText
+													value="#{per.localidad.idEstado} #{per.localidad.idMunicipio} #{per.localidad.idLocalidad}" />
+											</p:column>
+
+											<p:column headerText="Estado/Municipio/Localidad"
+												sortBy="#{per.localidad.descripcion}"
+												filterBy="#{per.localidad.descripcion}"
+												filterMatchMode="contains">
+												<h:outputText value="#{per.localidad.descripcion}" />
+											</p:column>
+
+											<p:column headerText="Resultado de la Entrevista"
+												filterBy="#{per.decision.descripcion}"
+												filterMatchMode="contains"
+												sortBy="#{per.decision.descripcion}">
+												<h:outputText value="#{per.decision.descripcion}" />
+											</p:column>
+										</p:dataTable>
+									</p:panel>
+								</p:tab>
+							</p:tabView>
 						</div>
+
 
 					</h:panelGroup>
 
@@ -115,7 +196,7 @@
 							<br></br>
 							<br></br>
 
-							<p:outputLabel value="¿Se suma a la causa?"></p:outputLabel>
+							<p:outputLabel value="¿Se incorpora al grupo de amigos?"></p:outputLabel>
 
 							<br></br>
 							<br></br>
@@ -127,7 +208,8 @@
 
 									<f:selectItem itemLabel="Sí" itemValue="1"></f:selectItem>
 									<f:selectItem itemLabel="No" itemValue="0"></f:selectItem>
-									<f:selectItem itemLabel="Quizá más adelante" itemValue="2"></f:selectItem>
+									<f:selectItem itemLabel="Probablemente en un futuro"
+										itemValue="2"></f:selectItem>
 
 								</div>
 
@@ -138,7 +220,8 @@
 							<div style="text-align: right;">
 
 								<p:commandButton icon=" fa fa-step-forward " value="Aceptar"
-									actionListener="#{capturaBean.actionGuardarDecision}"></p:commandButton>
+									actionListener="#{capturaBean.actionGuardarDecision}"
+									update="@(.outputTable)"></p:commandButton>
 
 							</div>
 
@@ -153,10 +236,11 @@
 
 							<p:panelGrid columns="2" layout="grid">
 
+
+
 								<p:column>
-									<p:outputLabel value="¿Vive?"></p:outputLabel>
-									<p:selectBooleanCheckbox
-										value="#{capturaBean.personaSeleccionada.vive}"></p:selectBooleanCheckbox>
+									<h4>DATOS PERSONALES</h4>
+
 								</p:column>
 								<p:column></p:column>
 
@@ -181,17 +265,62 @@
 										value="#{capturaBean.personaSeleccionada.fechaNacimiento}"></p:calendar>
 								</p:column>
 								<p:column>
-									<p:outputLabel value="Dirección"></p:outputLabel>
+									<p:outputLabel value="Ocupación / Profesión/ Oficio"></p:outputLabel>
 									<p:inputText
-										value="#{capturaBean.personaSeleccionada.direccion}"></p:inputText>
+										value="#{capturaBean.personaSeleccionada.ocupacion}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Teléfono Celular"></p:outputLabel>
+
+									<p:inputMask
+										value="#{capturaBean.personaSeleccionada.telefonoCelular}"
+										mask="(999) 999-9999" />
+								</p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column>
+									<h4>DIRECCIÓN</h4>
+
 								</p:column>
 								<p:column></p:column>
 								<p:column>
-									<p:outputLabel value="Teléfono Celular"></p:outputLabel>
+									<p:outputLabel value="Calle"></p:outputLabel>
+									<p:inputText value="#{capturaBean.personaSeleccionada.calle}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Número de Casa"></p:outputLabel>
+									<p:inputText value="#{capturaBean.personaSeleccionada.numero}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Entre Calle y Calle"></p:outputLabel>
 									<p:inputText
-										value="#{capturaBean.personaSeleccionada.telefonoCelular}"></p:inputText>
+										value="#{capturaBean.personaSeleccionada.entreCalles}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Colonia o Barrio"></p:outputLabel>
+									<p:inputText
+										value="#{capturaBean.personaSeleccionada.coloniaBarrio}"></p:inputText>
+								</p:column>
+								<p:column>
+									<p:outputLabel value="Sección Electoral"></p:outputLabel>
+
+									<p:inputMask
+										value="#{capturaBean.personaSeleccionada.seccionElectoral}"
+										mask="999" />
 								</p:column>
 								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column></p:column>
+								<p:column>
+									<h4>REDES SOCIALES</h4>
+
+								</p:column>
+								<p:column></p:column>
+
 								<p:column>
 									<p:outputLabel value="¿Utiliza WhatsApp?"></p:outputLabel>
 									<p:selectBooleanCheckbox
@@ -227,12 +356,7 @@
 										value="#{capturaBean.personaSeleccionada.apoyaCompartirRedesSociales}"></p:selectBooleanCheckbox>
 								</p:column>
 								<p:column></p:column>
-								<p:column>
-									<p:outputLabel value="Ocupación / Profesión/ Oficio"></p:outputLabel>
-									<p:inputText
-										value="#{capturaBean.personaSeleccionada.ocupacion}"></p:inputText>
-								</p:column>
-								<p:column></p:column>
+
 								<p:outputLabel value="Observaciones"></p:outputLabel>
 								<p:column></p:column>
 								<p:inputTextarea
@@ -245,7 +369,8 @@
 							<div style="text-align: right;">
 
 								<p:commandButton icon=" fa fa-step-forward " value="Aceptar"
-									actionListener="#{capturaBean.actionGuardarFormularioAcepta}"></p:commandButton>
+									actionListener="#{capturaBean.actionGuardarFormularioAcepta}"
+									update="@(.outputTable)"></p:commandButton>
 
 							</div>
 
@@ -257,8 +382,28 @@
 
 							<br></br>
 
-							<p:outputLabel
-								value="Qué dudas tiene? Por favor déjeme saberlo..."></p:outputLabel>
+
+							<p:panelGrid columns="2" layout="grid">
+
+
+
+								<p:column>
+									<h4>DATOS PERSONALES</h4>
+
+								</p:column>
+								<p:column></p:column>
+
+
+								<p:column>
+									<p:outputLabel value="Teléfono Celular"></p:outputLabel>
+
+									<p:inputMask
+										value="#{capturaBean.personaSeleccionada.telefonoCelular}"
+										mask="(999) 999-9999" />
+								</p:column>
+								<p:column></p:column>
+
+							</p:panelGrid>
 
 							<br></br>
 							<br></br>
@@ -269,7 +414,8 @@
 							<div style="text-align: right;">
 
 								<p:commandButton icon=" fa fa-step-forward " value="Aceptar"
-									actionListener="#{encuestasBean.actionSiguientePregunta}"></p:commandButton>
+									actionListener="#{capturaBean.actionGuardarFormularioAcepta}"
+									update="@(.outputTable)"></p:commandButton>
 
 							</div>
 

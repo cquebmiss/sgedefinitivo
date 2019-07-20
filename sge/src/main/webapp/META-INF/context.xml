@@ -5,13 +5,15 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="webrh"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://app-sge-mysql:3306/sge" username="indesalud" />
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/sge" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="archivodigitalweb"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/archivodigitalweb"
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/archivodigitalweb"
 		username="indesalud" />
 
 
@@ -19,25 +21,29 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="siri"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/siri" username="indesalud" />
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/siri" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="nominas"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://sge-mysql:3306/nominas" username="indesalud" />
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/nominas" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="timbrado"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://app-sge-mysql:3306/timbrado" username="indesalud" />
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/timbrado" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="spoolerpdf"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://app-sge-mysql:3306/spoolerpdf"
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/spoolerpdf"
 		username="indesalud" />
 
 
@@ -45,19 +51,22 @@
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="minutas"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://app-sge-mysql:3306/minutas" username="indesalud" />
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/minutas" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="gestiones"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://app-sge-mysql:3306/gestiones" username="indesalud" />
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/gestiones" username="indesalud" />
 
 	<Resource auth="Container"
 		driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30"
 		maxWait="10000" removeAbandoned="true" name="climalaboral"
 		password="@FPD1730yendoqueb" type="javax.sql.DataSource"
-		url="jdbc:mysql://app-sge-mysql:3306/climalaboral"
+		factory="org.apache.commons.dbcp.BasicDataSourceFactory"
+		url="jdbc:mysql://localhost:3306/climalaboral"
 		username="indesalud" />
 
 </Context>

@@ -97,13 +97,13 @@ public class AppControllerBean
 	    
 	    	properties.setProperty(MysqlExportService.JDBC_DRIVER_NAME, "com.mysql.jdbc.Driver");
 
-	    	properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, "jdbc:mysql://sge-mysql:3306/sge");
+	    	properties.setProperty(MysqlExportService.JDBC_CONNECTION_STRING, "jdbc:mysql://aa1gj42pw580bmu.catx1rafuq3t.us-east-2.rds.amazonaws.com:3306/sge");
 
 	    	//properties.setProperty(MysqlExportService.DB_NAME, "sge");
 
 	    	properties.setProperty(MysqlExportService.DB_USERNAME, "indesalud");
 
-	    	properties.setProperty(MysqlExportService.DB_PASSWORD, "@FPD1730yendoqueb");
+	    	properties.setProperty(MysqlExportService.DB_PASSWORD, "FPD1730yendoqueb");
 
 	    	//properties relating to email config
 

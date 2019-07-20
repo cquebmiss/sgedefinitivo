@@ -25,6 +25,10 @@ public class CapturaBean implements Serializable
 	CapturaController capturaController;
 
 	// Tabla de usuarios
+	private List<Persona> personasNoEntrevistadas;
+	private List<Persona> personasNoEntrevistadasFilter;
+	private Persona personaNoEntrevistadaSeleccionada;
+	
 	private List<Persona> personasEntrevistadas;
 	private List<Persona> personasEntrevistadasFilter;
 	private Persona personaSeleccionada;
@@ -34,10 +38,16 @@ public class CapturaBean implements Serializable
 	public void postConstruct()
 	{
 		this.dashBoardController = new DashBoardController();
-		this.personasEntrevistadas = this.dashBoardController.getPersonasEntrevistadas();
-
 		this.capturaController = new CapturaController();
+		updateTablas();
 
+	}
+	
+	public void updateTablas()
+	{
+		this.personasNoEntrevistadas = this.dashBoardController.getPersonasNoEntrevistadas();
+		this.personasEntrevistadas = this.dashBoardController.getPersonasEntrevistadas();
+		
 	}
 
 	public void actionPersonaSelect(Persona personaSeleccionada)
@@ -50,17 +60,32 @@ public class CapturaBean implements Serializable
 	{
 		this.personaSeleccionada = null;
 		this.personasEntrevistadasFilter = null;
+		this.idDecision = -1;
 	}
 
 	public void actionGuardarDecision()
 	{
 		this.capturaController.savePersona(this.personaSeleccionada, this.idDecision);
+		updateTablas();
+		
+		//Si se ha seleccionado que no
+		if( this.idDecision == 0 )
+		{
+			actionDetenerCaptura();
+		}
 	}
 	
 	public void actionGuardarFormularioAcepta()
 	{
 		this.capturaController.savePersona(this.personaSeleccionada, null);
 		actionDetenerCaptura();
+		
+	}
+	
+	public void actionGuardarPersona(Persona persona)
+	{
+		this.capturaController.savePersona(persona, null);
+		
 	}
 
 }
