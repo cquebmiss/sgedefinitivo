@@ -6,6 +6,9 @@
 package gui;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -17,12 +20,20 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 
+import org.joda.time.LocalDateTime;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+
+import dao.LoginDAO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import modelo.persistence.Usuario;
+import modelo.persistence.dynamodb.*;
+import persistence.dynamodb.Localidad;
 import resources.DataBase;
 import util.FacesUtils;
+import util.utilidades;
 
 /**
  *
@@ -40,8 +51,8 @@ public class Login implements Serializable
 	private String contrasena;
 	private String mensajeError;
 	private EntityManager entityManagerCRM;
-	private Usuario usuarioEnSesion;
 
+	private persistence.dynamodb.Usuario usuarioAWS;
 
 	@PostConstruct
 	public void postConstruct()
@@ -53,9 +64,9 @@ public class Login implements Serializable
 
 	public String isInSession()
 	{
-		if( this.usuarioEnSesion != null )
+		if( this.usuarioAWS != null )
 		{
-			return usuarioEnSesion.getPermisoUsuario().getDescripcion();
+			return usuarioAWS.getDescripcionPermisoUsuario();
 		}
 		else
 		{
@@ -69,16 +80,53 @@ public class Login implements Serializable
 
 		try
 		{
+			
+			
+			
+			try {
+/*
+ 				
+ 				DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+				persistence.dynamodb.Usuario item = new persistence.dynamodb.Usuario();
+				item.setIdUsuario("1");
+				item.setNombre("cquebmiss");
+				item.setContraseña("salud");
+				item.setIdStatusUsuario(1);
+				item.setDescripcionStatusUsuario("Activo");
+				item.setIdPermisoUsuario(2);
+				item.setDescripcionPermisoUsuario("Administrador");
+				
+				List<Localidad> localidades = new ArrayList<Localidad>();
+				localidades.add( new Localidad("04","Campeche","01","Campeche","40010002","Isla Arena (Punta Arena)") );
+				localidades.add( new Localidad("04","Campeche","003","Carmen","40031776","Oxcabal") );
+				localidades.add( new Localidad("04","Campeche","003","Carmen","40033395","Gustavo Díaz Ordaz 18 de marzo") );
+				
+				item.setLocalidades(localidades);*/
+				
+				List<persistence.dynamodb.Usuario> usuario = LoginDAO.getUsuario(getUsuario(), getContrasena());
+				
+				if( usuario == null )
+				{
+					System.out.println("Usuario no encontrado");
+				}
+				else
+				{
+					System.out.print("Usuario encontrado: "+usuario.get(0).getIdUsuario());
+				}
+				
+				
+				
 
-			EntityManager em = ((DataBase) FacesUtils.getManagedBean("database")).getEntityManagerCRM();
+			} catch (Exception e1) {
+				System.out.println("Excepción en algo de Amazon");
+				e1.printStackTrace();
+			}
+			
+			
+			List<persistence.dynamodb.Usuario> usuario = LoginDAO.getUsuario(getUsuario(), getContrasena());
+			
 
-			List<Usuario> usuario = em
-					.createQuery("SELECT u FROM usuario u WHERE u.nombre = :nombre AND u.contraseña = :contraseña",
-							Usuario.class)
-					.setParameter("nombre", getUsuario()).setParameter("contraseña", getContrasena()).setMaxResults(1)
-					.getResultList();
-
-			if (usuario.isEmpty())
+			if (usuario == null || usuario.isEmpty())
 			{
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Datos Incorrectos", "Nombre de usuario y/o contraseña incorrecta."));
@@ -88,7 +136,7 @@ public class Login implements Serializable
 
 			} else
 			{
-				this.usuarioEnSesion = usuario.get(0);
+				this.usuarioAWS = usuario.get(0);
 				
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Datos Correctos", "Bienvenido, redireccionando..."));
@@ -110,7 +158,7 @@ public class Login implements Serializable
 	{
 		try
 		{
-			this.usuarioEnSesion = null;
+			this.usuarioAWS = null;
 
 			FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 

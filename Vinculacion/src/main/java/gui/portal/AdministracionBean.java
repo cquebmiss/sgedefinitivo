@@ -100,7 +100,7 @@ public class AdministracionBean
 
 	public void actionGetUsuariosSistema()
 	{
-		setUsuariosSistema(this.administracionController.getUsuariosSistema());
+		//setUsuariosSistema(this.administracionController.getUsuariosSistema());
 		setTipoPanel(1);
 	}
 
@@ -118,8 +118,8 @@ public class AdministracionBean
 					"Administrador", "El usuario no necesita localidades asignadas"));
 		}
 
-		this.administracionController.saveUsuario(this.usuarioSeleccionado, this.localidadesDualListModel.getTarget(),
-				this.catLocalidades);
+	//	this.administracionController.saveUsuario(this.usuarioSeleccionado, this.localidadesDualListModel.getTarget(),
+		//		this.catLocalidades);
 
 		setTipoPanel(1);
 

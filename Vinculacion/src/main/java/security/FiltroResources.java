@@ -66,7 +66,7 @@ public class FiltroResources implements Filter
 		{
 			Login sesionBean = (Login) session.getAttribute("login");
 
-			if( sesionBean.getUsuarioEnSesion() != null)
+			if( sesionBean.getUsuarioAWS() != null)
 			{
 				loggedIn = true;
 			}

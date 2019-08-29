@@ -12,6 +12,9 @@ import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+
 import modelo.Usuario;
 import modelo.actividades.StatusActividad;
 import modelo.gestion.CategoriaGestion;
@@ -20,8 +23,11 @@ import modelo.gestion.SeguridadSocial;
 import modelo.gestion.TipoDescuento;
 import modelo.gestion.TipoGestion;
 import modelo.gestion.UnidadSalud;
+import persistence.dynamodb.CategoriaGestionAWS;
+import persistence.dynamodb.StatusActividadAWS;
 import resources.DataBase;
 import util.FacesUtils;
+import util.utilidades;
 
 public class UtilidadesGestion
 {
@@ -236,6 +242,43 @@ public class UtilidadesGestion
 		return UtilidadesGestion.getGestiones(idUsuario, 1, fechaInicio, fechaFin, fechaFinalizacionInicial,
 				fechaFinalizacionFinal);
 
+	}
+	
+	public static List<CategoriaGestionAWS> getCatCategoriaGestionAWS()
+	{
+		List<CategoriaGestionAWS> catCategoriaGestion = null;
+		
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+		
+		catCategoriaGestion = mapper.scan(CategoriaGestionAWS.class, new DynamoDBScanExpression());
+		
+		return catCategoriaGestion;
+	}
+	
+	public static List<StatusActividadAWS> getCatStatusActividadAWS()
+	{
+		List<StatusActividadAWS> catStatusActividad = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		/*Map<String, AttributeValue> eav = new HashMap<>();
+		eav.put(":val1", new AttributeValue().withN("-1"));
+
+		DynamoDBQueryExpression<StatusActividadAWS> queryExpression = new DynamoDBQueryExpression<StatusActividadAWS>()
+				.withKeyConditionExpression("idStatusActividad = :val1").withExpressionAttributeValues(eav);
+		
+		catStatusActividad = mapper.query(StatusActividadAWS.class, queryExpression);*/
+		catStatusActividad = mapper.scan(StatusActividadAWS.class, new DynamoDBScanExpression());
+		
+		for(StatusActividadAWS e :  catStatusActividad)
+		{
+			System.out.println(e.getIdStatusActividad()+" - "+e.getDescripcion());
+		}
+		
+		catStatusActividad.stream().peek( e-> System.out.println(e.getIdStatusActividad()+" - "+e.getDescripcion()));
+
+		return catStatusActividad;
+		
 	}
 
 	public static List<StatusActividad> getCatStatusActividad()

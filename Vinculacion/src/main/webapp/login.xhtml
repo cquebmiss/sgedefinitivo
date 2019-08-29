@@ -48,11 +48,12 @@
 					<!--	<p:outputLabel value="Remember me" />	-->
 				</div>
 
+<h:outputText value="#{login.usuarioAWS.nombre}"></h:outputText>
 
 				<p:commandButton value="Acceder" style="margin-bottom:10px"
 					styleClass="raised-btn" update="@all"
 					actionListener="#{login.actionBotonAcceder}"
-					action="#{login.isInSession}"></p:commandButton>
+					></p:commandButton>
 				<h:outputText value="#{appControllerBean.iniciado}"
 					style="visibility: hidden;"></h:outputText>
 

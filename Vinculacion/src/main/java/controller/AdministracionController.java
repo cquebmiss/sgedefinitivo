@@ -14,7 +14,7 @@ import modelo.persistence.ConfUsuarioPK;
 import modelo.persistence.Localidad;
 import modelo.persistence.PermisoUsuario;
 import modelo.persistence.StatusUsuario;
-import modelo.persistence.Usuario;
+import persistence.dynamodb.Usuario;
 import resources.DataBase;
 import util.FacesUtils;
 
@@ -31,7 +31,7 @@ public class AdministracionController
 		this.entityManagerCRM = dataBaseBean.getEntityManagerCRM();
 
 		Login login = (Login) FacesUtils.getManagedBean("login");
-		this.usuarioEnSesion = login.getUsuarioEnSesion();
+		this.usuarioEnSesion = login.getUsuarioAWS();
 
 	}
 
@@ -67,7 +67,7 @@ public class AdministracionController
 			this.entityManagerCRM.persist(usuario);
 		}
 		
-		usuario.setConfUsuario(null);
+	//	usuario.setConfUsuario(null);
 
 		List<ConfUsuario> listaConfUsuario = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class AdministracionController
 				{
 					ConfUsuario confUsuario = new ConfUsuario();
 					ConfUsuarioPK pk = new ConfUsuarioPK();
-					pk.setIdUsuario(usuario.getIdUsuario());
+			//		pk.setIdUsuario(usuario.getIdUsuario());
 					pk.setIdEstado(loc.getIdEstado());
 					pk.setIdMunicipio(loc.getIdMunicipio());
 					pk.setIdLocalidad(loc.getIdLocalidad());
@@ -106,7 +106,7 @@ public class AdministracionController
 			}
 		}
 	
-		usuario.setConfUsuario(listaConfUsuario);
+	//	usuario.setConfUsuario(listaConfUsuario);
 		this.entityManagerCRM.merge(usuario);
 
 		this.entityManagerCRM.getTransaction().commit();

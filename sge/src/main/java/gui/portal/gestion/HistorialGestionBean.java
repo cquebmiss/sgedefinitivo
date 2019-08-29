@@ -1,6 +1,7 @@
 package gui.portal.gestion;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,10 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.joda.time.LocalDateTime;
 import org.primefaces.PrimeFaces;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 
 import gui.persistence.wunderlist.WunderlistWSBean;
 import modelo.Sesion;
@@ -22,8 +26,10 @@ import modelo.gestion.Gestion;
 import modelo.gestion.Task;
 import modelo.gestion.TaskComment;
 import modelo.gestion.WUsuario;
+import persistence.dynamodb.ControlAcceso;
 import resources.DataBase;
 import util.FacesUtils;
+import util.utilidades;
 import util.gestion.UtilidadesGestion;
 
 @ManagedBean
@@ -54,6 +60,25 @@ public class HistorialGestionBean
 	{
 		this.taskComment = new TaskComment();
 		getHistorialGestiones();
+		
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+		
+		try {
+			InetAddress inetAddress = InetAddress.getLocalHost();
+
+			ControlAcceso item = new ControlAcceso();
+			item.setId((int) (Math.random() * 25000 + 1));
+			item.setTitle("Accediendo al historial");
+			item.setIp(inetAddress.getHostAddress()+" - "+inetAddress.getCanonicalHostName()+" - "+inetAddress.getHostName());
+			item.setFechahora(LocalDateTime.now().toString());
+
+			mapper.save(item);
+
+		} catch (Exception e) {
+			System.out.println("Excepción en algo de Amazon");
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void getHistorialGestiones()

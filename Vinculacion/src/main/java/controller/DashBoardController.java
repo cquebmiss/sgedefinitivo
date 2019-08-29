@@ -6,11 +6,9 @@ import javax.persistence.EntityManager;
 
 import gui.Login;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import modelo.persistence.ConfUsuario;
 import modelo.persistence.Persona;
-import modelo.persistence.Usuario;
+import persistence.dynamodb.Usuario;
 import resources.DataBase;
 import util.FacesUtils;
 
@@ -27,7 +25,7 @@ public class DashBoardController
 		this.entityManagerCRM = dataBaseBean.getEntityManagerCRM();
 
 		Login login = (Login) FacesUtils.getManagedBean("login");
-		this.usuarioEnSesion = login.getUsuarioEnSesion();
+		this.usuarioEnSesion = login.getUsuarioAWS();
 
 	}
 	
@@ -37,7 +35,7 @@ public class DashBoardController
 				"FROM persona p WHERE p.decision.idDecision = -1 AND (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
 				+ "IN ( SELECT cnf.confUsuarioPK.idEstado,cnf.confUsuarioPK.idMunicipio,cnf.confUsuarioPK.idLocalidad FROM confusuario cnf "
 				+ "WHERE cnf.confUsuarioPK.idUsuario= :idUsuario)",
-				Persona.class).setParameter("idUsuario", this.usuarioEnSesion.getIdUsuario()).getResultList();
+				Persona.class).setParameter("idUsuario", Integer.parseInt(this.usuarioEnSesion.getIdUsuario())).getResultList();
 	}
 
 	public List<Persona> getPersonasEntrevistadas()
@@ -46,7 +44,7 @@ public class DashBoardController
 				"FROM persona p WHERE p.decision.idDecision > -1 AND (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
 				+ "IN ( SELECT cnf.confUsuarioPK.idEstado,cnf.confUsuarioPK.idMunicipio,cnf.confUsuarioPK.idLocalidad FROM confusuario cnf "
 				+ "WHERE cnf.confUsuarioPK.idUsuario= :idUsuario)",
-				Persona.class).setParameter("idUsuario", this.usuarioEnSesion.getIdUsuario()).getResultList();
+				Persona.class).setParameter("idUsuario", Integer.parseInt(this.usuarioEnSesion.getIdUsuario())).getResultList();
 	}
 
 }

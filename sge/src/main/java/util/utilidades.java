@@ -16,6 +16,13 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+
 import modelo.PermisoSistema;
 import modelo.Usuario;
 import resources.DataBase;
@@ -32,6 +39,31 @@ public class utilidades implements Serializable
 	public static String[] comandos = new String[] { "pp" };
 
 	public static DecimalFormat formato = new DecimalFormat("$#,###.00");
+	
+	
+	public static AmazonDynamoDB client = null;
+	public static DynamoDB dynamoDB = null;
+	
+	
+	public static AmazonDynamoDB getAWSDynamoDBClient()
+	{
+		if( utilidades.client == null )
+		{
+			BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAVWPSHQFDG3A65247",
+					"jzZx6WPlUHIeVH0CxgEh9lael0ZtZQVp9gSVnN32");
+
+			utilidades.client = AmazonDynamoDBClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).withRegion(Regions.US_WEST_2).build();
+			
+			utilidades.dynamoDB = new DynamoDB(client);
+			
+		}
+		
+		
+		return utilidades.client;
+		
+	}
+	
 
 	public static String ajustaMoneda(String valor1)
 	{

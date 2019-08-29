@@ -8,6 +8,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.gestion.NuevaGestionBean;
+import persistence.dynamodb.CategoriaGestionAWS;
 import util.FacesUtils;
 
 @FacesConverter("categoriaGestionConverter")
@@ -24,7 +25,7 @@ public class CategoriaGestionConverter implements Converter
 			return null;
 		}
 
-		Optional<CategoriaGestion> res = bean.getCatCategoriaGestion().stream()
+		Optional<CategoriaGestionAWS> res = bean.getCatCategoriaGestionAWS().stream()
 				.filter(v -> v.getIdCategoriaGestion() == Integer.parseInt(id)).findFirst();
 
 		return res.get();
@@ -35,7 +36,7 @@ public class CategoriaGestionConverter implements Converter
 	{
 		if (value != null)
 		{
-			return "" + ((CategoriaGestion) value).getIdCategoriaGestion();
+			return "" + ((CategoriaGestionAWS) value).getIdCategoriaGestion();
 		}
 
 		return null;

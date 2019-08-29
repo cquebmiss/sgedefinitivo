@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -46,6 +45,8 @@ import modelo.gestion.json.MunicipioINEGI;
 import modelo.gestion.json.RespuestaEstadosJson;
 import modelo.gestion.json.RespuestaLocalidadesJson;
 import modelo.gestion.json.RespuestaMunicipiosJson;
+import persistence.dynamodb.CategoriaGestionAWS;
+import persistence.dynamodb.StatusActividadAWS;
 import resources.DataBase;
 import service.INEGIService;
 import util.FacesUtils;
@@ -60,9 +61,11 @@ public class NuevaGestionBean
 	// Dado que una gestión es una actividad se comparte el catálogo de status de
 	// actividades
 	private List<StatusActividad> catStatusActividad;
+	private List<StatusActividadAWS> catStatusActividadAWS;
 	private List<TipoGestion> catTiposGestion;
 	private List<SeguridadSocial> catSeguridadSocial;
 	private List<CategoriaGestion> catCategoriaGestion;
+	private List<CategoriaGestionAWS> catCategoriaGestionAWS;
 	private List<UnidadSalud> catUnidadSalud;
 	private List<TipoDescuento> catTipoDescuento;
 
@@ -104,9 +107,11 @@ public class NuevaGestionBean
 	public void iniciaNuevaGestion()
 	{
 		this.catStatusActividad = UtilidadesGestion.getCatStatusActividad();
+		this.catStatusActividadAWS = UtilidadesGestion.getCatStatusActividadAWS();
 		this.catTiposGestion = UtilidadesGestion.getCatTipoGestion();
 		this.catSeguridadSocial = UtilidadesGestion.getCatSeguridadSocial();
 		this.catCategoriaGestion = UtilidadesGestion.getCatCategoriaGestion();
+		this.catCategoriaGestionAWS = UtilidadesGestion.getCatCategoriaGestionAWS();
 		setCatUnidadSalud(UtilidadesGestion.getCatUnidadSalud());
 		setCatTipoDescuento(UtilidadesGestion.getCatTipoDescuento());
 

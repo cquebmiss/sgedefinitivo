@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import modelo.persistence.Decision;
 import modelo.persistence.Persona;
-import modelo.persistence.Usuario;
+import persistence.dynamodb.Usuario;
 import resources.DataBase;
 import util.FacesUtils;
 
@@ -25,7 +25,7 @@ public class CapturaController
 		this.entityManagerCRM = dataBaseBean.getEntityManagerCRM();
 
 		Login login = (Login) FacesUtils.getManagedBean("login");
-		this.usuarioEnSesion = login.getUsuarioEnSesion();
+		this.usuarioEnSesion = login.getUsuarioAWS();
 
 	}
 
