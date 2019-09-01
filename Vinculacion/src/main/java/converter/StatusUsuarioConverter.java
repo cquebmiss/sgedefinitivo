@@ -8,7 +8,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.AdministracionBean;
-import modelo.persistence.StatusUsuario;
+import persistence.dynamodb.StatusUsuario;
 import util.FacesUtils;
 
 @FacesConverter("statusUsuarioConverter")

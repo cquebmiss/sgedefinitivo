@@ -15,6 +15,7 @@ public class MunicipioINEGI
 	private String	cve_agem;
 	private String	nom_agem;
 	private String	cve_cab;
+	private String 	nom_cab;
 	private String	pob;
 	private String	pob_fem;
 	private String	pob_mas;

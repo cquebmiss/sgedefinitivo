@@ -9,7 +9,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.AdministracionBean;
-import modelo.persistence.Localidad;
+import persistence.dynamodb.Localidad;
 import util.FacesUtils;
 
 @FacesConverter("localidadesConverter")
@@ -26,7 +26,7 @@ public class LocalidadesConverter implements Converter
 			return null;
 		}
 
-		Optional<Localidad> res = bean.getCatLocalidades().stream().filter(v -> v.getIdLocalidad().equalsIgnoreCase(id))
+		Optional<Localidad> res = bean.getCatLocalidades().stream().filter(v -> v.getClaveCombinada().equalsIgnoreCase(id))
 				.findFirst();
 
 		try
@@ -48,7 +48,7 @@ public class LocalidadesConverter implements Converter
 	{
 		if (value != null)
 		{
-			return "" + ((Localidad) value).getIdLocalidad();
+			return "" + ((Localidad) value).getClaveCombinada();
 		}
 
 		return null;

@@ -8,8 +8,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.AdministracionBean;
-import modelo.persistence.PermisoUsuario;
-import modelo.persistence.StatusUsuario;
+import persistence.dynamodb.PermisoUsuario;
 import util.FacesUtils;
 
 @FacesConverter("permisoUsuarioConverter")

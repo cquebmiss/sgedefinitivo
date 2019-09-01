@@ -6,9 +6,7 @@
 package gui;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -20,17 +18,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.persistence.EntityManager;
 
-import org.joda.time.LocalDateTime;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 
 import dao.LoginDAO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import modelo.persistence.Usuario;
-import modelo.persistence.dynamodb.*;
-import persistence.dynamodb.Localidad;
+import persistence.dynamodb.LocalidadConf;
+import persistence.dynamodb.PermisoUsuario;
+import persistence.dynamodb.StatusUsuario;
 import resources.DataBase;
 import util.FacesUtils;
 import util.utilidades;
@@ -66,7 +62,7 @@ public class Login implements Serializable
 	{
 		if( this.usuarioAWS != null )
 		{
-			return usuarioAWS.getDescripcionPermisoUsuario();
+			return usuarioAWS.getPermisoUsuario().getDescripcion();
 		}
 		else
 		{
@@ -84,25 +80,113 @@ public class Login implements Serializable
 			
 			
 			try {
-/*
- 				
+
+ 		/*		
  				DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
 				persistence.dynamodb.Usuario item = new persistence.dynamodb.Usuario();
 				item.setIdUsuario("1");
 				item.setNombre("cquebmiss");
-				item.setContraseña("salud");
-				item.setIdStatusUsuario(1);
-				item.setDescripcionStatusUsuario("Activo");
-				item.setIdPermisoUsuario(2);
-				item.setDescripcionPermisoUsuario("Administrador");
+				item.setContrasena("salud");
+				item.setStatusUsuario(new StatusUsuario(1, "Activo"));
+				item.setPermisoUsuario(new PermisoUsuario(2, "Administrador"));
 				
-				List<Localidad> localidades = new ArrayList<Localidad>();
-				localidades.add( new Localidad("04","Campeche","01","Campeche","40010002","Isla Arena (Punta Arena)") );
-				localidades.add( new Localidad("04","Campeche","003","Carmen","40031776","Oxcabal") );
-				localidades.add( new Localidad("04","Campeche","003","Carmen","40033395","Gustavo Díaz Ordaz 18 de marzo") );
+				List<LocalidadConf> localidades = new ArrayList<>();
+				localidades.add( new LocalidadConf("04","Campeche","01","Campeche","40010002","Isla Arena (Punta Arena)") );
+				localidades.add( new LocalidadConf("04","Campeche","003","Carmen","40031776","Oxcabal") );
+				localidades.add( new LocalidadConf("04","Campeche","003","Carmen","40033395","Gustavo Díaz Ordaz 18 de marzo") );
 				
-				item.setLocalidades(localidades);*/
+				item.setLocalidades(localidades);
+				mapper.save(item);*/
 				
+		/*		
+				DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+				
+				//Poblar las tablas de localidades, estados y municipios
+				
+				INEGIService inegiService = new INEGIService();
+				RespuestaEstadosJson respuesta = inegiService.getAllEstados();
+				
+
+				List<EstadoINEGI> estadosINEGI = respuesta.getDatos();
+				List<MunicipioINEGI> municipiosINEGI = null;
+				List<LocalidadINEGI> localidadesINEGI = null;
+				List<Estado> estadosAWS = new ArrayList<>();
+				List<Municipio> municipiosAWS = new ArrayList<>();
+				List<Localidad> localidadesAWS = new ArrayList<>();
+
+				if (estadosINEGI == null)
+				{
+					estadosINEGI = new ArrayList<>();
+				}
+
+				estadosINEGI.forEach(estado -> estadosAWS
+						.add(new Estado(estado.getCve_agee(), estado.getNom_agee(), estado.getNom_abrev(),
+								estado.getPob(), estado.getPob_fem(), estado.getPob_mas(), estado.getViv())));
+				
+				mapper.batchSave(estadosAWS);
+
+				RespuestaMunicipiosJson respuestaMun = null;
+				RespuestaLocalidadesJson respuestaLoca = null;
+				
+				//Recorrer todos los estados e ir insertando
+				for(EstadoINEGI estado : estadosINEGI)
+				{
+					if( ! estado.getCve_agee().equalsIgnoreCase("04"))
+					{
+						continue;
+					}
+					
+					municipiosAWS = new ArrayList<>();
+					respuestaMun = inegiService.getMunicipios(estado.getCve_agee());
+					municipiosINEGI = respuestaMun.getDatos();
+					
+					if(municipiosINEGI == null )
+					{
+						municipiosINEGI = new ArrayList<>();
+					}
+					
+					
+					for( MunicipioINEGI municipio : municipiosINEGI)
+					{
+						municipiosAWS.add(new Municipio(municipio.getCve_agee(),
+								municipio.getCve_agem(), municipio.getNom_agem(), municipio.getCve_cab(), municipio.getNom_cab(),
+								municipio.getPob(), municipio.getPob_fem(), municipio.getPob_mas(), municipio.getViv()));
+					}
+					
+					System.out.println("Salvando municipios del estado: "+estado.getNom_agee());
+					mapper.batchSave(municipiosAWS);
+					System.out.println("Salvados los municipios del estado: "+estado.getNom_agee());
+					
+					for(MunicipioINEGI municipio : municipiosINEGI)
+					{
+						localidadesAWS = new ArrayList<>();
+						respuestaLoca = inegiService.getLocalidades(estado.getCve_agee(), municipio.getCve_agem());
+						localidadesINEGI = respuestaLoca.getDatos();
+						
+						if( localidadesINEGI == null )
+						{
+							localidadesINEGI = new ArrayList<>();
+						}
+						
+						for(LocalidadINEGI loca : localidadesINEGI)
+						{
+							localidadesAWS.add(new Localidad(loca.getCve_agee(),
+									loca.getCve_agem(), loca.getCve_loc(), loca.getNom_loc(), loca.getAmbito(),
+									loca.getLatitud(), loca.getLongitud(), loca.getAltitud(), loca.getPob(), loca.getViv(),
+									loca.getCve_carta(), loca.getEstatus(), loca.getPeriodo()));
+						}
+						
+						
+						System.out.println("Salvando localidades del municipio: "+estado.getNom_agee()+"-"+municipio.getNom_agem());
+						mapper.batchSave(localidadesAWS);
+						System.out.println("Salvados las localidades del del municipio: "+estado.getNom_agee()+" - "+municipio.getNom_agem());
+						
+					}
+					
+					
+					
+				}
+				*/
 				List<persistence.dynamodb.Usuario> usuario = LoginDAO.getUsuario(getUsuario(), getContrasena());
 				
 				if( usuario == null )

@@ -14,6 +14,7 @@ import modelo.gestion.json.RespuestaMunicipiosJson;
 public class INEGIService
 {
 	private final String	URL_ESTADOS		= "http://geoweb2.inegi.org.mx/wscatgeo/mgee/buscar/";
+	private final String	URL_ALLESTADOS		= "http://geoweb2.inegi.org.mx/wscatgeo/mgee/";
 	private final String	URL_MUNICIPIOS	= "http://geoweb2.inegi.org.mx/wscatgeo/mgem/";
 	private final String	URL_LOCALIDADES	= "http://geoweb2.inegi.org.mx/wscatgeo/localidades/";
 	private Client			client;
@@ -26,6 +27,11 @@ public class INEGIService
 	public RespuestaEstadosJson getEstados(String busqueda)
 	{
 		return consumeServiceEstados(this.URL_ESTADOS + busqueda);
+	}
+
+	public RespuestaEstadosJson getAllEstados()
+	{
+		return consumeServiceEstados(this.URL_ALLESTADOS);
 	}
 
 	public RespuestaMunicipiosJson getMunicipios(String idEstado)

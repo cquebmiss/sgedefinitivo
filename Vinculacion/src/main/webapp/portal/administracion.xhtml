@@ -50,7 +50,8 @@
 					</h4>
 					<br></br>
 					<p:commandButton value="Nuevo Usuario"
-						actionListener="#{administracionBean.actionNuevoUsuario}" update="@(.outputUsuarios)"></p:commandButton>
+						actionListener="#{administracionBean.actionNuevoUsuario}"
+						update="@(.outputUsuarios)"></p:commandButton>
 					<br></br>
 					<br></br>
 
@@ -141,22 +142,37 @@
 							<p:column>
 								<p:outputLabel value="Contraseña"></p:outputLabel>
 								<p:inputText
-									value="#{administracionBean.usuarioSeleccionado.contraseña}"></p:inputText>
+									value="#{administracionBean.usuarioSeleccionado.contrasena}"></p:inputText>
 							</p:column>
+							<p:column></p:column>
+
+							<h:panelGrid columns="3">
+								<f:facet name="header"> Búsqueda de localidad	</f:facet>
+
+								<p:inputText placeholder="Estado"
+									value="#{administracionBean.cve_agee}"></p:inputText>
+								<p:inputText placeholder="Municipio"
+									value="#{administracionBean.cve_agem}"></p:inputText>
+								<p:inputText placeholder="Localidad"
+									value="#{administracionBean.cve_loc}"></p:inputText>
+							</h:panelGrid>
+							<p:column></p:column>
+							<p:commandButton value="Buscar" update="@form"
+								actionListener="#{administracionBean.actionBuscarLocalidad}"></p:commandButton>
 							<p:column></p:column>
 
 						</p:panelGrid>
 
+
+
 						<div class="ui-g-12 ui-lg-12">
-							<h3>Localidades</h3>
 							<p:pickList id="pickList"
 								value="#{administracionBean.localidadesDualListModel}" var="loc"
-								itemLabel="#{loc}" itemValue="#{loc}"  
-								converter="localidadesConverter"  
-								showSourceFilter="true" filterMatchMode="contains"
-								showTargetFilter="true" responsive="true">
-								<f:facet name="sourceCaption">Localidades</f:facet>
-								<f:facet name="targetCaption">Asignadas</f:facet>
+								itemLabel="#{loc}" itemValue="#{loc}" showSourceFilter="true"
+								filterMatchMode="contains" showTargetFilter="true"
+								responsive="true">
+								<f:facet name="sourceCaption">Encontradas</f:facet>
+								<f:facet name="targetCaption">Localidades Asignadas</f:facet>
 							</p:pickList>
 						</div>
 

@@ -1,13 +1,14 @@
 package gui.portal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.model.DualListModel;
 
@@ -15,12 +16,12 @@ import controller.AdministracionController;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import modelo.persistence.ConfUsuario;
-import modelo.persistence.ConfUsuarioPK;
-import modelo.persistence.Localidad;
-import modelo.persistence.PermisoUsuario;
-import modelo.persistence.StatusUsuario;
-import modelo.persistence.Usuario;
+import persistence.dynamodb.Estado;
+import persistence.dynamodb.LocalidadConf;
+import persistence.dynamodb.Municipio;
+import persistence.dynamodb.PermisoUsuario;
+import persistence.dynamodb.StatusUsuario;
+import persistence.dynamodb.Usuario;
 
 @ManagedBean
 @SessionScoped
@@ -38,11 +39,17 @@ public class AdministracionBean
 	private List<Usuario> usuariosSistemaFilter;
 	private Usuario usuarioSeleccionado;
 
-	private DualListModel<Localidad> localidadesDualListModel;
-	private List<Localidad> catLocalidades;
+	private DualListModel<String> localidadesDualListModel;
+	private List<String> catEstados;
+	private List<String> catLocalidades;
+	private List<String> catMunicipios;
 
 	private List<StatusUsuario> catStatusUsuario;
 	private List<PermisoUsuario> catPermisoUsuario;
+	
+	private String cve_agee;
+	private String cve_agem;
+	private String cve_loc;
 
 	@PostConstruct
 	public void postConstruct()
@@ -53,41 +60,38 @@ public class AdministracionBean
 
 	private void inicializaFormulario()
 	{
-		this.catLocalidades = this.administracionController.getLocalidadesSistema();
-
-		this.localidadesDualListModel = new DualListModel<Localidad>(this.administracionController.getLocalidadesSistema(), new ArrayList<Localidad>());
-		this.catStatusUsuario = this.administracionController.getCatStatusUsuario();
-		this.catPermisoUsuario = this.administracionController.getCatPermisoUsuario();
+		this.cve_agee = "";
+		this.cve_agem = "";
+		this.cve_loc = "";
+		this.localidadesDualListModel = new DualListModel<String>(new ArrayList<>(), new ArrayList<String>());
+		this.catStatusUsuario = this.administracionController.getCatStatusUsuarioAWS();
+		this.catPermisoUsuario = this.administracionController.getCatPermisoUsuarioAWS();
 	}
 
+	public void actionBuscarLocalidad()
+	{
+		if( this.cve_agem.trim().isEmpty()) {
+			return;
+		}
+		
+		if( this.cve_loc.trim().isEmpty())
+		{
+			this.localidadesDualListModel.setSource(this.administracionController.getLocalidadesSistemaAWS(this.cve_agee, this.cve_agem, this.cve_loc));
+		}
+		else
+		{
+			this.localidadesDualListModel.setSource(this.administracionController.getLocalidadesSistemaAWS(this.cve_agee, this.cve_agem, this.cve_loc));
+		}
+		
+	}
+	
 	public void actionSeleccionUsuario(Usuario usuario)
 	{
 		setUsuarioSeleccionado(usuario);
 		inicializaFormulario();
 		setTipoPanel(2);
-
-		List<Localidad> source = this.localidadesDualListModel.getSource();
-		List<Localidad> target = this.localidadesDualListModel.getTarget();
-
-		for (ConfUsuario confUsu : usuario.getConfUsuario())
-		{
-			for (int x = 0; x < source.size(); x++)
-			{
-
-				Localidad catLoc = source.get(x);
-
-				if ((confUsu.getConfUsuarioPK().getIdEstado() + "-" + confUsu.getConfUsuarioPK().getIdMunicipio() + "-"
-						+ confUsu.getConfUsuarioPK().getIdLocalidad()).equalsIgnoreCase(
-								catLoc.getIdEstado() + "-" + catLoc.getIdMunicipio() + "-" + catLoc.getIdLocalidad()))
-				{
-					target.add(catLoc);
-					source.remove(x);
-
-				}
-
-			}
-
-		}
+		
+		this.localidadesDualListModel = new DualListModel<String>(new ArrayList<>(), usuario.getLocalidadesString());
 
 	}
 
@@ -100,29 +104,81 @@ public class AdministracionBean
 
 	public void actionGetUsuariosSistema()
 	{
-		//setUsuariosSistema(this.administracionController.getUsuariosSistema());
+		setUsuariosSistema(this.administracionController.getUsuariosSistemaAWS());
 		setTipoPanel(1);
 	}
 
 	public void actionGuardarUsuario()
 	{
-
-		if (this.usuarioSeleccionado.getPermisoUsuario().getIdPermisoUsuario() == 1
-				&& this.localidadesDualListModel.getTarget().isEmpty())
+		List<Estado> catEstados = this.administracionController.getCatEstadosAWS();
+		List<Municipio> catMunicipios = new ArrayList<>();
+		
+		//Ordenar la lista de localidades
+		List<String> target = localidadesDualListModel.getTarget();
+		Collections.sort(target, String.CASE_INSENSITIVE_ORDER);
+		
+		usuarioSeleccionado.setLocalidades(new ArrayList<>());
+	
+		String nombreEstado;
+		String cve_loc;
+		String nombreMunicipio;
+		String nom_loc;
+		LocalidadConf locConf;
+		
+		List<Estado> estadoAGuardar;
+		List<Municipio> municipioAWS;
+		
+		for(String targetLoc : target)
 		{
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Localidades Asignadas", "El usuario no tiene localidades seleccionadas"));
-		} else
-		{
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Administrador", "El usuario no necesita localidades asignadas"));
+			String cve_agee = targetLoc.substring(0, 2);
+			
+			//Ubica al estado
+			estadoAGuardar = catEstados.stream().filter(estado-> estado.getCve_agee().equalsIgnoreCase(cve_agee)).collect(Collectors.toList());
+			nombreEstado = estadoAGuardar.get(0).getNom_agee();
+			
+			String cve_agem = targetLoc.substring(2, 5);
+			
+			//Verifica si el municipio ya lo hemos consultado en AWS
+			Optional<Municipio> munEncontrado = catMunicipios.stream().filter(mun-> mun.getCve_agee() == cve_agee && mun.getCve_agem() == cve_agem).findFirst();
+			
+			if( munEncontrado.isPresent() )
+			{
+				nombreMunicipio = munEncontrado.get().getNom_agem();
+			}
+			else
+			{
+				//Se consulta mediante AWS
+				municipioAWS = this.administracionController.getMunicipoAWS(cve_agee, cve_agem);
+				
+				if( municipioAWS == null || municipioAWS.isEmpty())
+				{
+					nombreMunicipio = "";
+				}
+				else
+				{
+					nombreMunicipio = municipioAWS.get(0).getNom_agem();
+					catMunicipios.add(municipioAWS.get(0));
+				}
+				
+				
+			}
+			
+			
+			cve_loc = targetLoc.substring(5, 9);
+			nom_loc = targetLoc.substring(targetLoc.indexOf("-")+2, targetLoc.length());
+			
+			locConf = new LocalidadConf(cve_agee, nombreEstado, cve_agem, nombreMunicipio, cve_loc, nom_loc);
+			
+			usuarioSeleccionado.getLocalidades().add(locConf);
 		}
-
-	//	this.administracionController.saveUsuario(this.usuarioSeleccionado, this.localidadesDualListModel.getTarget(),
-		//		this.catLocalidades);
+		
+		
+		this.administracionController.saveUsuarioAWS(this.usuarioSeleccionado);
+		
 
 		setTipoPanel(1);
 
 	}
+	
 
 }
