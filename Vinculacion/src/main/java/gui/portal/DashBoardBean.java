@@ -11,7 +11,6 @@ import controller.DashBoardController;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import modelo.persistence.Persona;
 
 @ManagedBean
 @SessionScoped
@@ -20,18 +19,18 @@ import modelo.persistence.Persona;
 @NoArgsConstructor
 public class DashBoardBean implements Serializable
 {
-	DashBoardController dashBoardController;
+	DashBoardController							dashBoardController;
 
 	// Tabla de usuarios
-	private List<Persona> personasEntrevistadas;
-	private List<Persona> personasEntrevistadasFilter;
+	private List<persistence.dynamodb.Persona>	personasEntrevistadas;
+	private List<persistence.dynamodb.Persona>	personasEntrevistadasFilter;
 
 	@PostConstruct
 	public void postConstruct()
 	{
 		this.dashBoardController = new DashBoardController();
 
-		this.personasEntrevistadas = this.dashBoardController.getPersonasEntrevistadas();
+		this.personasEntrevistadas = this.dashBoardController.getPersonasEntrevistadasAWS();
 	}
 
 }

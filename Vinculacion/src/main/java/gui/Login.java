@@ -6,7 +6,6 @@
 package gui;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -16,20 +15,13 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.persistence.EntityManager;
-
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 
 import dao.LoginDAO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import persistence.dynamodb.LocalidadConf;
-import persistence.dynamodb.PermisoUsuario;
-import persistence.dynamodb.StatusUsuario;
 import resources.DataBase;
 import util.FacesUtils;
-import util.utilidades;
 
 /**
  *
@@ -46,7 +38,6 @@ public class Login implements Serializable
 	private String usuario;
 	private String contrasena;
 	private String mensajeError;
-	private EntityManager entityManagerCRM;
 
 	private persistence.dynamodb.Usuario usuarioAWS;
 
@@ -54,7 +45,6 @@ public class Login implements Serializable
 	public void postConstruct()
 	{
 		DataBase dataBaseBean = (DataBase) FacesUtils.getManagedBean("database");
-		this.entityManagerCRM = dataBaseBean.getEntityManagerCRM();
 	}
 
 

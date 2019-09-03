@@ -1,50 +1,70 @@
 package controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.EntityManager;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import gui.Login;
 import lombok.Getter;
 import lombok.Setter;
-import modelo.persistence.Persona;
+import persistence.dynamodb.Persona;
 import persistence.dynamodb.Usuario;
-import resources.DataBase;
 import util.FacesUtils;
+import util.utilidades;
 
 @Getter
 @Setter
 public class DashBoardController
 {
-	private EntityManager entityManagerCRM;
 	private Usuario usuarioEnSesion;
 
 	public DashBoardController()
 	{
-		DataBase dataBaseBean = (DataBase) FacesUtils.getManagedBean("database");
-		this.entityManagerCRM = dataBaseBean.getEntityManagerCRM();
-
 		Login login = (Login) FacesUtils.getManagedBean("login");
 		this.usuarioEnSesion = login.getUsuarioAWS();
 
 	}
-	
-	public List<Persona> getPersonasNoEntrevistadas()
+
+	public List<Persona> getPersonasNoEntrevistadasAWS()
 	{
-		return this.entityManagerCRM.createQuery(
-				"FROM persona p WHERE p.decision.idDecision = -1 AND (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
-				+ "IN ( SELECT cnf.confUsuarioPK.idEstado,cnf.confUsuarioPK.idMunicipio,cnf.confUsuarioPK.idLocalidad FROM confusuario cnf "
-				+ "WHERE cnf.confUsuarioPK.idUsuario= :idUsuario)",
-				Persona.class).setParameter("idUsuario", Integer.parseInt(this.usuarioEnSesion.getIdUsuario())).getResultList();
+		List<persistence.dynamodb.Persona> catMunicipiosAWS = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":val1", new AttributeValue().withN("-1"));
+
+		DynamoDBScanExpression queryExpression = new DynamoDBScanExpression()
+				.withFilterExpression("decision.idDecision = :val1")
+				// .withProjectionExpression("cve_agee,cve_agem,nom_agem")
+				.withExpressionAttributeValues(eav);
+
+		catMunicipiosAWS = mapper.scan(Persona.class, queryExpression);
+
+		return catMunicipiosAWS;
 	}
 
-	public List<Persona> getPersonasEntrevistadas()
+	public List<Persona> getPersonasEntrevistadasAWS()
 	{
-		return this.entityManagerCRM.createQuery(
-				"FROM persona p WHERE p.decision.idDecision > -1 AND (p.localidad.idEstado,p.localidad.idMunicipio,p.localidad.idLocalidad) "
-				+ "IN ( SELECT cnf.confUsuarioPK.idEstado,cnf.confUsuarioPK.idMunicipio,cnf.confUsuarioPK.idLocalidad FROM confusuario cnf "
-				+ "WHERE cnf.confUsuarioPK.idUsuario= :idUsuario)",
-				Persona.class).setParameter("idUsuario", Integer.parseInt(this.usuarioEnSesion.getIdUsuario())).getResultList();
+		List<persistence.dynamodb.Persona> catMunicipiosAWS = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":val1", new AttributeValue().withN("-1"));
+
+		DynamoDBScanExpression queryExpression = new DynamoDBScanExpression()
+				.withFilterExpression("decision.idDecision > :val1")
+				// .withProjectionExpression("cve_agee,cve_agem,nom_agem")
+				.withExpressionAttributeValues(eav);
+
+		catMunicipiosAWS = mapper.scan(Persona.class, queryExpression);
+
+		return catMunicipiosAWS;
 	}
 
 }

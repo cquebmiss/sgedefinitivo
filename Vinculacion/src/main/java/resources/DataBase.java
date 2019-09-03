@@ -12,9 +12,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.sql.DataSource;
 
 import lombok.Getter;
@@ -37,8 +34,6 @@ public class DataBase
 	private DataSource	dataSourceGestiones;
 	private DataSource	dataSourceClimaLaboral;
 	
-	private	EntityManagerFactory sessionFactoryCRM;
-	private EntityManager entityManagerCRM;
 	 
 
 	public DataBase()
@@ -49,8 +44,6 @@ public class DataBase
 			context = new InitialContext();
 			setDataSource(0);
 			
-			this.sessionFactoryCRM = Persistence.createEntityManagerFactory("CRM");
-			this.entityManagerCRM = this.sessionFactoryCRM.createEntityManager();
 		}
 		catch (Exception e)
 		{
@@ -164,10 +157,6 @@ public class DataBase
 	}
 	
 	
-	public EntityManager getEntityManagerCRM()
-	{
-		return this.entityManagerCRM;
-	}
 	
 
 	/**

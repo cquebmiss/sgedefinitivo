@@ -28,15 +28,106 @@
 
 				<div class="ui-g layout-dashboard">
 
+					<h:panelGroup rendered="#{capturaBean.personaAWS != null}">
 
-					<h:panelGroup rendered="#{capturaBean.personaSeleccionada == null}">
-					<div>
-					<p:commandButton value="Añadir Persona" icon="fa fa-user-plus"></p:commandButton>
-					</div>
+						<p:panel>
 
-						<div class="ui-g-12 ui-lg-12">
-							
+							<f:facet name="header">Nueva Persona</f:facet>
+
+							<p:spacer height="15"></p:spacer>
+							<p:messages id="messages" showDetail="false" closable="true">
+								<p:autoUpdate />
+							</p:messages>
+
+							<p:panelGrid columns="4" cellspacing="15" cellpadding="15">
+
+
+								<p:inputText placeholder="Nombre" label="Nombres"
+									value="#{capturaBean.personaAWS.nombres}" required="true">
+									<p:ajax event="blur"></p:ajax>
+								</p:inputText>
+								<p:inputText placeholder="Ap. Paterno" label="Apellido Paterno"
+									value="#{capturaBean.personaAWS.apPaterno}" required="true">
+									<p:ajax event="blur"></p:ajax>
+								</p:inputText>
+								<p:inputText placeholder="Ap. Materno"
+									value="#{capturaBean.personaAWS.apMaterno}">
+									<p:ajax event="blur"></p:ajax>
+								</p:inputText>
+								<p:selectOneMenu id="console" style="width:125px"
+									value="#{capturaBean.personaAWS.sexo}">
+									<p:ajax event="blur"></p:ajax>
+									<f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+									<f:selectItem itemLabel="Femenino" itemValue="Femenino" />
+								</p:selectOneMenu>
+
+
+							</p:panelGrid>
+
+							<br></br>
+
+							<p:outputLabel value="Localidad"></p:outputLabel>
+
+							<p:panelGrid columns="3" cellspacing="15" cellpadding="15">
+
+								<p:inputText placeholder="Estado" id="inputEstado"
+									value="#{capturaBean.personaAWS.localidad.idEstado}"></p:inputText>
+								<p:inputText placeholder="Municipio" id="inputMunicipio"
+									value="#{capturaBean.personaAWS.localidad.idMunicipio}"></p:inputText>
+								<p:inputText placeholder="Localidad" id="inputLocalidad"
+									value="#{capturaBean.personaAWS.localidad.idLocalidad}"></p:inputText>
+
+								<f:facet name="footer">
+									<center>
+
+										<p:commandButton style="width: 100%" value="Buscar"
+											update="@(.outputTable)"
+											process="inputEstado, inputMunicipio, inputLocalidad, @this"
+											actionListener="#{capturaBean.actionBuscarLocalidad}"></p:commandButton>
+
+									</center>
+								</f:facet>
+
+							</p:panelGrid>
+
+							<p:spacer height="15"></p:spacer>
+
+							<p:outputLabel for="advanced" value="Resultados:" />
+							<p:selectOneListbox id="advanced" label="Localidad"
+								value="#{capturaBean.localidadSeleccionada}" filter="true"
+								filterMatchMode="contains" required="true"
+								requiredMessage="Asigne una localidad a la nueva persona.">
+								<f:selectItems value="#{capturaBean.catLocalidades}" var="theme"
+									itemLabel="#{theme}" itemValue="#{theme}" />
+								<p:column>
+									<h:outputText value="#{t}" />
+								</p:column>
+
+							</p:selectOneListbox>
+
+							<f:facet name="footer">
+								<h:panelGrid columns="2" cellspacing="35" cellpadding="35">
+									<p:commandButton value="Guardar"
+										actionListener="#{capturaBean.actionCrearPersona}"
+										update="@(.outputTable)"></p:commandButton>
+									<p:commandButton value="Cancelar"
+										actionListener="#{capturaBean.actionCancelarCrearPersona}"
+										update="@(.outputTable)" process="@this" immediate="true"></p:commandButton>
+								</h:panelGrid>
+							</f:facet>
+						</p:panel>
+
+					</h:panelGroup>
+
+					<h:panelGroup
+						rendered="#{capturaBean.personaSeleccionada == null and capturaBean.personaAWS == null}">
+						<div>
+							<p:commandButton value="Añadir Persona" icon="fa fa-user-plus"
+								actionListener="#{capturaBean.actionNuevaPersona}"
+								update="@(.outputTable)"></p:commandButton>
 						</div>
+
+						<div class="ui-g-12 ui-lg-12"></div>
 
 
 						<div class="ui-g-12 ui-lg-12">
@@ -84,10 +175,10 @@
 											</p:column>
 
 											<p:column headerText="Estado/Municipio/Localidad"
-												sortBy="#{per.localidad.descripcion}"
-												filterBy="#{per.localidad.descripcion}"
+												sortBy="#{per.localidad.descripcionLocalidad}"
+												filterBy="#{per.localidad.descripcionLocalidad}"
 												filterMatchMode="contains">
-												<h:outputText value="#{per.localidad.descripcion}" />
+												<h:outputText value="#{per.localidad.descripcionLocalidad}" />
 											</p:column>
 
 
@@ -147,10 +238,10 @@
 											</p:column>
 
 											<p:column headerText="Estado/Municipio/Localidad"
-												sortBy="#{per.localidad.descripcion}"
-												filterBy="#{per.localidad.descripcion}"
+												sortBy="#{per.localidad.descripcionLocalidad}"
+												filterBy="#{per.localidad.descripcionLocalidad}"
 												filterMatchMode="contains">
-												<h:outputText value="#{per.localidad.descripcion}" />
+												<h:outputText value="#{per.localidad.descripcionLocalidad}" />
 											</p:column>
 
 											<p:column headerText="Resultado de la Entrevista"
@@ -187,7 +278,7 @@
 
 							<h:outputText value="Persona encuestando:"></h:outputText>
 							<h:outputText style="font-weight: bold"
-								value="#{capturaBean.personaSeleccionada}"></h:outputText>
+								value="#{capturaBean.personaSeleccionada.nombres} #{capturaBean.personaSeleccionada.apPaterno} #{capturaBean.personaSeleccionada.apMaterno}"></h:outputText>
 
 						</div>
 
@@ -329,7 +420,7 @@
 								<p:column>
 									<p:outputLabel value="¿Utiliza Mensajes de Texto?"></p:outputLabel>
 									<p:selectBooleanCheckbox
-										value="#{capturaBean.personaSeleccionada.SMS}"></p:selectBooleanCheckbox>
+										value="#{capturaBean.personaSeleccionada.sMS}"></p:selectBooleanCheckbox>
 								</p:column>
 								<p:column>
 									<p:outputLabel value="Correo Electrónico"></p:outputLabel>
@@ -429,7 +520,12 @@
 
 				</h:panelGroup>
 			</h:form>
+
+
+
 		</p:outputPanel>
+
+
 
 
 
