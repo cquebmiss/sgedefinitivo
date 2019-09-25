@@ -8,6 +8,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.gestion.NuevaGestionBean;
+import persistence.dynamodb.TipoDescuentoAWS;
 import util.FacesUtils;
 
 @FacesConverter("tipoDescuentoConverter")
@@ -19,16 +20,16 @@ public class TipoDescuentoConverter implements Converter
 	{
 		NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("nuevaGestionBean");
 
-		if (bean.getCatTipoDescuento() == null || bean.getCatTipoDescuento().isEmpty())
+		if (bean.getCatTipoDescuentoAWS() == null || bean.getCatTipoDescuentoAWS().isEmpty())
 		{
 			return null;
 		}
 
-		Optional<TipoDescuento> res = null;
+		Optional<TipoDescuentoAWS> res = null;
 
 		if (!id.equalsIgnoreCase("..."))
 		{
-			res = bean.getCatTipoDescuento().stream().filter(v -> v.getIdTipoDescuento() == Integer.parseInt(id))
+			res = bean.getCatTipoDescuentoAWS().stream().filter(v -> v.getIdTipoDescuento() == Integer.parseInt(id))
 					.findFirst();
 			return res.get();
 		}
@@ -42,7 +43,7 @@ public class TipoDescuentoConverter implements Converter
 	{
 		if (value != null)
 		{
-			return "" + ((TipoDescuento) value).getIdTipoDescuento();
+			return "" + ((TipoDescuentoAWS) value).getIdTipoDescuento();
 		}
 
 		return null;

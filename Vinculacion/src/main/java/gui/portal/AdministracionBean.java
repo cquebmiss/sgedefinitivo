@@ -182,7 +182,7 @@ public class AdministracionBean
 			cve_loc = targetLoc.substring(5, 9);
 			nom_loc = targetLoc.substring(targetLoc.indexOf("-") + 2, targetLoc.length());
 
-			locConf = new LocalidadConf(cve_agee, nombreEstado, cve_agem, nombreMunicipio, cve_loc, nom_loc);
+			locConf = new LocalidadConf(cve_agee.trim(), nombreEstado.trim(), cve_agem.trim(), nombreMunicipio.trim(), cve_loc.trim(), nom_loc.trim());
 
 			usuarioSeleccionado.getLocalidades().add(locConf);
 		}

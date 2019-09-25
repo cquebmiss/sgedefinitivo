@@ -14,6 +14,7 @@ import javax.faces.context.FacesContext;
 import controller.AdministracionController;
 import controller.CapturaController;
 import controller.DashBoardController;
+import gui.Login;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import persistence.dynamodb.Estado;
 import persistence.dynamodb.LocalidadConf;
 import persistence.dynamodb.Municipio;
 import persistence.dynamodb.Persona;
+import util.FacesUtils;
 
 @ManagedBean
 @SessionScoped
@@ -29,28 +31,28 @@ import persistence.dynamodb.Persona;
 @NoArgsConstructor
 public class CapturaBean implements Serializable
 {
-	DashBoardController							dashBoardController;
-	CapturaController							capturaController;
+	DashBoardController					dashBoardController;
+	CapturaController					capturaController;
 
-	private AdministracionController			administracionController;
+	private AdministracionController	administracionController;
 
 	// Tabla de usuarios
-	private List<Persona>	personasNoEntrevistadas;
-	private List<Persona>	personasNoEntrevistadasFilter;
-	private Persona		personaNoEntrevistadaSeleccionada;
+	private List<Persona>				personasNoEntrevistadas;
+	private List<Persona>				personasNoEntrevistadasFilter;
+	private Persona						personaNoEntrevistadaSeleccionada;
 
-	private List<Persona>	personasEntrevistadas;
-	private List<Persona>	personasEntrevistadasFilter;
-	private Persona		personaSeleccionada;
-	private Persona		personaAWS;
+	private List<Persona>				personasEntrevistadas;
+	private List<Persona>				personasEntrevistadasFilter;
+	private Persona						personaSeleccionada;
+	private Persona						personaAWS;
 
-	private Integer								idDecision;
+	private Integer						idDecision;
 
-	private String								cve_agee;
-	private String								cve_agem;
-	private String								cve_loc;
-	private List<String>						catLocalidades;
-	private String								localidadSeleccionada;
+	private String						cve_agee;
+	private String						cve_agem;
+	private String						cve_loc;
+	private List<String>				catLocalidades;
+	private String						localidadSeleccionada;
 
 	@PostConstruct
 	public void postConstruct()
@@ -72,8 +74,10 @@ public class CapturaBean implements Serializable
 
 	public void updateTablas()
 	{
-		this.personasNoEntrevistadas = this.dashBoardController.getPersonasNoEntrevistadasAWS();
-		this.personasEntrevistadas = this.dashBoardController.getPersonasEntrevistadasAWS();
+		Login loginBean = (Login) FacesUtils.getManagedBean("login");
+		
+		this.personasNoEntrevistadas = this.dashBoardController.getPersonasNoEntrevistadasAWS(loginBean.getUsuarioAWS().getLocalidades());
+		this.personasEntrevistadas = this.dashBoardController.getPersonasEntrevistadasAWS(loginBean.getUsuarioAWS().getLocalidades());
 
 	}
 
@@ -117,6 +121,7 @@ public class CapturaBean implements Serializable
 
 	public void actionCrearPersona()
 	{
+		Login loginBean = (Login) FacesUtils.getManagedBean("login");
 
 		List<Estado> catEstados = this.administracionController.getCatEstadosAWS();
 		List<Municipio> municipioAWS = this.administracionController.getMunicipoAWS(
@@ -131,9 +136,9 @@ public class CapturaBean implements Serializable
 		this.personaAWS.getLocalidad().setDescripcionMunicipio(municipioAWS.get(0).getNom_agem());
 		this.personaAWS.getLocalidad()
 				.setIdLocalidad(this.localidadSeleccionada.substring(5, this.localidadSeleccionada.indexOf("-")));
-		
-		String descripcionLocalidad = this.localidadSeleccionada
-				.substring(this.localidadSeleccionada.indexOf("-") + 2, this.localidadSeleccionada.length());
+
+		String descripcionLocalidad = this.localidadSeleccionada.substring(this.localidadSeleccionada.indexOf("-") + 2,
+				this.localidadSeleccionada.length());
 		this.personaAWS.getLocalidad().setDescripcionLocalidad(descripcionLocalidad);
 
 		// Se valida que no exista una persona igual en la base de datos
@@ -156,7 +161,8 @@ public class CapturaBean implements Serializable
 				this.personaAWS.getLocalidad().getDescripcionEstado(), this.personaAWS.getLocalidad().getIdMunicipio(),
 				this.personaAWS.getLocalidad().getDescripcionMunicipio(),
 				this.personaAWS.getLocalidad().getIdLocalidad(),
-				this.personaAWS.getLocalidad().getDescripcionLocalidad());
+				this.personaAWS.getLocalidad().getDescripcionLocalidad(), loginBean.getUsuarioAWS().getIdUsuario(),
+				loginBean.getUsuarioAWS().getNombre());
 
 		updateTablas();
 		actionDetenerCaptura();
@@ -170,9 +176,12 @@ public class CapturaBean implements Serializable
 
 	public void actionGuardarDecision()
 	{
-		 this.capturaController.savePersona(this.personaSeleccionada,
-		 this.idDecision);
-		 updateTablas();
+		Login loginBean = (Login) FacesUtils.getManagedBean("login");
+		this.personaSeleccionada.setIdUsuarioCaptura(loginBean.getUsuarioAWS().getIdUsuario());
+		this.personaSeleccionada.setNombreUsuarioCaptura(loginBean.getUsuarioAWS().getNombre());
+		
+		this.capturaController.savePersona(this.personaSeleccionada, this.idDecision);
+		updateTablas();
 
 		// Si se ha seleccionado que no
 		if (this.idDecision == 0)
@@ -183,13 +192,21 @@ public class CapturaBean implements Serializable
 
 	public void actionGuardarFormularioAcepta()
 	{
-		 this.capturaController.savePersona(this.personaSeleccionada, null);
-		 actionDetenerCaptura();
+		Login loginBean = (Login) FacesUtils.getManagedBean("login");
+		this.personaSeleccionada.setIdUsuarioCaptura(loginBean.getUsuarioAWS().getIdUsuario());
+		this.personaSeleccionada.setNombreUsuarioCaptura(loginBean.getUsuarioAWS().getNombre());
+		
+		this.capturaController.savePersona(this.personaSeleccionada, null);
+		actionDetenerCaptura();
 
 	}
 
 	public void actionGuardarPersona(Persona persona)
 	{
+		Login loginBean = (Login) FacesUtils.getManagedBean("login");
+		persona.setIdUsuarioCaptura(loginBean.getUsuarioAWS().getIdUsuario());
+		persona.setNombreUsuarioCaptura(loginBean.getUsuarioAWS().getNombre());
+
 		this.capturaController.savePersona(persona, null);
 
 	}

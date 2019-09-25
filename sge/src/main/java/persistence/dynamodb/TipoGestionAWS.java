@@ -10,17 +10,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@DynamoDBTable(tableName = "gestion_StatusActividad")
 @DynamoDBDocument
-@NoArgsConstructor
+@DynamoDBTable(tableName = "gestion_TipoGestion")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class StatusActividadAWS
+public class TipoGestionAWS
 {
 	@DynamoDBHashKey
-	private int		idStatusActividad;
-	
+	private int		idTipoGestion;
 	@DynamoDBAttribute
 	private String	descripcion;
 

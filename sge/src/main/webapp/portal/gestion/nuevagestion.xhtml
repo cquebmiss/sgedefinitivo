@@ -61,7 +61,8 @@
 										<p:outputLabel for="campoFechaRecepcion"
 											value="Fecha de Recepción" />
 
-										<p:calendar id="campoFechaRecepcion" pattern="MM/dd/yyyy"
+										<p:calendar id="campoFechaRecepcion" pattern="dd/MM/yyyy"
+											converter="localDateTimeConverter"
 											value="#{nuevaGestionBean.gestion.fechaRecepcion}">
 											<p:ajax event="blur" process="@this"></p:ajax>
 										</p:calendar>
@@ -142,13 +143,13 @@
 												listener="#{nuevaGestionBean.onItemSelectEstado}"
 												update="@(.panelPrincipal)"></p:ajax>
 
-											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}" update="@(.classMun) @(.classLoc)"></p:ajax>
+											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}"
+												update="@(.classMun) @(.classLoc)"></p:ajax>
 
 
 										</p:autoComplete>
 
-										<p:outputLabel for="campoMunicipioOrigen"
-											value="Municipio"></p:outputLabel>
+										<p:outputLabel for="campoMunicipioOrigen" value="Municipio"></p:outputLabel>
 
 										<p:autoComplete id="campoMunicipioOrigen" minQueryLength="3"
 											effect="fade" forceSelection="true" styleClass="classMun"
@@ -161,18 +162,19 @@
 											<p:ajax event="itemSelect"
 												listener="#{nuevaGestionBean.onItemSelectMunicipio}"
 												update="@(.panelPrincipal)" />
-											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}" update="@(.classEdo) @(.classLoc)"></p:ajax>
+											<p:ajax event="blur" listener="#{nuevaGestionBean.blur}"
+												update="@(.classEdo) @(.classLoc)"></p:ajax>
 
 										</p:autoComplete>
 
-										<p:outputLabel for="campoLocalidadOrigen"
-											value="Localidad"></p:outputLabel>
+										<p:outputLabel for="campoLocalidadOrigen" value="Localidad"></p:outputLabel>
 
 										<p:autoComplete id="campoLocalidadOrigen" minQueryLength="3"
 											effect="fade" forceSelection="true" styleClass="classLoc"
 											completeMethod="#{nuevaGestionBean.autoCompleteLocalidades}"
 											converter="localidadConverter" var="theme"
-											itemLabel="#{theme.cve_loc} #{theme.nom_loc}" itemValue="#{theme}"
+											itemLabel="#{theme.cve_loc} #{theme.nom_loc}"
+											itemValue="#{theme}"
 											value="#{nuevaGestionBean.gestion.paciente.lugarResidencia.localidadINEGI}"
 											scrollHeight="300">
 											<p:ajax event="itemSelect" />
@@ -188,8 +190,9 @@
 
 											<p:ajax event="blur" process="@this"></p:ajax>
 
-											<f:selectItems value="#{nuevaGestionBean.catSeguridadSocial}"
-												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
+											<f:selectItems
+												value="#{nuevaGestionBean.catSeguridadSocialAWS}" var="ss"
+												itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
 
 										</p:selectOneMenu>
 
@@ -209,7 +212,7 @@
 
 											<p:ajax event="blur" process="@this"></p:ajax>
 
-											<f:selectItems value="#{nuevaGestionBean.catUnidadSalud}"
+											<f:selectItems value="#{nuevaGestionBean.catUnidadSaludAWS}"
 												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
 
 										</p:selectOneMenu>
@@ -225,7 +228,7 @@
 
 											<p:ajax event="blur" process="@this"></p:ajax>
 
-											<f:selectItems value="#{nuevaGestionBean.catUnidadSalud}"
+											<f:selectItems value="#{nuevaGestionBean.catUnidadSaludAWS}"
 												var="ss" itemLabel="#{ss.descripcion}" itemValue="#{ss}"></f:selectItems>
 
 										</p:selectOneMenu>
@@ -296,8 +299,9 @@
 													converter="tipoDescuentoConverter">
 													<p:ajax event="change"></p:ajax>
 													<f:selectItem itemLabel="..." noSelectionOption="true"></f:selectItem>
-													<f:selectItems value="#{nuevaGestionBean.catTipoDescuento}"
-														var="td" itemLabel="#{td.descripcion}" itemValue="#{td}"></f:selectItems>
+													<f:selectItems
+														value="#{nuevaGestionBean.catTipoDescuentoAWS}" var="td"
+														itemLabel="#{td.descripcion}" itemValue="#{td}"></f:selectItems>
 												</p:selectOneMenu>
 											</h:panelGrid>
 										</p:column>

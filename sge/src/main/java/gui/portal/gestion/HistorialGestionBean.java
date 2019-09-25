@@ -114,7 +114,7 @@ public class HistorialGestionBean
 		{
 			gestion.updateAllDataBD();
 			NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("nuevaGestionBean");
-			bean.iniciaEdicionGestion(gestion);
+	//		bean.iniciaEdicionGestion(gestion);
 
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			ec.redirect(ec.getRequestContextPath() + "/portal/gestion/nuevagestion.jsf");

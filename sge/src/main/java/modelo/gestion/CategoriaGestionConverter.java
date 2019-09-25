@@ -20,7 +20,7 @@ public class CategoriaGestionConverter implements Converter
 	{
 		NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("nuevaGestionBean");
 
-		if (bean.getCatCategoriaGestion() == null || bean.getCatCategoriaGestion().isEmpty())
+		if (bean.getCatCategoriaGestionAWS() == null || bean.getCatCategoriaGestionAWS().isEmpty())
 		{
 			return null;
 		}

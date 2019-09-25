@@ -8,6 +8,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.gestion.NuevaGestionBean;
+import persistence.dynamodb.SeguridadSocialAWS;
 import util.FacesUtils;
 
 @FacesConverter("seguridadSocialConverter")
@@ -19,12 +20,12 @@ public class SeguridadSocialConverter implements Converter
 	{
 		NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("nuevaGestionBean");
 
-		if (bean.getCatSeguridadSocial() == null || bean.getCatSeguridadSocial().isEmpty())
+		if (bean.getCatSeguridadSocialAWS() == null || bean.getCatSeguridadSocialAWS().isEmpty())
 		{
 			return null;
 		}
 
-		Optional<SeguridadSocial> res = bean.getCatSeguridadSocial().stream()
+		Optional<SeguridadSocialAWS> res = bean.getCatSeguridadSocialAWS().stream()
 				.filter(v -> v.getIdSeguridadSocial() == Integer.parseInt(id)).findFirst();
 
 		return res.get();
@@ -37,7 +38,7 @@ public class SeguridadSocialConverter implements Converter
 
 		if (value != null)
 		{
-			return "" + ((SeguridadSocial) value).getIdSeguridadSocial();
+			return "" + ((SeguridadSocialAWS) value).getIdSeguridadSocial();
 		}
 
 		return null;

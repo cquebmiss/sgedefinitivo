@@ -162,7 +162,9 @@ public class Login implements Serializable {
 
 		String tableName = "ControlAcceso";*/
 
-		/*try {
+		try {
+			DynamoDB dynamoDB = new DynamoDB(utilidades.getAWSDynamoDBClient());
+			String tableName = "ControlAcceso";
 
 			List<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
 			attributeDefinitions.add(new AttributeDefinition().withAttributeName("id").withAttributeType("N"));
@@ -173,7 +175,7 @@ public class Login implements Serializable {
 
 			CreateTableRequest request = new CreateTableRequest().withTableName(tableName).withKeySchema(keySchema)
 					.withAttributeDefinitions(attributeDefinitions).withProvisionedThroughput(
-							new ProvisionedThroughput().withReadCapacityUnits(5L).withWriteCapacityUnits(6L));
+							new ProvisionedThroughput().withReadCapacityUnits(5L).withWriteCapacityUnits(5L));
 
 			System.out.println("Issuing CreateTable request for " + tableName);
 			Table table = dynamoDB.createTable(request);
@@ -209,8 +211,11 @@ public class Login implements Serializable {
 		} catch (Exception e1) {
 		//	System.err.println("CreateTable request failed for " + tableName);
 			System.err.println(e1.getMessage());
-		}*/
+		}
 
+		
+		if(1==1)return;
+		
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnection();) {
 			Sesion controlSesion = (Sesion) FacesUtils.getManagedBean("Sesion");
 

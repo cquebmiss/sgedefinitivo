@@ -18,10 +18,18 @@ import javax.faces.model.SelectItem;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMappingException;
+import com.amazonaws.services.dynamodbv2.datamodeling.TransactionLoadRequest;
+import com.amazonaws.services.dynamodbv2.datamodeling.TransactionWriteRequest;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.model.InternalServerErrorException;
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.dynamodbv2.model.TransactionCanceledException;
 
 import modelo.PermisoSistema;
 import modelo.Usuario;
@@ -34,36 +42,50 @@ import resources.DataBase;
 public class utilidades implements Serializable
 {
 
-	public static String rutaServerArchivos = "/Users/desarolloyc/Downloads/ArchivosDigitales/";
+	public static String			rutaServerArchivos	= "/Users/desarolloyc/Downloads/ArchivosDigitales/";
 
-	public static String[] comandos = new String[] { "pp" };
+	public static String[]			comandos			= new String[] { "pp" };
 
-	public static DecimalFormat formato = new DecimalFormat("$#,###.00");
-	
-	
-	public static AmazonDynamoDB client = null;
-	public static DynamoDB dynamoDB = null;
-	
-	
+	public static DecimalFormat		formato				= new DecimalFormat("$#,###.00");
+
+	public static AmazonDynamoDB	client				= null;
+	public static DynamoDB			dynamoDB			= null;
+	public static DynamoDBMapper	mapper				= null;
+
 	public static AmazonDynamoDB getAWSDynamoDBClient()
 	{
-		if( utilidades.client == null )
+		if (utilidades.client == null)
 		{
 			BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAVWPSHQFDG3A65247",
 					"jzZx6WPlUHIeVH0CxgEh9lael0ZtZQVp9gSVnN32");
 
+			/*utilidades.client = AmazonDynamoDBClientBuilder.standard()
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).withRegion(Regions.US_WEST_2).build();*/
+			
 			utilidades.client = AmazonDynamoDBClientBuilder.standard()
-					.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).withRegion(Regions.US_WEST_2).build();
-			
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+					.withEndpointConfiguration(
+							new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "us-west-2"))
+					.build();
+
 			utilidades.dynamoDB = new DynamoDB(client);
-			
+
 		}
-		
-		
+
 		return utilidades.client;
-		
+
 	}
-	
+
+	public static DynamoDBMapper getMapper()
+	{
+		if (utilidades.mapper == null)
+		{
+			utilidades.mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		}
+
+		return utilidades.mapper;
+	}
 
 	public static String ajustaMoneda(String valor1)
 	{
@@ -87,7 +109,6 @@ public class utilidades implements Serializable
 		return valor1;
 	}
 
-
 	public static String formatoMoneda(String cantidad)
 	{
 		String cantidadFormato = null;
@@ -95,8 +116,7 @@ public class utilidades implements Serializable
 		try
 		{
 			cantidadFormato = formato.format(Double.parseDouble(cantidad));
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			cantidadFormato = "NaN";
 		}
@@ -143,8 +163,7 @@ public class utilidades implements Serializable
 
 			return sb.toString();
 
-		}
-		catch (java.security.NoSuchAlgorithmException e)
+		} catch (java.security.NoSuchAlgorithmException e)
 		{
 			e.printStackTrace();
 		}
@@ -152,7 +171,6 @@ public class utilidades implements Serializable
 		return null;
 
 	}
-
 
 	public static List<Usuario> getUsuariosRegistrados()
 	{
@@ -181,8 +199,7 @@ public class utilidades implements Serializable
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -219,8 +236,7 @@ public class utilidades implements Serializable
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -256,8 +272,7 @@ public class utilidades implements Serializable
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -287,8 +302,7 @@ public class utilidades implements Serializable
 
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -317,8 +331,7 @@ public class utilidades implements Serializable
 				} while (rBD.next());
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -347,8 +360,7 @@ public class utilidades implements Serializable
 				} while (rBD.next());
 			}
 
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -356,10 +368,61 @@ public class utilidades implements Serializable
 		return permisosSistema;
 	}
 
+	public static List<Object> executeTransactionLoad(TransactionLoadRequest transactionLoadRequest)
+	{
+		List<Object> loadedObjects = new ArrayList<Object>();
+		try
+		{
+			loadedObjects = utilidades.getMapper().transactionLoad(transactionLoadRequest);
+		} catch (DynamoDBMappingException ddbme)
+		{
+			System.err.println("Client side error in Mapper, fix before retrying. Error: " + ddbme.getMessage());
+		} catch (ResourceNotFoundException rnfe)
+		{
+			System.err.println("One of the tables was not found, verify table exists before retrying. Error: "
+					+ rnfe.getMessage());
+		} catch (InternalServerErrorException ise)
+		{
+			System.err.println(
+					"Internal Server Error, generally safe to retry with back-off. Error: " + ise.getMessage());
+		} catch (TransactionCanceledException tce)
+		{
+			System.err.println(
+					"Transaction Canceled, implies a client issue, fix before retrying. Error: " + tce.getMessage());
+		} catch (Exception ex)
+		{
+			System.err.println(
+					"An exception occurred, investigate and configure retry strategy. Error: " + ex.getMessage());
+		}
+		return loadedObjects;
+	}
 
+	public static void executeTransactionWrite(TransactionWriteRequest transactionWriteRequest)
+	{
+		try
+		{
+			utilidades.getMapper().transactionWrite(transactionWriteRequest);
 
-
-
-
+		} catch (DynamoDBMappingException ddbme)
+		{
+			System.err.println("Client side error in Mapper, fix before retrying. Error: " + ddbme.getMessage());
+		} catch (ResourceNotFoundException rnfe)
+		{
+			System.err.println("One of the tables was not found, verify table exists before retrying. Error: "
+					+ rnfe.getMessage());
+		} catch (InternalServerErrorException ise)
+		{
+			System.err.println(
+					"Internal Server Error, generally safe to retry with back-off. Error: " + ise.getMessage());
+		} catch (TransactionCanceledException tce)
+		{
+			System.err.println(
+					"Transaction Canceled, implies a client issue, fix before retrying. Error: " + tce.getMessage());
+		} catch (Exception ex)
+		{
+			System.err.println(
+					"An exception occurred, investigate and configure retry strategy. Error: " + ex.getMessage());
+		}
+	}
 
 }

@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import modelo.Usuario;
 import modelo.actividades.StatusActividad;
@@ -24,26 +28,35 @@ import modelo.gestion.TipoDescuento;
 import modelo.gestion.TipoGestion;
 import modelo.gestion.UnidadSalud;
 import persistence.dynamodb.CategoriaGestionAWS;
+import persistence.dynamodb.GestionAWS;
+import persistence.dynamodb.SeguridadSocialAWS;
 import persistence.dynamodb.StatusActividadAWS;
+import persistence.dynamodb.TipoDescuentoAWS;
+import persistence.dynamodb.TipoGestionAWS;
+import persistence.dynamodb.UnidadSaludAWS;
 import resources.DataBase;
 import util.FacesUtils;
 import util.utilidades;
 
 public class UtilidadesGestion
 {
-	public static int		idListaGestiones	= 338456892;
-//	public static int		idListaGestiones	= 354697479;																// pruebas
-	public static int		idListaPruebas		= 354697479;
-	public static String	wunderlistWSBean	= "wunderlistWSBean";
-	public static String	urlAccessToken		= "https://www.wunderlist.com/oauth/access_token";
-	public static String	urlLists			= "https://a.wunderlist.com/api/v1/lists";
-	public static String	urlTasks			= "https://a.wunderlist.com/api/v1/tasks";
-	public static String	urlNotes			= "https://a.wunderlist.com/api/v1/notes";
-	public static String	urlTaskComments		= "https://a.wunderlist.com/api/v1/task_comments";
-	public static String	seriesColors		= "58BA27,F52F2F, FFCC33,2db5ff,A30303,bcd2dd,ceeeff,105a82,707d84,8e6e68,"
+//	public static int		idListaGestiones	= 338456892;
+	public static int		idListaGestiones		= 354697479;																// pruebas
+	public static int		idListaPruebas			= 354697479;
+	public static String	wunderlistWSBean		= "wunderlistWSBean";
+	public static String	urlAccessToken			= "https://www.wunderlist.com/oauth/access_token";
+	public static String	urlLists				= "https://a.wunderlist.com/api/v1/lists";
+	public static String	urlTasks				= "https://a.wunderlist.com/api/v1/tasks";
+	public static String	urlNotes				= "https://a.wunderlist.com/api/v1/notes";
+	public static String	urlTaskComments			= "https://a.wunderlist.com/api/v1/task_comments";
+	public static String	seriesColors			= "58BA27,F52F2F, FFCC33,2db5ff,A30303,bcd2dd,ceeeff,105a82,707d84,8e6e68,"
 			+ "b4eab4,515b51,091e09,00ff00,00ffe9,002afc,b200ff,ff00dc,fc0093,f2002c,"
 			+ "efb8c2,baf298,a1ef97,8ce2af,8aeacf,7fd7e2,76a7db,9068cc,af63c6,e26897,"
 			+ "6b382f,6d512e,68632c,546028,415b25,276338,2a7064,26576d,253170,46216d ";
+
+	public static String	UUID_SeguridadSocial	= "a5126a79-82e5-4014-988d-1bd741f5a019";
+	public static String	UUID_CategoriaGestion	= "1148c0fd-3284-4f1b-a9a3-03d00e71140a";
+	public static String	UUID_UnidadSalud		= "01338d24-a713-41d5-94ac-0eab3adfa51c";
 
 	// Para consultar listas, tareas y notas en específico, se debe adicionar
 	// después de la url el id correspondiente, ejemplo: notes/7263526
@@ -54,12 +67,12 @@ public class UtilidadesGestion
 	{
 		// Se obtiene la gestión, solamente con los atributos de Folio, Fecha Recepción,
 		// Solicitud, Status y Usuario
-		PreparedStatement	prep		= null;
-		ResultSet			rBD			= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<Gestion>		gestiones	= new ArrayList<>();
+		List<Gestion> gestiones = new ArrayList<>();
 
-		String				complemento	= "";
+		String complemento = "";
 
 		switch (statusGestion)
 		{
@@ -243,50 +256,13 @@ public class UtilidadesGestion
 				fechaFinalizacionFinal);
 
 	}
-	
-	public static List<CategoriaGestionAWS> getCatCategoriaGestionAWS()
-	{
-		List<CategoriaGestionAWS> catCategoriaGestion = null;
-		
-		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
-		
-		catCategoriaGestion = mapper.scan(CategoriaGestionAWS.class, new DynamoDBScanExpression());
-		
-		return catCategoriaGestion;
-	}
-	
-	public static List<StatusActividadAWS> getCatStatusActividadAWS()
-	{
-		List<StatusActividadAWS> catStatusActividad = null;
-
-		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
-
-		/*Map<String, AttributeValue> eav = new HashMap<>();
-		eav.put(":val1", new AttributeValue().withN("-1"));
-
-		DynamoDBQueryExpression<StatusActividadAWS> queryExpression = new DynamoDBQueryExpression<StatusActividadAWS>()
-				.withKeyConditionExpression("idStatusActividad = :val1").withExpressionAttributeValues(eav);
-		
-		catStatusActividad = mapper.query(StatusActividadAWS.class, queryExpression);*/
-		catStatusActividad = mapper.scan(StatusActividadAWS.class, new DynamoDBScanExpression());
-		
-		for(StatusActividadAWS e :  catStatusActividad)
-		{
-			System.out.println(e.getIdStatusActividad()+" - "+e.getDescripcion());
-		}
-		
-		catStatusActividad.stream().peek( e-> System.out.println(e.getIdStatusActividad()+" - "+e.getDescripcion()));
-
-		return catStatusActividad;
-		
-	}
 
 	public static List<StatusActividad> getCatStatusActividad()
 	{
-		PreparedStatement		prep				= null;
-		ResultSet				rBD					= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<StatusActividad>	catStatusActividad	= new ArrayList<>();
+		List<StatusActividad> catStatusActividad = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -333,10 +309,10 @@ public class UtilidadesGestion
 
 	public static List<TipoGestion> getCatTipoGestion()
 	{
-		PreparedStatement	prep				= null;
-		ResultSet			rBD					= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<TipoGestion>	catTipoGestiones	= new ArrayList<>();
+		List<TipoGestion> catTipoGestiones = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -380,12 +356,23 @@ public class UtilidadesGestion
 
 	}
 
+	public static List<TipoGestionAWS> getCatTipoGestionAWS()
+	{
+		List<TipoGestionAWS> catTipoGestionAWS = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		catTipoGestionAWS = mapper.scan(TipoGestionAWS.class, new DynamoDBScanExpression());
+
+		return catTipoGestionAWS;
+	}
+
 	public static List<SeguridadSocial> getCatSeguridadSocial()
 	{
-		PreparedStatement		prep				= null;
-		ResultSet				rBD					= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<SeguridadSocial>	catSeguridadSocial	= new ArrayList<>();
+		List<SeguridadSocial> catSeguridadSocial = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -432,10 +419,10 @@ public class UtilidadesGestion
 
 	public static List<CategoriaGestion> getCatCategoriaGestion()
 	{
-		PreparedStatement		prep				= null;
-		ResultSet				rBD					= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<CategoriaGestion>	catSeguridadSocial	= new ArrayList<>();
+		List<CategoriaGestion> catSeguridadSocial = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -482,10 +469,10 @@ public class UtilidadesGestion
 
 	public static List<UnidadSalud> getCatUnidadSalud()
 	{
-		PreparedStatement	prep			= null;
-		ResultSet			rBD				= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<UnidadSalud>	catUnidadSalud	= new ArrayList<>();
+		List<UnidadSalud> catUnidadSalud = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -531,10 +518,10 @@ public class UtilidadesGestion
 
 	public static List<TipoDescuento> getCatTipoDescuento()
 	{
-		PreparedStatement	prep			= null;
-		ResultSet			rBD				= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<TipoDescuento>	catTipoDescuento	= new ArrayList<>();
+		List<TipoDescuento> catTipoDescuento = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -546,7 +533,8 @@ public class UtilidadesGestion
 			{
 				do
 				{
-					catTipoDescuento.add(new TipoDescuento(rBD.getInt("idTipoDescuento"), rBD.getString("Descripcion")));
+					catTipoDescuento
+							.add(new TipoDescuento(rBD.getInt("idTipoDescuento"), rBD.getString("Descripcion")));
 
 				} while (rBD.next());
 
@@ -581,10 +569,10 @@ public class UtilidadesGestion
 	public static List<String> getCoincidenciasSolicitantes(String query)
 	{
 
-		PreparedStatement	prep			= null;
-		ResultSet			rBD				= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<String>		catSolicitantes	= new ArrayList<>();
+		List<String> catSolicitantes = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -630,10 +618,10 @@ public class UtilidadesGestion
 	public static List<String> getCoincidenciasLugarOrigen(String query)
 	{
 
-		PreparedStatement	prep						= null;
-		ResultSet			rBD							= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		List<String>		coincidenciasLugarOrigen	= new ArrayList<>();
+		List<String> coincidenciasLugarOrigen = new ArrayList<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -680,10 +668,10 @@ public class UtilidadesGestion
 	// MÉTODOS PARA REPORTES
 	public static Map<String, Integer> getTotalesSolicitantes()
 	{
-		PreparedStatement		prep			= null;
-		ResultSet				rBD				= null;
+		PreparedStatement prep = null;
+		ResultSet rBD = null;
 
-		Map<String, Integer>	solicitantes	= new HashMap<>();
+		Map<String, Integer> solicitantes = new HashMap<>();
 
 		try (Connection conexion = ((DataBase) FacesUtils.getManagedBean("database")).getConnectionGestiones();)
 		{
@@ -726,6 +714,105 @@ public class UtilidadesGestion
 
 		return solicitantes;
 
+	}
+
+	public static List<UnidadSaludAWS> getCatUnidadSaludAWS()
+	{
+		List<UnidadSaludAWS> catUnidadSaludAWS = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":val1", new AttributeValue().withS(UUID_UnidadSalud));
+
+		DynamoDBQueryExpression<UnidadSaludAWS> queryExpression = new DynamoDBQueryExpression<UnidadSaludAWS>()
+				.withKeyConditionExpression("UUID_UnidadSalud = :val1 ").withExpressionAttributeValues(eav)
+				.withScanIndexForward(true);
+
+		catUnidadSaludAWS = mapper.query(UnidadSaludAWS.class, queryExpression);
+
+		return catUnidadSaludAWS;
+	}
+
+	public static List<CategoriaGestionAWS> getCatCategoriaGestionAWS()
+	{
+
+		List<CategoriaGestionAWS> catCategoriaGestion = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":val1", new AttributeValue().withS(UUID_CategoriaGestion));
+
+		DynamoDBQueryExpression<CategoriaGestionAWS> queryExpression = new DynamoDBQueryExpression<CategoriaGestionAWS>()
+				.withKeyConditionExpression("UUID_CategoriaGestion = :val1").withExpressionAttributeValues(eav)
+				.withScanIndexForward(true);
+
+		catCategoriaGestion = mapper.query(CategoriaGestionAWS.class, queryExpression);
+
+		return catCategoriaGestion;
+	}
+
+	public static List<StatusActividadAWS> getCatStatusActividadAWS()
+	{
+		List<StatusActividadAWS> catStatusActividad = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+		
+		StatusActividadAWS sta = new StatusActividadAWS(-1, "Agendada");
+		StatusActividadAWS sta2 = new StatusActividadAWS(0, "Iniciada");
+		StatusActividadAWS sta3 = new StatusActividadAWS(2, "Finalizada");
+		
+		mapper.batchSave(Arrays.asList(sta, sta2, sta3));
+
+		catStatusActividad = mapper.scan(StatusActividadAWS.class, new DynamoDBScanExpression());
+
+		return catStatusActividad;
+
+	}
+
+	public static List<TipoDescuentoAWS> getCatTipoDescuentoAWS()
+	{
+		List<TipoDescuentoAWS> catTipoDescuentoAWS = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		catTipoDescuentoAWS = mapper.scan(TipoDescuentoAWS.class, new DynamoDBScanExpression());
+
+		return catTipoDescuentoAWS;
+	}
+
+	public static List<SeguridadSocialAWS> getCatSeguridadSocialAWS()
+	{
+		List<SeguridadSocialAWS> catSeguridadSocialAWS = null;
+
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":val1", new AttributeValue().withS(UUID_SeguridadSocial));
+
+		DynamoDBQueryExpression<SeguridadSocialAWS> queryExpression = new DynamoDBQueryExpression<SeguridadSocialAWS>()
+				.withKeyConditionExpression("UUID_SeguridadSocial = :val1").withExpressionAttributeValues(eav)
+				.withScanIndexForward(true);
+
+		catSeguridadSocialAWS = mapper.query(SeguridadSocialAWS.class, queryExpression);
+
+		return catSeguridadSocialAWS;
+	}
+	
+	public static int countGestionAWS(LocalDateTime fechaCreacion)
+	{
+		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
+
+		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+		eav.put(":val1", new AttributeValue().withS(fechaCreacion.toString()));
+
+		DynamoDBScanExpression queryExpression = new DynamoDBScanExpression()
+				.withFilterExpression("fechaCreacion < :val1 ")
+				.withExpressionAttributeValues(eav);
+		
+		return mapper.count(GestionAWS.class, queryExpression);
+		
 	}
 
 }

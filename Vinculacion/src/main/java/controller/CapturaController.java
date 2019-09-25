@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import persistence.dynamodb.LocalidadConf;
 import persistence.dynamodb.Usuario;
-import resources.DataBase;
 import util.FacesUtils;
 import util.utilidades;
 
@@ -25,8 +24,6 @@ public class CapturaController
 
 	public CapturaController()
 	{
-		DataBase dataBaseBean = (DataBase) FacesUtils.getManagedBean("database");
-
 		Login login = (Login) FacesUtils.getManagedBean("login");
 		this.usuarioEnSesion = login.getUsuarioAWS();
 
@@ -40,13 +37,13 @@ public class CapturaController
 		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
 
 		Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
-		eav.put(":val1", new AttributeValue().withS(nombre));
-		eav.put(":val2", new AttributeValue().withS(apPaterno));
-		eav.put(":val3", new AttributeValue().withS(apMaterno));
-		eav.put(":val4", new AttributeValue().withS(sexo));
-		eav.put(":val5", new AttributeValue().withS(cve_agee));
-		eav.put(":val6", new AttributeValue().withS(cve_agem));
-		eav.put(":val7", new AttributeValue().withS(cve_loc));
+		eav.put(":val1", new AttributeValue().withS(nombre.trim()));
+		eav.put(":val2", new AttributeValue().withS(apPaterno.trim()));
+		eav.put(":val3", new AttributeValue().withS(apMaterno.trim()));
+		eav.put(":val4", new AttributeValue().withS(sexo.trim()));
+		eav.put(":val5", new AttributeValue().withS(cve_agee.trim()));
+		eav.put(":val6", new AttributeValue().withS(cve_agem.trim()));
+		eav.put(":val7", new AttributeValue().withS(cve_loc.trim()));
 
 		DynamoDBScanExpression queryExpression = new DynamoDBScanExpression()
 				.withFilterExpression("nombres = :val1 and apPaterno = :val2 and apMaterno = :val3 and sexo = :val4 "
@@ -60,19 +57,21 @@ public class CapturaController
 
 	public persistence.dynamodb.Persona createNuevaPersona(String nombre, String apPaterno, String apMaterno,
 			String sexo, String cve_agee, String nom_agee, String cve_agem, String nom_agem, String cve_loc,
-			String nom_loc)
+			String nom_loc, String idUsuarioCreacion, String nombreUsuarioCreacion)
 	{
 
 		DynamoDBMapper mapper = new DynamoDBMapper(utilidades.getAWSDynamoDBClient());
 		persistence.dynamodb.Persona persona = new persistence.dynamodb.Persona();
 
-		persona.setNombres(nombre);
-		persona.setApPaterno(apPaterno);
-		persona.setApMaterno(apMaterno);
-		persona.setSexo(sexo);
+		persona.setNombres(nombre.trim());
+		persona.setApPaterno(apPaterno.trim());
+		persona.setApMaterno(apMaterno.trim());
+		persona.setSexo(sexo.trim());
 		persona.setVive(true);
+		persona.setIdUsuarioCreacion(idUsuarioCreacion.trim());
+		persona.setNombreUsuarioCreacion(nombreUsuarioCreacion.trim());
 
-		LocalidadConf localidad = new LocalidadConf(cve_agee, nom_agee, cve_agem, nom_agem, cve_loc, nom_loc);
+		LocalidadConf localidad = new LocalidadConf(cve_agee.trim(), nom_agee.trim(), cve_agem.trim(), nom_agem.trim(), cve_loc.trim(), nom_loc.trim());
 		persona.setDecision(new persistence.dynamodb.Decision(-1, "No encuestado"));
 
 		persona.setLocalidad(localidad);

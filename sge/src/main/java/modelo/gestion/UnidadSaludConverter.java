@@ -8,6 +8,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 import gui.portal.gestion.NuevaGestionBean;
+import persistence.dynamodb.UnidadSaludAWS;
 import util.FacesUtils;
 
 @FacesConverter("unidadSaludConverter")
@@ -19,12 +20,12 @@ public class UnidadSaludConverter implements Converter
 	{
 		NuevaGestionBean bean = (NuevaGestionBean) FacesUtils.getManagedBean("nuevaGestionBean");
 
-		if (bean.getCatUnidadSalud() == null || bean.getCatUnidadSalud().isEmpty())
+		if (bean.getCatUnidadSaludAWS() == null || bean.getCatUnidadSaludAWS().isEmpty())
 		{
 			return null;
 		}
 
-		Optional<UnidadSalud> res = bean.getCatUnidadSalud().stream()
+		Optional<UnidadSaludAWS> res = bean.getCatUnidadSaludAWS().stream()
 				.filter(v -> v.getIdUnidadSalud() == Integer.parseInt(id)).findFirst();
 
 		return res.get();
@@ -37,7 +38,7 @@ public class UnidadSaludConverter implements Converter
 
 		if (value != null)
 		{
-			return "" + ((UnidadSalud) value).getIdUnidadSalud();
+			return "" + ((UnidadSaludAWS) value).getIdUnidadSalud();
 		}
 
 		return null;

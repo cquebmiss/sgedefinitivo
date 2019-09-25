@@ -4,7 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import modelo.gestion.Contacto;
+import persistence.dynamodb.Contacto;
 import util.FacesUtils;
 
 @ManagedBean
